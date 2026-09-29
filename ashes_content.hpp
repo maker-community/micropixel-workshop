@@ -21,17 +21,17 @@ namespace ids = pal_strings;
 // ---------------------------------------------------------------------------
 
 enum : uint8_t {
-    kCharXiao = 0U,    // 萧余烬 — the protagonist swordsman
-    kCharLingxi = 1U,  // 灵汐 — the fox-spirit companion
-    kCharYunyang = 2U, // 云阳子 — the wandering Daoist
+    kCharXiao = 0U,    // 李逍遥 — the innkeeper's nephew
+    kCharLingxi = 1U,  // 赵灵儿 — the water-spirit maiden
+    kCharYunyang = 2U, // 林月如 — the swordswoman of 林家堡
     kCharacterCount = 3U,
 };
 
 enum : uint8_t {
-    kMapVillage = 0U,  // 青云村
-    kMapForest = 1U,   // 幽篁林
-    kMapPass = 2U,     // 玄冥关
-    kMapHall = 3U,     // 天枢殿
+    kMapVillage = 0U,  // 余杭镇
+    kMapForest = 1U,   // 十里坡
+    kMapPass = 2U,     // 仙灵岛
+    kMapHall = 3U,     // 水月宫
     kMapCount = 4U,
 };
 
@@ -58,13 +58,13 @@ enum BattleId : uint8_t {
 };
 
 // Story flags persisted in the save blob.
-inline constexpr uint32_t kFlagRelic = 1U << 0U;         // accepted 玄天玉
-inline constexpr uint32_t kFlagLingxi = 1U << 1U;        // 灵汐 in the party
-inline constexpr uint32_t kFlagMercy = 1U << 2U;         // saved the caravan
+inline constexpr uint32_t kFlagRelic = 1U << 0U;         // accepted 水灵珠
+inline constexpr uint32_t kFlagLingxi = 1U << 1U;        // 赵灵儿 in the party
+inline constexpr uint32_t kFlagMercy = 1U << 2U;         // saved the villagers
 inline constexpr uint32_t kFlagBold = 1U << 3U;          // flanked the bandits
 inline constexpr uint32_t kFlagCalm = 1U << 4U;          // waited and watched
-inline constexpr uint32_t kFlagYunyang = 1U << 5U;       // 云阳子 in the party
-inline constexpr uint32_t kFlagCourtesy = 1U << 6U;      // invited him politely
+inline constexpr uint32_t kFlagYunyang = 1U << 5U;       // 林月如 in the party
+inline constexpr uint32_t kFlagCourtesy = 1U << 6U;      // invited her politely
 
 inline constexpr uint8_t kItemNone = 0xFFU;
 

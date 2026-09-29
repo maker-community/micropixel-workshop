@@ -20,10 +20,10 @@ void Panel(GameView& view, micropixel::Rect rect, micropixel::Color fill, microp
 // Slim top bar with the current location and the party purse.
 void Header(GameContext& context, ids::Id title, bool show_gold);
 
-// 0 萧余烬, 1 灵汐, 2 云阳子, 3 青云子, 4 商队首领, 5 玄冥魔尊, 0xFF none.
+// 0 李逍遥, 1 赵灵儿, 2 林月如, 3 酒剑仙, 4 村民, 5 拜月教主, 0xFF none.
 void Portrait(GameView& view, micropixel::Rect area, uint8_t portrait, uint8_t emotion, bool highlight);
 
-// Monsters: 0 妖狼, 1 山贼, 2 怨灵, 3 玄冥魔尊.
+// Monsters: 0 蛇妖, 1 山贼, 2 水妖, 3 拜月教主.
 void EnemySprite(GameView& view, micropixel::Rect area, uint8_t sprite, bool alive, bool targeted);
 
 // Overworld token for a party member.

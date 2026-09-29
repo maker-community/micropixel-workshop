@@ -78,7 +78,7 @@ constexpr BattleDef kBattles[kBattleCount] = {
 
 // --- dialogue graph ---------------------------------------------------------
 constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
-    // 0 kDlgIntro — the night raid on 青云村
+    // 0 kDlgIntro — 酒剑仙 sends 李逍遥 to 仙灵岛
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryIntroL0, 0xFFU, 0U},
       {ids::Id::kCharMaster, ids::Id::kStoryIntroL1, 3U, 0U},
@@ -86,7 +86,7 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 1 kDlgWolves — 灵汐 joins
+    // 1 kDlgWolves — 赵灵儿 joins
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryWolvesL0, 0xFFU, 0U},
       {ids::Id::kCharLingxi, ids::Id::kStoryWolvesL1, 1U, 3U},
@@ -96,7 +96,7 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
       {ids::Id::kStoryWolvesC1, -1, kFlagLingxi, 0U},
       {}},
      -1},
-    // 2 kDlgForest — the caravan ambush
+    // 2 kDlgForest — the villagers ambushed on 十里坡
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryForestL0, 0xFFU, 0U},
       {ids::Id::kCharMerchant, ids::Id::kStoryForestL1, 4U, 2U},
@@ -114,7 +114,7 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 4 kDlgPass — 云阳子 joins
+    // 4 kDlgPass — 林月如 joins
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryPassL0, 0xFFU, 0U},
       {ids::Id::kCharYunyang, ids::Id::kStoryPassL1, 2U, 0U},
@@ -132,7 +132,7 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 6 kDlgHall — facing 玄冥魔尊
+    // 6 kDlgHall — facing 拜月教主
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryHallL0, 0xFFU, 0U},
       {ids::Id::kCharDemon, ids::Id::kStoryHallL1, 5U, 1U},

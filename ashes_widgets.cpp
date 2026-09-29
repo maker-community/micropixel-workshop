@@ -152,7 +152,7 @@ void Portrait(GameView& view, micropixel::Rect area, uint8_t portrait, uint8_t e
     }
 
     switch (portrait) {
-        case 0U: {  // 萧余烬 — young swordsman
+        case 0U: {  // 李逍遥 — young swordsman
             const FaceStyle style{micropixel::Color::Rgb(252U, 224U, 214U), micropixel::Color::Rgb(220U, 178U, 168U),
                                   micropixel::Color::Rgb(38U, 44U, 76U), micropixel::Color::Rgb(96U, 118U, 208U),
                                   micropixel::Color::Rgb(72U, 128U, 224U), 0U, false, true};
@@ -165,7 +165,7 @@ void Portrait(GameView& view, micropixel::Rect area, uint8_t portrait, uint8_t e
             view.Round(Cell(area, 250, 250, 500, 60), theme::kBlood, theme::kBlood.Lightened(60U), 26U, 1U);
             break;
         }
-        case 1U: {  // 灵汐 — fox spirit
+        case 1U: {  // 赵灵儿 — water spirit
             const FaceStyle style{micropixel::Color::Rgb(255U, 232U, 236U), micropixel::Color::Rgb(228U, 190U, 198U),
                                   micropixel::Color::Rgb(214U, 216U, 236U), micropixel::Color::Rgb(255U, 255U, 255U),
                                   micropixel::Color::Rgb(92U, 196U, 196U), 1U, false, true};
@@ -175,7 +175,7 @@ void Portrait(GameView& view, micropixel::Rect area, uint8_t portrait, uint8_t e
             view.Round(Cell(area, 660, 300, 90, 90), theme::kBlood, theme::kBlood.Lightened(80U), 40U, 1U);
             break;
         }
-        case 2U: {  // 云阳子 — Daoist
+        case 2U: {  // 林月如 — swordswoman of 林家堡
             const FaceStyle style{micropixel::Color::Rgb(246U, 226U, 206U), micropixel::Color::Rgb(212U, 186U, 166U),
                                   micropixel::Color::Rgb(226U, 226U, 232U), micropixel::Color::Rgb(255U, 255U, 255U),
                                   micropixel::Color::Rgb(120U, 132U, 168U), 0U, true, false};
@@ -186,7 +186,7 @@ void Portrait(GameView& view, micropixel::Rect area, uint8_t portrait, uint8_t e
                        micropixel::Color::Rgb(196U, 186U, 158U), 40U, 1U);
             break;
         }
-        case 3U: {  // 青云子 — village master
+        case 3U: {  // 酒剑仙 — drunken sword immortal
             const FaceStyle style{micropixel::Color::Rgb(238U, 216U, 194U), micropixel::Color::Rgb(202U, 176U, 154U),
                                   micropixel::Color::Rgb(206U, 206U, 212U), micropixel::Color::Rgb(244U, 244U, 248U),
                                   micropixel::Color::Rgb(110U, 112U, 132U), 0U, true, false};
@@ -195,7 +195,7 @@ void Portrait(GameView& view, micropixel::Rect area, uint8_t portrait, uint8_t e
             DrawHead(view, area, style, emotion);
             break;
         }
-        case 4U: {  // 商队首领 — caravan leader
+        case 4U: {  // 村民 — villager
             const FaceStyle style{micropixel::Color::Rgb(232U, 194U, 152U), micropixel::Color::Rgb(196U, 158U, 120U),
                                   micropixel::Color::Rgb(58U, 46U, 40U), micropixel::Color::Rgb(104U, 84U, 66U),
                                   micropixel::Color::Rgb(78U, 62U, 48U), 0U, false, false};
@@ -205,7 +205,7 @@ void Portrait(GameView& view, micropixel::Rect area, uint8_t portrait, uint8_t e
             view.Round(Cell(area, 240U, 250U, 520U, 70U), theme::kBlood.Darkened(70U), theme::kBlood, 24U, 1U);
             break;
         }
-        default: {  // 玄冥魔尊 — demon lord
+        default: {  // 拜月教主 — moon cult leader
             const FaceStyle style{micropixel::Color::Rgb(206U, 196U, 214U), micropixel::Color::Rgb(150U, 138U, 168U),
                                   micropixel::Color::Rgb(38U, 28U, 56U), micropixel::Color::Rgb(96U, 62U, 132U),
                                   micropixel::Color::Rgb(226U, 72U, 88U), 2U, false, false};
@@ -227,7 +227,7 @@ void EnemySprite(GameView& view, micropixel::Rect area, uint8_t sprite, bool ali
     }
 
     switch (sprite) {
-        case 0U: {  // 幽篁妖狼
+        case 0U: {  // 蛇妖
             view.Round(Cell(area, 120, 330, 760, 480), micropixel::Color::Rgb(96U, 100U, 112U),
                        micropixel::Color::Rgb(60U, 62U, 74U), 140U, 2U, alpha);
             view.Round(Cell(area, 250, 120, 500, 420), micropixel::Color::Rgb(120U, 124U, 136U),
@@ -246,7 +246,7 @@ void EnemySprite(GameView& view, micropixel::Rect area, uint8_t sprite, bool ali
             }
             break;
         }
-        case 1U: {  // 黑风山贼
+        case 1U: {  // 山贼
             view.Round(Cell(area, 260, 240, 480, 620), micropixel::Color::Rgb(74U, 54U, 50U),
                        micropixel::Color::Rgb(48U, 34U, 32U), 120U, 2U, alpha);
             view.Round(Cell(area, 320, 120, 360, 340), micropixel::Color::Rgb(226U, 184U, 148U),
@@ -262,7 +262,7 @@ void EnemySprite(GameView& view, micropixel::Rect area, uint8_t sprite, bool ali
             }
             break;
         }
-        case 2U: {  // 怨灵
+        case 2U: {  // 水妖
             view.Round(Cell(area, 280, 130, 440, 520), micropixel::Color::Rgb(120U, 178U, 186U),
                        micropixel::Color::Rgb(78U, 134U, 144U), 200U, 2U, alpha);
             view.Round(Cell(area, 200, 620, 600, 320), micropixel::Color::Rgb(96U, 152U, 164U),
@@ -273,7 +273,7 @@ void EnemySprite(GameView& view, micropixel::Rect area, uint8_t sprite, bool ali
                        micropixel::Color::Rgb(24U, 40U, 44U), 28U, 0U, alpha);
             break;
         }
-        default: {  // 玄冥魔尊
+        default: {  // 拜月教主
             view.Round(Cell(area, 180, 520, 640, 440), micropixel::Color::Rgb(40U, 24U, 58U),
                        micropixel::Color::Rgb(120U, 62U, 150U), 120U, 2U, alpha);
             view.Round(Cell(area, 300, 180, 400, 400), micropixel::Color::Rgb(214U, 202U, 220U),
