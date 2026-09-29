@@ -133,6 +133,9 @@ class GameView final {
     // Routes subsequent Fill/Round/Text into the clipped map layer.
     void UseMapLayer(bool enabled) { on_map_layer_ = enabled; }
 
+    // True when the most recent End() had its frame rejected by the Host.
+    [[nodiscard]] bool last_frame_rejected() const { return last_frame_rejected_; }
+
     void End() {
         const uint32_t rects = map_.rect_count + hud_.rect_count;
         const uint32_t labels = map_.label_count + hud_.label_count;
@@ -140,6 +143,7 @@ class GameView final {
         hud_.Retire();
         updating_ = false;
         const auto presented = renderer_.Present(scene_);
+        last_frame_rejected_ = !presented.has_value();
         if (!presented.has_value()) {
             // A rejected frame leaves the previous one on screen. Report it with
             // the frame's node counts and keep running: trapping here would take
@@ -299,6 +303,7 @@ class GameView final {
     Layer hud_;
     bool on_map_layer_{};
     bool updating_{};
+    bool last_frame_rejected_{};
 };
 
 // ---------------------------------------------------------------------------

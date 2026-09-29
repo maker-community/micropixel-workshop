@@ -215,9 +215,17 @@ class PalApp final {
                 (void)EndingSceneTouch(context_, touch);
                 break;
         }
-        if (context_.dirty) {
-            context_.dirty = false;
-            RenderCurrent();
+        // Rendering is left to the next tick. Presenting from inside the input
+        // event raced the Host's own present of the previous frame, which made a
+        // freshly pushed scene (the status menu) come back rejected.
+        context_.dirty = true;
+    }
+
+    // A scene whose frame the Host refuses would otherwise trap the player on a
+    // stale screen with no way back. Drop out of it instead.
+    void AbandonUnpresentableMenu() {
+        if (context_.scene_id == kSceneMenu && context_.view.last_frame_rejected()) {
+            PushScene(context_, context_.previous_scene);
         }
     }
 
@@ -242,10 +250,7 @@ class PalApp final {
                 (void)EndingSceneKey(context_, code);
                 break;
         }
-        if (context_.dirty) {
-            context_.dirty = false;
-            RenderCurrent();
-        }
+        context_.dirty = true;
     }
 
     void RenderCurrent() {
