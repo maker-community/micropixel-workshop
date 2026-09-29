@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "app_id": "com.maker.pal",
+  "version": "0.2.0",
+  "threading": "none",
+  "title": {
+    "default": "zh-CN",
+    "values": {
+      "zh-CN": "仙剑奇侠传"
+    }
+  },
+  "localization": {
+    "default": "zh-CN",
+    "translations": {
+      "zh-CN": "i18n/zh-CN.json"
+    }
+  },
+  "sources": [
+    "main.cpp",
+    "ashes_app.cpp",
+    "ashes_common.cpp",
+    "ashes_content.cpp",
+    "ashes_model.cpp",
+    "ashes_world.cpp",
+    "ashes_dialogue.cpp",
+    "ashes_battle.cpp",
+    "ashes_widgets.cpp",
+    "scenes/title_scene.cpp",
+    "scenes/explore_scene.cpp",
+    "scenes/dialogue_scene.cpp",
+    "scenes/battle_scene.cpp",
+    "scenes/menu_scene.cpp",
+    "scenes/ending_scene.cpp"
+  ],
+  "asset_manifest": "assets/manifest.json",
+  "launch_asset": "launch",
+  "requirements": {
+    "schema_version": 1,
+    "display": {
+      "layouts": [
+        "square",
+        "portrait",
+        "landscape"
+      ],
+      "min_width": 320,
+      "min_height": 320
+    },
+    "required": [
+      "input.touch"
+    ],
+    "optional": [
+      "input.keys"
+    ],
+    "any_of": [],
+    "services": {}
+  }
+}
