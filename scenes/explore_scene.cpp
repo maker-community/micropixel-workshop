@@ -177,13 +177,80 @@ void ExploreSceneUpdate(GameContext& context, uint32_t delta_ms) {
     context.dirty = true;
 }
 
+// Drag-to-walk tuning: thumb travel for one tile, and the shorter flick that
+// still counts as a single step.
+inline constexpr int32_t kDragStep = 26;
+inline constexpr int32_t kFlickStep = 14;
+
 bool ExploreSceneTouch(GameContext& context, const micropixel::TouchEvent& touch) {
-    if (touch.phase() != micropixel::TouchPhase::kDown) {
-        return false;
+    const micropixel::Point point = touch.position();
+    switch (touch.phase()) {
+        case micropixel::TouchPhase::kDown:
+            context.drag_x = point.x;
+            context.drag_y = point.y;
+            context.drag_origin_x = point.x;
+            context.drag_origin_y = point.y;
+            context.dragging = true;
+            break;
+        case micropixel::TouchPhase::kMove: {
+            if (!context.dragging) {
+                context.drag_x = point.x;
+                context.drag_y = point.y;
+                context.dragging = true;
+                break;
+            }
+            // Every kDragStep pixels of travel walks one tile, so a thumb drag
+            // explores the map without aiming at the pad at all.
+            for (;;) {
+                const int32_t dx = point.x - context.drag_x;
+                const int32_t dy = point.y - context.drag_y;
+                const int32_t ax = dx < 0 ? -dx : dx;
+                const int32_t ay = dy < 0 ? -dy : dy;
+                const bool can_x = ax >= kDragStep;
+                const bool can_y = ay >= kDragStep;
+                if (!can_x && !can_y) {
+                    break;
+                }
+                if (can_x && (!can_y || ax >= ay)) {
+                    const int32_t dir = dx > 0 ? 1 : -1;
+                    TryStep(context, dir, 0);
+                    context.drag_x += dir * kDragStep;
+                } else {
+                    const int32_t dir = dy > 0 ? 1 : -1;
+                    TryStep(context, 0, dir);
+                    context.drag_y += dir * kDragStep;
+                }
+            }
+            return true;
+        }
+        case micropixel::TouchPhase::kUp:
+        case micropixel::TouchPhase::kCancel: {
+            // A flick too short to cross the drag threshold still reads as one
+            // step in its dominant direction.
+            if (context.dragging) {
+                const int32_t dx = point.x - context.drag_origin_x;
+                const int32_t dy = point.y - context.drag_origin_y;
+                const int32_t ax = dx < 0 ? -dx : dx;
+                const int32_t ay = dy < 0 ? -dy : dy;
+                const bool short_swipe = ax < kDragStep && ay < kDragStep;
+                if (short_swipe && (ax >= kFlickStep || ay >= kFlickStep)) {
+                    if (ax >= ay) {
+                        TryStep(context, dx > 0 ? 1 : -1, 0);
+                    } else {
+                        TryStep(context, 0, dy > 0 ? 1 : -1);
+                    }
+                }
+                context.dragging = false;
+            }
+            return true;
+        }
+        default:
+            return false;
     }
+
     const GameLayout& layout = context.layout;
     for (uint8_t index = 0U; index < 4U; ++index) {
-        if (!layout.dpad[index].contains(touch.position())) {
+        if (!layout.dpad[index].contains(point)) {
             continue;
         }
         switch (index) {
@@ -202,7 +269,7 @@ bool ExploreSceneTouch(GameContext& context, const micropixel::TouchEvent& touch
         }
         return true;
     }
-    if (layout.menu_button.contains(touch.position())) {
+    if (layout.menu_button.contains(point)) {
         context.previous_scene = kSceneExplore;
         PushScene(context, kSceneMenu);
         return true;

@@ -354,6 +354,14 @@ struct GameContext final {
     uint8_t scene_id{kSceneTitle};
     uint8_t previous_scene{kSceneTitle};  // the menu returns here
     uint8_t cursor{};                     // shared menu cursor
+
+    // Drag-to-walk state for the exploration map: where the thumb last was,
+    // where the gesture started, and whether a drag is in flight.
+    int32_t drag_x{};
+    int32_t drag_y{};
+    int32_t drag_origin_x{};
+    int32_t drag_origin_y{};
+    bool dragging{};
     uint8_t dialogue_return{kDialogueToScript};
     uint32_t notice_ms{};  // transient confirmation ("已记录天机") countdown
     bool has_save{};

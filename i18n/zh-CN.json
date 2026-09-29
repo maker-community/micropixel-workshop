@@ -49,11 +49,16 @@
   "char.demon": "拜月教主",
   "char.elder": "吴伯",
   "char.kid": "小顽童",
+  "char.hostess": "婶婶",
 
   "enemy.wolf": "蛇妖",
   "enemy.bandit": "山贼",
   "enemy.ghost": "水妖",
   "enemy.demon": "拜月教主",
+  "enemy.treant": "千年树精",
+  "enemy.wasp": "妖蜂",
+  "enemy.chief": "山贼头目",
+  "enemy.cultist": "拜月教徒",
 
   "item.pill_hp": "金创药",
   "item.pill_mp": "灵葫仙丹",
@@ -61,6 +66,8 @@
   "item.talisman": "火灵符",
   "item.revive": "还魂香",
   "item.relic": "水灵珠",
+  "item.lingzhi": "千年灵芝",
+  "item.oxhorn": "蛮牛角",
 
   "skill.slash": "御剑术",
   "skill.thrust": "万剑诀",
@@ -79,6 +86,8 @@
   "map.forest": "十里坡",
   "map.pass": "仙灵岛",
   "map.hall": "水月宫",
+  "map.suzhou": "苏州城",
+  "map.fort": "林家堡",
 
   "battle.begin": "妖气逼近，拔剑！",
   "battle.enemy_phase": "敌方行动",
@@ -101,6 +110,35 @@
 
   "story.kid.l0": "小顽童拍手：听说岛上有会飞的仙女！",
   "story.kid.l1": "他一弯腰跑开了，鞋底拍得青石板啪啪作响。",
+
+  "story.hostess.l0": "婶婶倚在门边：逍遥，早去早回，婶婶等你。",
+  "story.hostess.l1": "她把一个布包塞进你手里，转身掩上了门。",
+
+  "story.depart.l0": "酒剑仙把一柄木剑丢给你：先学会挨打，再谈行侠。",
+  "story.depart.l1": "他指了指南边：仙灵岛走水路，十里坡口有船家。",
+  "story.depart.l2": "李逍遥：婶婶，等我带药回来。",
+
+  "story.road.l0": "十里坡口，两条路分岔：一条近却阴森，一条远些却有人烟。",
+  "story.road.l1": "赵灵儿：走哪边，你拿主意。",
+  "story.road.l2": "她拢了拢被风吹起的长发。",
+  "story.road.c0": "抄近路，穿林子",
+  "story.road.c1": "绕远路，走官道",
+
+  "story.afterhall.l0": "拜月教主化作黑雾散去，只留下一句：水月宫不是终点。",
+  "story.afterhall.l1": "林月如拾起地上的信笺：苏州城，林家堡。",
+  "story.afterhall.l2": "赵灵儿：他们在那里，等你自投罗网。",
+
+  "story.suzhou.l0": "苏州城的河道结了薄冰，酒旗在风里响了一路。",
+  "story.suzhou.l1": "岸边的教徒低着头快步走过，没人敢看你的眼睛。",
+  "story.suzhou.l2": "赵灵儿握紧水灵珠：他们在等我们。",
+
+  "story.fort.l0": "林家堡的大门敞着，像是特意留的。",
+  "story.fort.l1": "林月如：教徒在里面列阵，等我自投罗网。",
+  "story.fort.l2": "赵灵儿：那就让他们等。",
+
+  "story.final.l0": "阵破了，教徒四散，苏州城的灯火重新亮起。",
+  "story.final.l1": "赵灵儿：教主还在，这一程还没走完。",
+  "story.final.l2": "李逍遥收起木剑：那就接着走。",
 
   "story.wolves.l0": "蛇妖化作黑烟散去，十里坡安静下来。",
   "story.wolves.l1": "赵灵儿：你为我挡了一剑，我随你走一趟。",

@@ -22,7 +22,9 @@ GameLayout BuildLayout(const micropixel::RendererInfo& info) {
     const int32_t header_h = math::Clamp<int32_t>(h * 6 / 100, 18, 28);
     layout.header = {x, y, w, header_h};
 
-    const int32_t footer_h = math::Clamp<int32_t>(h * 31 / 100, 104, 200);
+    // The footer carries the exploration pad, so give it real estate: the pad
+    // ends up thumb-sized instead of a row of small targets.
+    const int32_t footer_h = math::Clamp<int32_t>(h * 54 / 100, 104, 200);
     layout.footer = {x, y + h - footer_h, w, footer_h};
     const int32_t body_y = y + header_h + 2;
     layout.body = {x, body_y, w, math::Max(y + h - footer_h - body_y - 2, 40)};
@@ -30,19 +32,23 @@ GameLayout BuildLayout(const micropixel::RendererInfo& info) {
     // --- exploration: viewport plus a diamond pad and a menu button ----------
     layout.stage = layout.body;
     const int32_t cell =
-        math::Min(math::Max((footer_h - pad * 4) / 3, 18), math::Max((w - pad * 8) / 3, 18));
+        math::Min(math::Max((footer_h - pad * 4) / 3, 20), math::Max((w - pad * 8) / 3, 20));
     const int32_t dpad_h = cell * 3 + pad * 2;
-    const int32_t dpad_x = x + pad;
-    const int32_t dpad_y = layout.footer.y + math::Max((footer_h - dpad_h) / 2, pad);
+    const int32_t dpad_w = dpad_h;
+    // Centred and pushed to the very bottom of the screen: that is where a
+    // thumb rests, and it buys the largest possible pad. The four arrows are
+    // laid out from this origin below.
+    const int32_t dpad_x = x + (w - dpad_w) / 2;
+    const int32_t dpad_y = layout.footer.y + math::Max(footer_h - dpad_h - pad, pad);
     layout.dpad[0] = {dpad_x + cell + pad, dpad_y, cell, cell};                       // up
     layout.dpad[1] = {dpad_x, dpad_y + cell + pad, cell, cell};                       // left
     layout.dpad[2] = {dpad_x + (cell + pad) * 2, dpad_y + cell + pad, cell, cell};     // right
     layout.dpad[3] = {dpad_x + cell + pad, dpad_y + (cell + pad) * 2, cell, cell};     // down
-    const int32_t dpad_w = cell * 3 + pad * 2;
-    const int32_t menu_w = math::Clamp<int32_t>(w - dpad_w - pad * 4, 64, 128);
-    const int32_t menu_h = math::Clamp<int32_t>(footer_h / 3, 26, 40);
-    layout.menu_button = {x + w - pad - menu_w, layout.footer.y + (footer_h - menu_h * 2 - pad) / 2, menu_w,
-                          menu_h};
+    // The status button lives in the margin the centred pad leaves free.
+    const int32_t margin_w = (w - dpad_w) / 2;
+    const int32_t menu_w = math::Clamp<int32_t>(margin_w - pad * 2, 44, 128);
+    const int32_t menu_h = math::Clamp<int32_t>(footer_h / 3, 26, 44);
+    layout.menu_button = {x + w - pad - menu_w, layout.footer.y + (footer_h - menu_h) / 2, menu_w, menu_h};
     layout.list = layout.body;
 
     // --- dialogue: a big box over the bottom of the screen, the speaker

@@ -32,7 +32,9 @@ enum : uint8_t {
     kMapForest = 1U,   // 十里坡
     kMapPass = 2U,     // 仙灵岛
     kMapHall = 3U,     // 水月宫
-    kMapCount = 4U,
+    kMapSuzhou = 4U,   // 苏州城
+    kMapFort = 5U,     // 林家堡
+    kMapCount = 6U,
 };
 
 enum DialogueId : uint8_t {
@@ -45,6 +47,13 @@ enum DialogueId : uint8_t {
     kDlgHall,
     kDlgElder,
     kDlgKid,
+    kDlgHostess,
+    kDlgDepart,
+    kDlgRoad,
+    kDlgAfterHall,
+    kDlgSuzhou,
+    kDlgFort,
+    kDlgFinal,
     kDlgEndGood,
     kDlgEndMid,
     kDlgEndBad,
@@ -56,6 +65,9 @@ enum BattleId : uint8_t {
     kBattleBandits,
     kBattleGhosts,
     kBattleBoss,
+    kBattleChief,      // 山贼头目 ambush on 十里坡
+    kBattleCultists,   // 拜月教徒 in 苏州城
+    kBattleFort,       // the 林家堡 stand
     kBattleCount,
 };
 
@@ -158,6 +170,8 @@ enum : uint8_t {
     kIdxTalisman,
     kIdxRevive,
     kIdxRelic,
+    kIdxLingzhi,
+    kIdxOxhorn,
     kItemIdxCount,
 };
 

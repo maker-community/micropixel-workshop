@@ -57,23 +57,46 @@ constexpr ItemDef kItems[kItemIdxCount] = {
     {ids::Id::kItemTalisman, ItemEffect::kDamageAll, 70U, true, false},
     {ids::Id::kItemRevive, ItemEffect::kRevive, 60U, true, true},
     {ids::Id::kItemRelic, ItemEffect::kKey, 0U, false, false},
+    {ids::Id::kItemLingzhi, ItemEffect::kHealHp, 150U, true, true},
+    {ids::Id::kItemOxhorn, ItemEffect::kDamageAll, 90U, true, false},
 };
 
 // --- enemies ----------------------------------------------------------------
-enum : uint8_t { kFoeWolf = 0U, kFoeBandit, kFoeGhost, kFoeDemon, kFoeCount };
+enum : uint8_t {
+    kFoeWolf = 0U,
+    kFoeBandit,
+    kFoeGhost,
+    kFoeDemon,
+    kFoeTreant,
+    kFoeWasp,
+    kFoeChief,
+    kFoeCultist,
+    kFoeCount,
+};
 
 constexpr EnemyDef kEnemies[kFoeCount] = {
     {ids::Id::kEnemyWolf, 0U, 90U, 0U, 18U, 6U, 12U, 0U, {0U, 0U}, 26U, 14U, kItemNone},
     {ids::Id::kEnemyBandit, 1U, 130U, 0U, 24U, 10U, 10U, 0U, {0U, 0U}, 38U, 22U, kIdxPillHp},
     {ids::Id::kEnemyGhost, 2U, 165U, 20U, 29U, 8U, 16U, 1U, {kSkDrain, 0U}, 54U, 30U, kIdxPillMp},
     {ids::Id::kEnemyDemon, 3U, 900U, 60U, 44U, 22U, 18U, 2U, {kSkMiasma, kSkFlame}, 420U, 320U, kIdxRevive},
+    // 十里坡's slow wall: soaks hits and hits back hard.
+    {ids::Id::kEnemyTreant, 3U, 260U, 0U, 24U, 18U, 6U, 1U, {kSkSlash, 0U}, 62U, 40U, kIdxLingzhi},
+    // Fast, fragile, and the first foe that can poison the party.
+    {ids::Id::kEnemyWasp, 0U, 110U, 0U, 20U, 6U, 22U, 1U, {kSkMiasma, 0U}, 34U, 18U, kIdxPillMp},
+    // Act 2: the bandit captain fights like a player swordsman.
+    {ids::Id::kEnemyChief, 1U, 320U, 30U, 30U, 14U, 14U, 2U, {kSkThrust, kSkSlash}, 92U, 64U, kIdxPillHp},
+    // Act 2: cult casters, the first foes that answer with real magic.
+    {ids::Id::kEnemyCultist, 3U, 240U, 40U, 26U, 12U, 18U, 2U, {kSkThunder, kSkFrost}, 110U, 72U, kIdxLingzhi},
 };
 
 constexpr BattleDef kBattles[kBattleCount] = {
-    {2U, {kFoeWolf, kFoeWolf, 0U}},
-    {3U, {kFoeBandit, kFoeBandit, kFoeWolf}},
+    {2U, {kFoeWolf, kFoeWasp, 0U}},
+    {3U, {kFoeBandit, kFoeBandit, kFoeTreant}},
     {2U, {kFoeGhost, kFoeGhost, 0U}},
-    {3U, {kFoeDemon, kFoeGhost, kFoeGhost}},
+    {3U, {kFoeDemon, kFoeGhost, kFoeTreant}},
+    {2U, {kFoeChief, kFoeWasp, 0U}},
+    {2U, {kFoeCultist, kFoeCultist, 0U}},
+    {3U, {kFoeCultist, kFoeTreant, kFoeCultist}},
 };
 
 // --- dialogue graph ---------------------------------------------------------
@@ -156,7 +179,65 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 9 kDlgEndGood
+    // 9 kDlgHostess — 婶婶 sees 李逍遥 off
+    {2U,
+     {{ids::Id::kCharHostess, ids::Id::kStoryHostessL0, 4U, 2U},
+      {ids::Id::kCharHostess, ids::Id::kStoryHostessL1, 4U, 0U},
+      {}},
+     0U,
+     {},
+     -1},
+    // 10 kDlgDepart — 酒剑仙's briefing before the road opens
+    {3U,
+     {{ids::Id::kCharMaster, ids::Id::kStoryDepartL0, 3U, 0U},
+      {ids::Id::kCharMaster, ids::Id::kStoryDepartL1, 3U, 0U},
+      {ids::Id::kCharXiao, ids::Id::kStoryDepartL2, 0U, 3U}},
+     0U,
+     {},
+     -1},
+    // 11 kDlgRoad — the fork at 十里坡口; the pick colours the ending
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryRoadL0, 0U, 0U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryRoadL1, 1U, 0U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryRoadL2, 1U, 0U}},
+     2U,
+     {{ids::Id::kStoryRoadC0, -1, kFlagBold, 0U},
+      {ids::Id::kStoryRoadC1, -1, kFlagCalm, 0U},
+      {}},
+     -1},
+    // 12 kDlgAfterHall — 拜月教主 slips away and points the party at 苏州
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryAfterhallL0, 0U, 0U},
+      {ids::Id::kCharYunyang, ids::Id::kStoryAfterhallL1, 2U, 0U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryAfterhallL2, 1U, 2U}},
+     0U,
+     {},
+     -1},
+    // 13 kDlgSuzhou — arrival in 苏州城
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStorySuzhouL0, 0U, 0U},
+      {ids::Id::kCharXiao, ids::Id::kStorySuzhouL1, 0U, 0U},
+      {ids::Id::kCharLingxi, ids::Id::kStorySuzhouL2, 1U, 3U}},
+     0U,
+     {},
+     -1},
+    // 14 kDlgFort — the 林家堡 stand
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryFortL0, 0U, 0U},
+      {ids::Id::kCharYunyang, ids::Id::kStoryFortL1, 2U, 1U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryFortL2, 1U, 0U}},
+     0U,
+     {},
+     -1},
+    // 15 kDlgFinal — the chapter closes with the cult still standing
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryFinalL0, 0U, 3U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryFinalL1, 1U, 0U},
+      {ids::Id::kCharXiao, ids::Id::kStoryFinalL2, 0U, 0U}},
+     0U,
+     {},
+     -1},
+    // 16 kDlgEndGood
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryEndGoodL0, 0xFFU, 0U},
       {ids::Id::kCharLingxi, ids::Id::kStoryEndGoodL1, 1U, 3U},
@@ -164,7 +245,7 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 10 kDlgEndMid
+    // 17 kDlgEndMid
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryEndMidL0, 0xFFU, 0U},
       {ids::Id::kCharYunyang, ids::Id::kStoryEndMidL1, 2U, 0U},
@@ -172,7 +253,7 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 11 kDlgEndBad
+    // 18 kDlgEndBad
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryEndBadL0, 0xFFU, 0U},
       {ids::Id::kCharLingxi, ids::Id::kStoryEndBadL1, 1U, 2U},
@@ -241,15 +322,48 @@ const char* const kHallRows[] = {
     "############",
 };
 
+// 苏州城 — canals cut the town into islands of houses.
+const char* const kSuzhouRows[] = {
+    "TTTTTTTTTTTTTTTT",
+    "T....~~~~......T",
+    "T....~~~~......T",
+    "T....~~~~..RRR.T",
+    "T..........RRR.T",
+    "T..RRRR........T",
+    "T..RRRR...~~~~.T",
+    "T.........~~~~.T",
+    "T..RRRR...~~~~.T",
+    "T..RRRR........T",
+    "T......**......T",
+    "TTTTTTTTTTTTTTTT",
+};
+
+// 林家堡 — an open courtyard with colonnades, entered from the north.
+const char* const kFortRows[] = {
+    "################",
+    "#______________#",
+    "#___##____##___#",
+    "#___##____##___#",
+    "#______________#",
+    "#______________#",
+    "#___##____##___#",
+    "#___##____##___#",
+    "#______________#",
+    "#______________#",
+    "#______**______#",
+    "################",
+};
+
 constexpr MapDef kMaps[kMapCount] = {
     {ids::Id::kMapVillage,
      16U,
      12U,
      kVillageRows,
-     3U,
+     4U,
      {{ids::Id::kCharMaster, 3U, 7U, 3U, kDlgIntro},
       {ids::Id::kCharElder, 4U, 2U, 1U, kDlgElder},
-      {ids::Id::kCharKid, 4U, 13U, 1U, kDlgKid}},
+      {ids::Id::kCharKid, 4U, 13U, 1U, kDlgKid},
+      {ids::Id::kCharHostess, 4U, 3U, 4U, kDlgHostess}},
      1U,
      {{7U, 10U, 2U, 1U}, {}}},
     {ids::Id::kMapForest,
@@ -273,25 +387,43 @@ constexpr MapDef kMaps[kMapCount] = {
      10U,
      kHallRows,
      0U,
-     {{}, {}},
+     {{}, {}, {}, {}},
      1U,
      {{5U, 8U, 2U, 1U}, {}}},
+    {ids::Id::kMapSuzhou,
+     16U,
+     12U,
+     kSuzhouRows,
+     0U,
+     {{}, {}, {}, {}},
+     1U,
+     {{7U, 10U, 2U, 1U}, {}}},
+    {ids::Id::kMapFort,
+     16U,
+     12U,
+     kFortRows,
+     0U,
+     {{}, {}, {}, {}},
+     1U,
+     {{7U, 10U, 2U, 1U}, {}}},
 };
 
 // Starting tile per map (the tile the party stands on when a chapter opens).
-constexpr uint8_t kMapStartX[kMapCount] = {7U, 7U, 7U, 5U};
-constexpr uint8_t kMapStartY[kMapCount] = {4U, 1U, 1U, 1U};
+constexpr uint8_t kMapStartX[kMapCount] = {7U, 7U, 7U, 5U, 7U, 7U};
+constexpr uint8_t kMapStartY[kMapCount] = {4U, 1U, 1U, 1U, 4U, 1U};
 
 // --- chapter script ---------------------------------------------------------
 constexpr ScriptStepDef kScript[] = {
     {StepKind::kDialogue, kDlgIntro},
     {StepKind::kExplore, kMapVillage},
+    {StepKind::kDialogue, kDlgDepart},
     {StepKind::kBattle, kBattleWolves},
     {StepKind::kDialogue, kDlgWolves},
     {StepKind::kExplore, kMapForest},
     {StepKind::kDialogue, kDlgForest},
-    {StepKind::kBattle, kBattleBandits},
+    {StepKind::kBattle, kBattleChief},
     {StepKind::kDialogue, kDlgBandits},
+    {StepKind::kDialogue, kDlgRoad},
     {StepKind::kExplore, kMapPass},
     {StepKind::kDialogue, kDlgPass},
     {StepKind::kBattle, kBattleGhosts},
@@ -299,6 +431,14 @@ constexpr ScriptStepDef kScript[] = {
     {StepKind::kExplore, kMapHall},
     {StepKind::kDialogue, kDlgHall},
     {StepKind::kBattle, kBattleBoss},
+    {StepKind::kDialogue, kDlgAfterHall},
+    {StepKind::kExplore, kMapSuzhou},
+    {StepKind::kDialogue, kDlgSuzhou},
+    {StepKind::kBattle, kBattleCultists},
+    {StepKind::kExplore, kMapFort},
+    {StepKind::kDialogue, kDlgFort},
+    {StepKind::kBattle, kBattleFort},
+    {StepKind::kDialogue, kDlgFinal},
     {StepKind::kEnding, 0U},
 };
 
