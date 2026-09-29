@@ -11,10 +11,10 @@
 
 #include <stdint.h>
 
-#include "my-app_strings.hpp"
+#include "pal_strings.hpp"
 
 namespace ashes {
-namespace ids = my_app_strings;
+namespace ids = pal_strings;
 
 // ---------------------------------------------------------------------------
 // Identifiers

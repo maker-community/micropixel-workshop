@@ -13,7 +13,7 @@
 #include <array>
 #include <vector>
 
-#include "my-app_strings.hpp"
+#include "pal_strings.hpp"
 #include "sdk/micropixel.hpp"
 
 #include "ashes_battle.hpp"
