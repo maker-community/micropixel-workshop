@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // Chapter exploration: a grid map, a diamond pad and NPC interaction.
 
-#include "../ashes_common.hpp"
-#include "../ashes_widgets.hpp"
+#include "../pal_common.hpp"
+#include "../pal_widgets.hpp"
 
 #include "sdk/math.hpp"
 
-namespace ashes {
+namespace pal {
 namespace {
 
 inline constexpr uint8_t kDirUp = 0U;
@@ -267,4 +267,4 @@ void ExploreSceneRender(GameContext& context) {
     view.End();
 }
 
-}  // namespace ashes
+}  // namespace pal

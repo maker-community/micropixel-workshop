@@ -5,15 +5,15 @@
 // keeps the battle/dialogue rules independently testable and lets the save blob
 // stay a flat, versioned byte record.
 
-#ifndef ASHES_MODEL_HPP
-#define ASHES_MODEL_HPP
+#ifndef PAL_MODEL_HPP
+#define PAL_MODEL_HPP
 
 #include <stdint.h>
 
-#include "ashes_content.hpp"
+#include "pal_content.hpp"
 #include "sdk/micropixel.hpp"
 
-namespace ashes {
+namespace pal {
 
 inline constexpr uint8_t kMaxParty = 3U;
 inline constexpr uint8_t kMaxBag = 8U;
@@ -35,7 +35,7 @@ struct BagSlot final {
 };
 
 struct Progress final {
-    uint32_t flags{};        // story flags, see ashes_content.hpp
+    uint32_t flags{};        // story flags, see pal_content.hpp
     uint8_t script_index{};  // position in the chapter script
     uint32_t gold{};
     uint32_t play_seconds{};
@@ -93,6 +93,6 @@ bool ProgressHasSave(micropixel::KVStore store);
 bool ProgressLoad(Progress& progress, micropixel::KVStore store);
 void ProgressStore(const Progress& progress, micropixel::KVStore store);
 
-}  // namespace ashes
+}  // namespace pal
 
-#endif  // ASHES_MODEL_HPP
+#endif  // PAL_MODEL_HPP

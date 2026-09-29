@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // Status menu: party sheets, the bag and the save / resume actions.
 
-#include "../ashes_common.hpp"
-#include "../ashes_widgets.hpp"
+#include "../pal_common.hpp"
+#include "../pal_widgets.hpp"
 
 #include "sdk/math.hpp"
 
-namespace ashes {
+namespace pal {
 namespace {
 
 inline constexpr uint8_t kMenuSave = 0U;
@@ -198,4 +198,4 @@ void MenuSceneRender(GameContext& context) {
     view.End();
 }
 
-}  // namespace ashes
+}  // namespace pal

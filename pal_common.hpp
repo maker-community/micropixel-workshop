@@ -5,8 +5,8 @@
 // The structure mirrors the official guest/apps/sdk-demo: this header is the
 // app's `demo_page.hpp`, each scenes/*.cpp is one `pages/*.cpp`.
 
-#ifndef ASHES_COMMON_HPP
-#define ASHES_COMMON_HPP
+#ifndef PAL_COMMON_HPP
+#define PAL_COMMON_HPP
 
 #include <stdint.h>
 
@@ -16,13 +16,13 @@
 #include "pal_strings.hpp"
 #include "sdk/micropixel.hpp"
 
-#include "ashes_battle.hpp"
-#include "ashes_content.hpp"
-#include "ashes_dialogue.hpp"
-#include "ashes_model.hpp"
-#include "ashes_world.hpp"
+#include "pal_battle.hpp"
+#include "pal_content.hpp"
+#include "pal_dialogue.hpp"
+#include "pal_model.hpp"
+#include "pal_world.hpp"
 
-namespace ashes {
+namespace pal {
 
 using Line = micropixel::FixedString<160U>;
 using ShortLine = micropixel::FixedString<48U>;
@@ -145,7 +145,7 @@ class GameView final {
             // the frame's node counts and keep running: trapping here would take
             // the whole App down, and the next frame can still recover.
             Line line;
-            (void)line.Append("ashes: present rejected: ");
+            (void)line.Append("pal: present rejected: ");
             (void)line.Append(presented.error().name());
             (void)line.Append(" rects=");
             (void)line.AppendUint(rects);
@@ -172,7 +172,7 @@ class GameView final {
 
     void Text(micropixel::Point position, const char* text, micropixel::Color color,
               micropixel::SystemFont font = micropixel::SystemFont::kMedium, bool centered = false) {
-        micropixel::Assert(updating_, "ashes: no active view frame");
+        micropixel::Assert(updating_, "pal: no active view frame");
         // The Host rejects a zero-length label outright (scene_graph.cpp
         // TextLength() panics), so an empty string — a typewriter line that has
         // not revealed its first codepoint yet — simply draws nothing.
@@ -255,7 +255,7 @@ class GameView final {
 
     void Rect(micropixel::Rect rect, micropixel::Color fill, micropixel::Color stroke, uint32_t radius,
               uint32_t stroke_width, uint8_t opacity) {
-        micropixel::Assert(updating_, "ashes: no active view frame");
+        micropixel::Assert(updating_, "pal: no active view frame");
         if (rect.empty() || opacity == 0U) {
             return;
         }
@@ -399,7 +399,7 @@ bool EndingSceneKey(GameContext& context, micropixel::KeyCode code);
 void EndingSceneRender(GameContext& context);
 
 // ---------------------------------------------------------------------------
-// Scene switching helpers shared by the screens (implemented in ashes_app.cpp)
+// Scene switching helpers shared by the screens (implemented in pal_app.cpp)
 // ---------------------------------------------------------------------------
 
 // Creates the dialogue state for `node_id` and switches to the dialogue scene.
@@ -422,6 +422,6 @@ ids::Id ContextMapNameId(const GameContext& context);
 // real device, where stepping through a debugger is not an option.
 void LogTrace(GameContext& context, const char* label, int32_t first, int32_t second);
 
-}  // namespace ashes
+}  // namespace pal
 
-#endif  // ASHES_COMMON_HPP
+#endif  // PAL_COMMON_HPP

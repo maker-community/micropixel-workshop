@@ -2,18 +2,18 @@
 // Application glue: the retained scene, the event loop, the chapter script
 // machine and the scene routing. This is the app's `demo_app.cpp`.
 
-#include "ashes.hpp"
+#include "pal.hpp"
 
-#include "ashes_common.hpp"
-#include "ashes_widgets.hpp"
+#include "pal_common.hpp"
+#include "pal_widgets.hpp"
 
 #include "sdk/math.hpp"
 
-namespace ashes {
+namespace pal {
 
 void LogTrace(GameContext& context, const char* label, int32_t first, int32_t second) {
     Line line;
-    (void)line.Append("ashes: ");
+    (void)line.Append("pal: ");
     (void)line.Append(label);
     (void)line.Append(" ");
     (void)line.AppendInt(first);
@@ -120,9 +120,9 @@ namespace {
 // 30 Hz drives the typewriter, tile stepping and the battle timers.
 inline constexpr uint32_t kTickMs = 33U;
 
-class AshesApp final {
+class PalApp final {
    public:
-    explicit AshesApp(micropixel::Application& application)
+    explicit PalApp(micropixel::Application& application)
         : app_(application),
           renderer_(app_.renderer()),
           info_(renderer_.info()),
@@ -283,11 +283,11 @@ class AshesApp final {
 
 }  // namespace
 
-int AshesAppMain() {
+int PalAppMain() {
     micropixel::Application app;
-    AshesApp game(app);
-    app.log().Info("ashes: Chinese Paladin ready");
+    PalApp game(app);
+    app.log().Info("pal: Chinese Paladin ready");
     return game.Run();
 }
 
-}  // namespace ashes
+}  // namespace pal

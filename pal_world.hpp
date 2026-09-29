@@ -2,15 +2,15 @@
 // Grid exploration: where the party stands on the current map, tile-stepped
 // movement with interpolation, NPC interaction and chapter exit triggers.
 
-#ifndef ASHES_WORLD_HPP
-#define ASHES_WORLD_HPP
+#ifndef PAL_WORLD_HPP
+#define PAL_WORLD_HPP
 
 #include <stdint.h>
 
-#include "ashes_content.hpp"
-#include "ashes_model.hpp"  // kEmptySlot sentinel
+#include "pal_content.hpp"
+#include "pal_model.hpp"  // kEmptySlot sentinel
 
-namespace ashes {
+namespace pal {
 
 // Milliseconds a single tile step takes to animate.
 inline constexpr uint32_t kStepMs = 150U;
@@ -54,6 +54,6 @@ bool WorldOnTrigger(const WorldState& world);
 // NPC occupying a tile, or nullptr.
 const MapNpcDef* WorldNpcAt(uint8_t map_id, int32_t x, int32_t y);
 
-}  // namespace ashes
+}  // namespace pal
 
-#endif  // ASHES_WORLD_HPP
+#endif  // PAL_WORLD_HPP

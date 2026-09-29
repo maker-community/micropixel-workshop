@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: Apache-2.0
 // Party growth curves, bag bookkeeping and the versioned save blob.
 
-#include "ashes_model.hpp"
+#include "pal_model.hpp"
 
-#include "ashes.hpp"
+#include "pal.hpp"
 
-namespace ashes {
+namespace pal {
 namespace {
 
 // --- save record layout -----------------------------------------------------
 // Every field is written as a little-endian u32 so the blob is trivially
 // forward/backward compatible: new fields go at the end and the version guard
-// (ashes::kSaveVersion) decides whether an old blob is migrated or discarded.
+// (pal::kSaveVersion) decides whether an old blob is migrated or discarded.
 
 class BlobWriter final {
    public:
@@ -431,4 +431,4 @@ void ProgressStore(const Progress& progress, micropixel::KVStore store) {
     (void)store.SetBytes(kSaveKey, buffer, size);
 }
 
-}  // namespace ashes
+}  // namespace pal

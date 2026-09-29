@@ -6,14 +6,14 @@
 // text is referenced by generated localization id, never inlined, so the game
 // ships a single translation catalog (i18n/zh-CN.json).
 
-#ifndef ASHES_CONTENT_HPP
-#define ASHES_CONTENT_HPP
+#ifndef PAL_CONTENT_HPP
+#define PAL_CONTENT_HPP
 
 #include <stdint.h>
 
 #include "pal_strings.hpp"
 
-namespace ashes {
+namespace pal {
 namespace ids = pal_strings;
 
 // ---------------------------------------------------------------------------
@@ -310,6 +310,6 @@ const ScriptStepDef& ScriptStep(uint8_t index);
 // Chooses the ending dialogue node from the accumulated story flags.
 uint8_t EndingDialogueFor(uint32_t flags);
 
-}  // namespace ashes
+}  // namespace pal
 
-#endif  // ASHES_CONTENT_HPP
+#endif  // PAL_CONTENT_HPP

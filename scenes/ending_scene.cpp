@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // Epilogue screen: the run summary and a way back to the title.
 
-#include "../ashes_common.hpp"
-#include "../ashes_widgets.hpp"
+#include "../pal_common.hpp"
+#include "../pal_widgets.hpp"
 
 #include "sdk/math.hpp"
 
-namespace ashes {
+namespace pal {
 namespace {
 
 ids::Id EndingNameId(const GameContext& context) {
@@ -123,4 +123,4 @@ void EndingSceneRender(GameContext& context) {
     view.End();
 }
 
-}  // namespace ashes
+}  // namespace pal

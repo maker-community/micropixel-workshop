@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // Battle scene: foes, party cards, the message strip and the command panel.
 
-#include "../ashes_common.hpp"
-#include "../ashes_widgets.hpp"
+#include "../pal_common.hpp"
+#include "../pal_widgets.hpp"
 
 #include "sdk/math.hpp"
 
-namespace ashes {
+namespace pal {
 namespace {
 
 inline constexpr uint8_t kRootAttack = 0U;
@@ -454,4 +454,4 @@ void BattleSceneRender(GameContext& context) {
     view.End();
 }
 
-}  // namespace ashes
+}  // namespace pal

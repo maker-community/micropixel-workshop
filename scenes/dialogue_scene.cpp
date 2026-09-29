@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // Dialogue scene: portrait, typewriter text and the branching choice list.
 
-#include "../ashes_common.hpp"
-#include "../ashes_widgets.hpp"
+#include "../pal_common.hpp"
+#include "../pal_widgets.hpp"
 
 #include "sdk/math.hpp"
 
-namespace ashes {
+namespace pal {
 namespace {
 
 void FinishOrContinue(GameContext& context) {
@@ -167,4 +167,4 @@ void DialogueSceneRender(GameContext& context) {
     view.End();
 }
 
-}  // namespace ashes
+}  // namespace pal

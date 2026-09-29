@@ -5,9 +5,9 @@
 // This translation unit holds no logic beyond lookups and the walkability
 // decoder, so designers can retune the game without touching the engine.
 
-#include "ashes_content.hpp"
+#include "pal_content.hpp"
 
-namespace ashes {
+namespace pal {
 namespace {
 
 // --- skill indices (referenced by characters and enemies) -------------------
@@ -380,4 +380,4 @@ uint8_t EndingDialogueFor(uint32_t flags) {
     return kDlgEndBad;
 }
 
-}  // namespace ashes
+}  // namespace pal

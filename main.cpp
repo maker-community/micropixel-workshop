@@ -2,8 +2,8 @@
 // 仙剑奇侠传 (Chinese Paladin) — a Chinese-paladin style turn-based RPG.
 //
 // The entry point mirrors guest/apps/*/main.cpp: it does nothing but hand
-// control to the application object declared in ashes.hpp.
+// control to the application object declared in pal.hpp.
 
-#include "ashes.hpp"
+#include "pal.hpp"
 
-int main() { return ashes::AshesAppMain(); }
+int main() { return pal::PalAppMain(); }

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 // Grid movement and chapter exits.
 
-#include "ashes_world.hpp"
+#include "pal_world.hpp"
 
 #include "sdk/math.hpp"
 
-namespace ashes {
+namespace pal {
 
 void WorldEnter(WorldState& world, uint8_t map_id) {
     world = WorldState{};
@@ -109,4 +109,4 @@ int32_t WorldRenderY16(const WorldState& world) {
     return origin + (target - origin) * elapsed / static_cast<int32_t>(kStepMs);
 }
 
-}  // namespace ashes
+}  // namespace pal

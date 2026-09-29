@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // Dialogue cursor and UTF-8 prefix helpers.
 
-#include "ashes_dialogue.hpp"
+#include "pal_dialogue.hpp"
 
-namespace ashes {
+namespace pal {
 namespace {
 
 inline bool IsContinuationByte(char byte) { return (static_cast<uint8_t>(byte) & 0xC0U) == 0x80U; }
@@ -146,4 +146,4 @@ void DialoguePick(DialogueState& state, const ids::Catalog& strings, uint32_t& f
 
 const DialogueNodeDef& DialogueCurrent(const DialogueState& state) { return DialogueNode(state.node); }
 
-}  // namespace ashes
+}  // namespace pal

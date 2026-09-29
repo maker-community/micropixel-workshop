@@ -6,16 +6,16 @@
 // reads BattleState to render and feeds input back through the Battle* calls,
 // so combat rules stay free of any graphics dependency.
 
-#ifndef ASHES_BATTLE_HPP
-#define ASHES_BATTLE_HPP
+#ifndef PAL_BATTLE_HPP
+#define PAL_BATTLE_HPP
 
 #include <stdint.h>
 
-#include "ashes_content.hpp"
-#include "ashes_model.hpp"
+#include "pal_content.hpp"
+#include "pal_model.hpp"
 #include "sdk/random.hpp"
 
-namespace ashes {
+namespace pal {
 
 inline constexpr uint8_t kMaxCombatants = 6U;
 inline constexpr uint16_t kPopupMs = 700U;
@@ -119,6 +119,6 @@ uint8_t BattleLivingParty(const BattleState& battle);
 const Combatant& BattleUnit(const BattleState& battle, uint8_t index);
 const Combatant& BattleActor(const BattleState& battle);
 
-}  // namespace ashes
+}  // namespace pal
 
-#endif  // ASHES_BATTLE_HPP
+#endif  // PAL_BATTLE_HPP

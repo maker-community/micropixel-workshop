@@ -5,12 +5,12 @@
 // fills in normalised 0..1000 coordinates, so the game ships no bitmap art and
 // scales cleanly from a 320px square panel to a 720px landscape one.
 
-#ifndef ASHES_WIDGETS_HPP
-#define ASHES_WIDGETS_HPP
+#ifndef PAL_WIDGETS_HPP
+#define PAL_WIDGETS_HPP
 
-#include "ashes_common.hpp"
+#include "pal_common.hpp"
 
-namespace ashes {
+namespace pal {
 namespace widgets {
 
 // Framed panel used by every screen.
@@ -39,6 +39,6 @@ void HpMpBars(GameView& view, micropixel::Rect area, const Combatant& unit, bool
 uint8_t PortraitForCharacter(uint8_t character);
 
 }  // namespace widgets
-}  // namespace ashes
+}  // namespace pal
 
-#endif  // ASHES_WIDGETS_HPP
+#endif  // PAL_WIDGETS_HPP

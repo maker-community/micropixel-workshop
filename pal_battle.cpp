@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 // Turn-based combat rules, turn order, enemy AI and rewards.
 
-#include "ashes_battle.hpp"
+#include "pal_battle.hpp"
 
 #include "sdk/math.hpp"
 
-namespace ashes {
+namespace pal {
 namespace {
 
 inline constexpr uint32_t kIntroMs = 1200U;
@@ -947,4 +947,4 @@ const Combatant& BattleUnit(const BattleState& battle, uint8_t index) {
 
 const Combatant& BattleActor(const BattleState& battle) { return battle.units[battle.actor]; }
 
-}  // namespace ashes
+}  // namespace pal

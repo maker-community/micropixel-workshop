@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 // Responsive layout for every screen.
 
-#include "ashes_common.hpp"
+#include "pal_common.hpp"
 
 #include "sdk/math.hpp"
 
-namespace ashes {
+namespace pal {
 
 namespace math = micropixel::math;
 
@@ -82,4 +82,4 @@ GameLayout BuildLayout(const micropixel::RendererInfo& info) {
 
 ids::Id ContextMapNameId(const GameContext& context) { return Map(context.world.map).name; }
 
-}  // namespace ashes
+}  // namespace pal

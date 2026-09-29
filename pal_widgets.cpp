@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 // Procedural vector art and the shared panels.
 
-#include "ashes_widgets.hpp"
+#include "pal_widgets.hpp"
 
 #include "sdk/math.hpp"
 
-namespace ashes {
+namespace pal {
 namespace widgets {
 namespace {
 
@@ -328,8 +328,8 @@ void DrawTile(GameView& view, micropixel::Rect area, uint8_t tile) {
     if (area.empty()) {
         return;
     }
-    switch (static_cast<ashes::Tile>(tile)) {
-        case ashes::Tile::kGrass:
+    switch (static_cast<pal::Tile>(tile)) {
+        case pal::Tile::kGrass:
             view.Fill(area, theme::kGrass);
             view.Fill({area.x + area.width / 5, area.y + area.height / 3, area.width / 6, area.height / 6},
                       theme::kGrassAlt);
@@ -387,4 +387,4 @@ void HpMpBars(GameView& view, micropixel::Rect area, const Combatant& unit, bool
 }
 
 }  // namespace widgets
-}  // namespace ashes
+}  // namespace pal

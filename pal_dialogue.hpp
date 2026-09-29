@@ -3,15 +3,15 @@
 // reveal. Text stays in the generated localization catalog; only ids are stored
 // here so a running dialogue is a handful of bytes.
 
-#ifndef ASHES_DIALOGUE_HPP
-#define ASHES_DIALOGUE_HPP
+#ifndef PAL_DIALOGUE_HPP
+#define PAL_DIALOGUE_HPP
 
 #include <stdint.h>
 
-#include "ashes_content.hpp"
-#include "ashes_model.hpp"
+#include "pal_content.hpp"
+#include "pal_model.hpp"
 
-namespace ashes {
+namespace pal {
 
 // One revealed codepoint every kRevealMsPerCodepoint milliseconds.
 inline constexpr uint32_t kRevealMsPerCodepoint = 40U;
@@ -55,6 +55,6 @@ void DialoguePick(DialogueState& state, const ids::Catalog& strings, uint32_t& f
 
 const DialogueNodeDef& DialogueCurrent(const DialogueState& state);
 
-}  // namespace ashes
+}  // namespace pal
 
-#endif  // ASHES_DIALOGUE_HPP
+#endif  // PAL_DIALOGUE_HPP
