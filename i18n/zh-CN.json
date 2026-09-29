@@ -47,6 +47,8 @@
   "char.master": "酒剑仙",
   "char.merchant": "村民",
   "char.demon": "拜月教主",
+  "char.elder": "吴伯",
+  "char.kid": "小顽童",
 
   "enemy.wolf": "蛇妖",
   "enemy.bandit": "山贼",
@@ -93,6 +95,12 @@
   "story.intro.l0": "余杭镇的晨雾还没散，客栈的灯笼摇了一夜。",
   "story.intro.l1": "酒剑仙按住你的肩：小李子，剑在人在。",
   "story.intro.l2": "婶婶的咳嗽声从里屋传来——唯有仙灵岛的灵药能救她。",
+
+  "story.elder.l0": "吴伯拄着竹杖：逍遥啊，往南过了十里坡就是往仙灵岛的水路。",
+  "story.elder.l1": "老人压低声音：岛上的人，轻易不肯见外人。",
+
+  "story.kid.l0": "小顽童拍手：听说岛上有会飞的仙女！",
+  "story.kid.l1": "他一弯腰跑开了，鞋底拍得青石板啪啪作响。",
 
   "story.wolves.l0": "蛇妖化作黑烟散去，十里坡安静下来。",
   "story.wolves.l1": "赵灵儿：你为我挡了一剑，我随你走一趟。",

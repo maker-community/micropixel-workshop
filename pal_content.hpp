@@ -43,6 +43,8 @@ enum DialogueId : uint8_t {
     kDlgPass,
     kDlgGhosts,
     kDlgHall,
+    kDlgElder,
+    kDlgKid,
     kDlgEndGood,
     kDlgEndMid,
     kDlgEndBad,
@@ -247,7 +249,7 @@ enum class Tile : uint8_t {
     kShrine,
 };
 
-inline constexpr uint8_t kMaxMapNpcs = 2U;
+inline constexpr uint8_t kMaxMapNpcs = 4U;
 inline constexpr uint8_t kMaxMapTriggers = 2U;
 
 struct MapNpcDef final {

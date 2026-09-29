@@ -140,7 +140,23 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 7 kDlgEndGood
+    // 7 kDlgElder — 吴伯 points the way south
+    {2U,
+     {{ids::Id::kCharElder, ids::Id::kStoryElderL0, 4U, 0U},
+      {ids::Id::kCharElder, ids::Id::kStoryElderL1, 4U, 2U},
+      {}},
+     0U,
+     {},
+     -1},
+    // 8 kDlgKid — the children's rumour about the island
+    {2U,
+     {{ids::Id::kCharKid, ids::Id::kStoryKidL0, 4U, 3U},
+      {ids::Id::kCharKid, ids::Id::kStoryKidL1, 4U, 0U},
+      {}},
+     0U,
+     {},
+     -1},
+    // 9 kDlgEndGood
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryEndGoodL0, 0xFFU, 0U},
       {ids::Id::kCharLingxi, ids::Id::kStoryEndGoodL1, 1U, 3U},
@@ -148,7 +164,7 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 8 kDlgEndMid
+    // 10 kDlgEndMid
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryEndMidL0, 0xFFU, 0U},
       {ids::Id::kCharYunyang, ids::Id::kStoryEndMidL1, 2U, 0U},
@@ -156,7 +172,7 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 9 kDlgEndBad
+    // 11 kDlgEndBad
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryEndBadL0, 0xFFU, 0U},
       {ids::Id::kCharLingxi, ids::Id::kStoryEndBadL1, 1U, 2U},
@@ -230,8 +246,10 @@ constexpr MapDef kMaps[kMapCount] = {
      16U,
      12U,
      kVillageRows,
-     1U,
-     {{ids::Id::kCharMaster, 3U, 7U, 3U, kDlgIntro}, {}},
+     3U,
+     {{ids::Id::kCharMaster, 3U, 7U, 3U, kDlgIntro},
+      {ids::Id::kCharElder, 4U, 2U, 1U, kDlgElder},
+      {ids::Id::kCharKid, 4U, 13U, 1U, kDlgKid}},
      1U,
      {{7U, 10U, 2U, 1U}, {}}},
     {ids::Id::kMapForest,
