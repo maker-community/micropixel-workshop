@@ -239,6 +239,42 @@ uint8_t CollectTargets(const BattleState& battle, TargetSide side, uint8_t prima
     return count;
 }
 
+// Scales a computed hit by how much the victim cares about that element. A
+// resisted hit still registers for at least 1.
+int32_t ElementAdjusted(const BattleState& battle, uint8_t victim, uint8_t skill_id, int32_t amount) {
+    const uint8_t element = SkillElement(skill_id);
+    if (element == kElemNone) {
+        return amount;
+    }
+    const Combatant& unit = battle.units[victim];
+    const int16_t resist = unit.enemy ? EnemyElementResist(unit.species, element)
+                                      : CharacterElementResist(unit.species, element);
+    return micropixel::math::Max<int32_t>(amount * (100 + resist) / 100, 1);
+}
+
+// A won fight hands back part of what it cost: the harder it was measured
+// against the party's next level, the more it gives back. Deliberately never a
+// full heal - that is what 金创药 and 灵葫仙丹 are for.
+void RestAfterBattle(Progress& progress, uint32_t xp) {
+    if (xp == 0U) {
+        return;
+    }
+    for (uint8_t index = 0U; index < progress.party_size && index < kMaxParty; ++index) {
+        PartyMember& member = progress.party[index];
+        if (member.character == kEmptySlot || member.hp == 0U) {
+            continue;
+        }
+        const uint8_t next = member.level < kMaxLevel ? static_cast<uint8_t>(member.level + 1U) : kMaxLevel;
+        const uint32_t need = static_cast<uint32_t>(MemberXpThreshold(next)) - MemberXpThreshold(member.level);
+        uint32_t share = need / 5U / xp;
+        if (share < 2U) {
+            share = 2U;
+        }
+        member.hp = static_cast<uint16_t>(member.hp + (MemberMaxHp(member) - member.hp) / share);
+        member.mp = static_cast<uint16_t>(member.mp + (MemberMaxMp(member) - member.mp) / share);
+    }
+}
+
 void PerformSkill(BattleState& battle, micropixel::XorShift32& rng, uint8_t skill_id, uint8_t target_index) {
     const SkillDef& skill = Skill(skill_id);
     Combatant& caster = battle.units[battle.actor];
@@ -267,7 +303,8 @@ void PerformSkill(BattleState& battle, micropixel::XorShift32& rng, uint8_t skil
                 const int32_t base = static_cast<int32_t>(caster.atk) * skill.power / 100 +
                                      static_cast<int32_t>(caster.level) * 2 -
                                      EffectiveDefense(battle.units[victim]) / 3;
-                (void)DealDamage(battle, victim, Vary(rng, base < 1 ? 1 : base, 8U));
+                (void)DealDamage(battle, victim,
+                                 ElementAdjusted(battle, victim, skill_id, Vary(rng, base < 1 ? 1 : base, 8U)));
                 break;
             }
             case SkillKind::kHeal:
@@ -288,7 +325,8 @@ void PerformSkill(BattleState& battle, micropixel::XorShift32& rng, uint8_t skil
                 const int32_t base = static_cast<int32_t>(caster.atk) * skill.power / 100 +
                                      static_cast<int32_t>(caster.level) * 2 -
                                      EffectiveDefense(battle.units[victim]) / 3;
-                (void)DealDamage(battle, victim, Vary(rng, base < 1 ? 1 : base, 8U));
+                (void)DealDamage(battle, victim,
+                                 ElementAdjusted(battle, victim, skill_id, Vary(rng, base < 1 ? 1 : base, 8U)));
                 if (battle.units[victim].alive) {
                     battle.units[victim].poisoned = true;
                 }
@@ -388,7 +426,20 @@ void PerformDefend(BattleState& battle) {
 }
 
 void TryFlee(BattleState& battle, micropixel::XorShift32& rng) {
-    if (battle.allow_flee && rng.Below(100U) < 60U) {
+    // A contest rather than a coin flip: how good the runner is at escaping
+    // against how much the foes can do about it. Boss battles are closed
+    // outright by `allow_flee`.
+    uint32_t resistance = 0U;
+    for (uint8_t index = 0U; index < battle.unit_count; ++index) {
+        const Combatant& unit = battle.units[index];
+        if (unit.enemy && unit.alive) {
+            resistance += static_cast<uint32_t>(unit.spd) * 2U + static_cast<uint32_t>(unit.atk) / 2U;
+        }
+    }
+    const Combatant& runner = battle.units[battle.actor];
+    const uint32_t escape =
+        static_cast<uint32_t>(runner.spd) * 3U + static_cast<uint32_t>(runner.level) * 2U;
+    if (battle.allow_flee && escape >= rng.Below(resistance + 1U)) {
         battle.outcome = BattleOutcome::kFled;
         battle.phase = BattlePhase::kFled;
         battle.message = ids::Id::kUiEscaped;
@@ -521,6 +572,7 @@ bool CheckOutcome(BattleState& battle, Progress& progress) {
             }
         }
         battle.level_ups = static_cast<uint8_t>(PartyGrantXp(progress, static_cast<uint16_t>(xp)));
+        RestAfterBattle(progress, xp);
         battle.outcome = BattleOutcome::kWin;
         battle.phase = BattlePhase::kVictory;
         battle.message = ids::Id::kUiVictory;
@@ -594,7 +646,8 @@ uint8_t NthBattleItem(const Progress& progress, uint8_t row) {
 }
 
 void OpenSkillMenu(BattleState& battle) {
-    battle.menu_rows = Character(battle.units[battle.actor].species).skill_count;
+    battle.menu_rows =
+        SkillUnlockedCount(battle.units[battle.actor].species, battle.units[battle.actor].level);
     battle.cursor = 0U;
     battle.return_phase = BattlePhase::kCommand;
     battle.phase = BattlePhase::kSkillMenu;
@@ -945,11 +998,8 @@ uint8_t BattleMenuRows(const BattleState& battle, const Progress& progress) {
 }
 
 uint8_t BattleMenuSkill(const BattleState& battle, uint8_t row) {
-    const CharacterDef& character = Character(battle.units[battle.actor].species);
-    if (row >= character.skill_count) {
-        return kEmptySlot;
-    }
-    return character.skills[row];
+    const Combatant& actor = battle.units[battle.actor];
+    return SkillRowSkill(actor.species, actor.level, row);
 }
 
 uint8_t BattleMenuItemSlot(const BattleState& battle, const Progress& progress, uint8_t row) {

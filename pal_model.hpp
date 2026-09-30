@@ -75,6 +75,10 @@ bool PartyRemove(Progress& progress, uint8_t character);
 void PartySyncFromFlags(Progress& progress);
 uint32_t PartyGrantXp(Progress& progress, uint16_t xp);  // returns levels gained
 void PartyRestore(Progress& progress);                   // full heal and revive
+// Restores `permille` of what everyone is missing, and revives nobody. The
+// rest points between chapters hand out a breather, not a full heal, so items
+// keep a job.
+void PartyRest(Progress& progress, uint32_t permille);
 void PartyClearPoison(Progress& progress);
 bool PartyWiped(const Progress& progress);
 uint16_t PartyTotalHp(const Progress& progress);

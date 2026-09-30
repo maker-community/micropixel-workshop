@@ -1047,7 +1047,137 @@ uint8_t SkillCount() { return kSkCount; }
 const SkillDef& Skill(uint8_t id) { return kSkills[id < kSkCount ? id : 0U]; }
 
 uint8_t CharacterCount() { return kCharacterCount; }
+// ---------------------------------------------------------------------------
+// Elements (五灵) and skill unlocks
+//
+// Kept as small parallel tables keyed by id instead of extra columns in the
+// content rows: the main tables stay readable, and anything not authored here
+// is simply neutral.
+// ---------------------------------------------------------------------------
+
+// Damage type per skill, in SkillId order.
+constexpr uint8_t kSkillElements[] = {
+    kElemNone,     // 御剑术
+    kElemNone,     // 万剑诀
+    kElemNone,     // 剑神
+    kElemThunder,  // 五雷咒
+    kElemNone,     // 观音咒
+    kElemWater,    // 冰咆哮
+    kElemNone,     // 疗伤术
+    kElemNone,     // 金刚咒
+    kElemWind,     // 风卷残云
+    kElemNone,     // 噬魂咒
+    kElemPoison,   // 蚀骨毒雾
+    kElemFire,     // 炎杀
+    kElemNone,     // 万剑归宗
+    kElemWater,    // 水龙吟
+    kElemFire,     // 红莲剑
+    kElemPoison,   // 蛊毒
+    kElemWater,    // 灵蛇咒
+    kElemNone,     // 回春咒
+    kElemPoison,   // 万蛊噬天
+    kElemWater,    // 水龙潮
+};
+static_assert(sizeof(kSkillElements) / sizeof(kSkillElements[0]) == static_cast<uint32_t>(kSkCount),
+              "kSkillElements must list every skill in order");
+
+struct ElementResist final {
+    uint8_t id;
+    int8_t resist[kElemCount];  // indexed by kElem*; slot 0 (none) is unused
+};
+
+// Only the foes whose 五灵 identity matters are listed; the rest stay neutral.
+// This is also what replaces hand-tuned HP when a boss should be hard: 蛛后
+// resists water and poison, so 水龙吟 and 蛊毒 stop being the answer for it.
+constexpr ElementResist kEnemyResist[] = {
+    {kFoeWolf, {0, -20, 20, 0, 0, 0}},          // 蛇妖 — fears fire
+    {kFoeGhost, {0, 0, 30, -20, 0, 0}},         // 水妖 — born of water, hates thunder
+    {kFoeDemon, {0, 20, 10, -15, 0, 20}},       // 拜月教主
+    {kFoeTreant, {0, -25, 15, 0, 10, 0}},       // 千年树精
+    {kFoeWasp, {0, 0, 0, -20, 20, 30}},         // 妖蜂 — venomous, hates wind
+    {kFoeCultist, {0, 0, 0, -15, 0, 0}},        // 拜月教徒
+    {kFoeSerpent, {0, -20, 20, 0, 0, 0}},       // 妖蛇
+    {kFoeGolem, {0, 20, 10, 20, -25, 0}},       // 石魔 — stone, but wind cracks it
+    {kFoePriest, {0, 0, 0, -20, 0, 10}},        // 拜月祭司
+    {kFoeOverlord, {0, 15, 10, -20, 0, 20}},    // 拜月教主·真身
+    {kFoeSpider, {0, -20, 0, 0, 0, 40}},        // 毒蛛
+    {kFoeShaman, {0, 0, 0, -15, 0, 30}},        // 蛊师
+    {kFoeWaterBeast, {0, 0, 40, -25, 0, 0}},    // 水魔兽
+    {kFoeSwordSpirit, {0, -15, 0, 0, 0, 0}},    // 剑灵
+    {kFoeSpiderQueen, {0, -25, 10, 0, 0, 40}},  // 蛛后
+};
+
+// The party's own affinities: 赵灵儿 is a water spirit, 阿奴 was raised on 蛊.
+constexpr ElementResist kCharacterResist[] = {
+    {kCharXiao, {0, 0, 0, 0, 0, 0}},
+    {kCharLingxi, {0, -20, 30, 0, 0, 0}},
+    {kCharYunyang, {0, 0, 0, 0, 0, 0}},
+    {kCharAnu, {0, 0, 0, 0, 0, 40}},
+};
+
+// Level at which each hero's four skills open, in CharacterDef::skills order.
+// The first two arrive almost immediately on purpose: the content was balanced
+// with a full kit at level 1, so only the third and the ultimate are held back -
+// which is what "no ultimates at level 1" actually asks for.
+constexpr uint8_t kSkillUnlockLevel[kCharacterCount][kMaxCharacterSkills] = {
+    {1U, 2U, 6U, 13U},  // 李小遥 — 御剑术 / 万剑诀 / 剑神 / 万剑归宗
+    {1U, 2U, 5U, 11U},  // 赵灵儿 — 五雷咒 / 观音咒 / 冰咆哮 / 水龙吟
+    {1U, 2U, 6U, 12U},  // 林月如 — 疗伤术 / 金刚咒 / 风卷残云 / 红莲剑
+    {1U, 2U, 5U, 11U},  // 阿奴 — 蛊毒 / 灵蛇咒 / 回春咒 / 万蛊噬天
+};
+
+int16_t LookupResist(const ElementResist* table, uint32_t count, uint8_t id, uint8_t element) {
+    if (element == kElemNone || element >= kElemCount) {
+        return 0;
+    }
+    for (uint32_t index = 0U; index < count; ++index) {
+        if (table[index].id == id) {
+            return table[index].resist[element];
+        }
+    }
+    return 0;
+}
+
 const CharacterDef& Character(uint8_t id) { return kCharacters[id < kCharacterCount ? id : 0U]; }
+
+uint8_t SkillElement(uint8_t skill_id) {
+    return skill_id < static_cast<uint8_t>(kSkCount) ? kSkillElements[skill_id] : kElemNone;
+}
+
+int16_t EnemyElementResist(uint8_t enemy_id, uint8_t element) {
+    return LookupResist(kEnemyResist, static_cast<uint32_t>(sizeof(kEnemyResist) / sizeof(kEnemyResist[0])),
+                        enemy_id, element);
+}
+
+int16_t CharacterElementResist(uint8_t character, uint8_t element) {
+    return LookupResist(kCharacterResist,
+                        static_cast<uint32_t>(sizeof(kCharacterResist) / sizeof(kCharacterResist[0])),
+                        character, element);
+}
+
+uint8_t SkillUnlockedCount(uint8_t character, uint8_t level) {
+    if (character >= kCharacterCount) {
+        return 0U;
+    }
+    uint8_t count = 0U;
+    for (uint8_t row = 0U; row < kMaxCharacterSkills; ++row) {
+        if (kSkillUnlockLevel[character][row] <= level) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+uint8_t SkillRowSkill(uint8_t character, uint8_t level, uint8_t row) {
+    if (character >= kCharacterCount || row >= kMaxCharacterSkills) {
+        return kNoSkill;
+    }
+    if (kSkillUnlockLevel[character][row] > level) {
+        return kNoSkill;
+    }
+    const CharacterDef& def = Character(character);
+    return row < def.skill_count ? def.skills[row] : kNoSkill;
+}
 
 uint8_t ItemCount() { return kItemIdxCount; }
 const ItemDef& Item(uint8_t id) { return kItems[id < kItemIdxCount ? id : 0U]; }

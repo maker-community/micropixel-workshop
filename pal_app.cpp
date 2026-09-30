@@ -109,9 +109,10 @@ void EnterScriptStep(GameContext& context) {
             break;
         case StepKind::kExplore: {
             // A chapter opens at a rest point: companions recruited by a choice
-            // join now, and the party wakes up fully healed.
+            // join now, and the party gets a breather - most of what it is
+            // missing, not all of it. The items have to cover the difference.
             PartySyncFromFlags(context.progress);
-            PartyRestore(context.progress);
+            PartyRest(context.progress, 750U);
             if (context.progress.map_id == step.arg) {
                 WorldRestore(context.world, step.arg, context.progress.player_x, context.progress.player_y);
             } else {

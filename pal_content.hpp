@@ -168,6 +168,38 @@ uint8_t SkillCount();
 const SkillDef& Skill(uint8_t id);
 
 // ---------------------------------------------------------------------------
+// Elements (五灵) and skill unlocks
+// ---------------------------------------------------------------------------
+
+// Damage type of an attack. kElemNone means "no element": every physical
+// strike, every utility skill, and anything that should ignore resistances.
+enum : uint8_t {
+    kElemNone = 0U,
+    kElemFire = 1U,
+    kElemWater = 2U,
+    kElemThunder = 3U,
+    kElemWind = 4U,
+    kElemPoison = 5U,
+    kElemCount = 6U,
+};
+
+// A skill slot that is not usable - locked by level, or past the list.
+// Same value as pal_model's kEmptySlot; the content layer stays model-free.
+inline constexpr uint8_t kNoSkill = 0xFFU;
+
+uint8_t SkillElement(uint8_t skill_id);
+
+// Signed percentage folded into incoming damage: +40 means the target takes 40%
+// less of that element, -25 means 25% more. Anything not authored is neutral.
+int16_t EnemyElementResist(uint8_t enemy_id, uint8_t element);
+int16_t CharacterElementResist(uint8_t character, uint8_t element);
+
+// Skills open up with levels instead of all arriving at level 1. Rows follow
+// CharacterDef::skills order, so row 0 is always available.
+uint8_t SkillUnlockedCount(uint8_t character, uint8_t level);
+uint8_t SkillRowSkill(uint8_t character, uint8_t level, uint8_t row);
+
+// ---------------------------------------------------------------------------
 // Playable characters
 // ---------------------------------------------------------------------------
 

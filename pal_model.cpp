@@ -107,6 +107,19 @@ uint8_t MemberSpeed(const PartyMember& member) {
     return static_cast<uint8_t>(def.base_spd + def.growth_spd * (member.level - 1U));
 }
 
+void PartyRest(Progress& progress, uint32_t permille) {
+    for (uint8_t index = 0U; index < progress.party_size && index < kMaxParty; ++index) {
+        PartyMember& member = progress.party[index];
+        if (member.character == kEmptySlot || member.hp == 0U) {
+            continue;
+        }
+        const uint32_t max_hp = MemberMaxHp(member);
+        const uint32_t max_mp = MemberMaxMp(member);
+        member.hp = static_cast<uint16_t>(member.hp + (max_hp - member.hp) * permille / 1000U);
+        member.mp = static_cast<uint16_t>(member.mp + (max_mp - member.mp) * permille / 1000U);
+    }
+}
+
 uint16_t MemberXpThreshold(uint8_t level) {
     if (level <= 1U) {
         return 0U;
