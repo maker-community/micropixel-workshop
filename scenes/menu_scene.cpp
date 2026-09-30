@@ -13,18 +13,26 @@ inline constexpr uint8_t kMenuSave = 0U;
 inline constexpr uint8_t kMenuResume = 1U;
 inline constexpr uint8_t kMenuButtons = 2U;
 
+// Height above which a card has room for a third row (the numeric stats).
+inline constexpr int32_t kCardStatsHeight = 34;
+
 micropixel::Rect CardRect(const GameContext& context, uint8_t index, uint8_t count) {
     const micropixel::Rect body = context.layout.body;
-    const int32_t area = body.height * 58 / 100;
+    // 66% fits a name row plus both bars on every card of a three-member party.
+    const int32_t area = body.height * 66 / 100;
     const int32_t pad = 5;
     const int32_t rows = count == 0U ? 1 : count;
+    // The band must fit every card plus the padding: clamping to a fixed minimum
+    // here made a two-member party overlap the bag below.
+    // 28 keeps a name row plus both bars apart on a three-member party as well
+    // (3 * 28 + 4 * 5 = 104 of the 113 px band).
     const int32_t height = micropixel::math::Max((area - pad * (rows + 1)) / rows, 28);
     return {body.x + pad, body.y + pad + static_cast<int32_t>(index) * (height + pad), body.width - pad * 2, height};
 }
 
 micropixel::Rect BagRect(const GameContext& context, uint8_t index, uint8_t count) {
     const micropixel::Rect body = context.layout.body;
-    const int32_t top = body.y + body.height * 58 / 100;
+    const int32_t top = body.y + body.height * 66 / 100;
     const int32_t pad = 5;
     const int32_t rows = micropixel::math::Max<int32_t>(count, 1);
     const int32_t height = micropixel::math::Max((body.y + body.height - top - pad * 2) / rows, 13);
@@ -213,42 +221,51 @@ void MenuSceneRender(GameContext& context) {
                           widgets::PortraitForCharacter(member.character), member.hp == 0U ? 2U : 0U, false);
 
         const int32_t text_x = card.x + face + 10;
-        view.Text({text_x, card.y + 3}, context.strings.Get(MemberNameId(member)),
+        const int32_t text_w = card.width - face - 20;
+        // Name row: the name on the left, the level badge on the right.
+        view.Text({text_x, card.y + 2}, context.strings.Get(MemberNameId(member)),
                   member.hp > 0U ? theme::kText : theme::kDim, micropixel::SystemFont::kSmall);
 
         Line level;
         (void)level.Append(context.strings.Get(ids::Id::kUiLv));
         (void)level.AppendUint(member.level);
-        view.Text({card.x + card.width - 6, card.y + 3}, level.c_str(), theme::kAccent,
+        view.Text({card.x + card.width - 6, card.y + 2}, level.c_str(), theme::kAccent,
                   micropixel::SystemFont::kSmall, true);
 
-        const micropixel::Rect bars{text_x, card.y + card.height / 2 - 2, card.width - face - 20,
-                                    micropixel::math::Max(card.height / 4, 12)};
-        view.Bar({bars.x, bars.y, bars.width, 6}, member.hp, MemberMaxHp(member), theme::kHp);
-        view.Bar({bars.x, bars.y + 8, bars.width, 6}, member.mp, MemberMaxMp(member), theme::kMp);
+        if (card.height >= kCardStatsHeight) {
+            const micropixel::Rect bars{text_x, card.y + card.height / 2 - 2, text_w,
+                                        micropixel::math::Max(card.height / 4, 12)};
+            view.Bar({bars.x, bars.y, bars.width, 6}, member.hp, MemberMaxHp(member), theme::kHp);
+            view.Bar({bars.x, bars.y + 8, bars.width, 6}, member.mp, MemberMaxMp(member), theme::kMp);
 
-        Line stats;
-        (void)stats.AppendUint(member.hp);
-        (void)stats.Append("/");
-        (void)stats.AppendUint(MemberMaxHp(member));
-        (void)stats.Append("  ");
-        (void)stats.AppendUint(member.mp);
-        (void)stats.Append("/");
-        (void)stats.AppendUint(MemberMaxMp(member));
-        view.Text({text_x, card.y + card.height - 14}, stats.c_str(), theme::kMuted,
-                  micropixel::SystemFont::kSmall);
+            Line stats;
+            (void)stats.AppendUint(member.hp);
+            (void)stats.Append("/");
+            (void)stats.AppendUint(MemberMaxHp(member));
+            (void)stats.Append("  ");
+            (void)stats.AppendUint(member.mp);
+            (void)stats.Append("/");
+            (void)stats.AppendUint(MemberMaxMp(member));
+            view.Text({text_x, card.y + card.height - 14}, stats.c_str(), theme::kMuted,
+                      micropixel::SystemFont::kSmall);
 
-        Line combat;
-        (void)combat.Append(context.strings.Get(ids::Id::kUiAtk));
-        (void)combat.AppendUint(MemberAttack(member));
-        (void)combat.Append(" ");
-        (void)combat.Append(context.strings.Get(ids::Id::kUiDef));
-        (void)combat.AppendUint(MemberDefense(member));
-        (void)combat.Append(" ");
-        (void)combat.Append(context.strings.Get(ids::Id::kUiSpd));
-        (void)combat.AppendUint(MemberSpeed(member));
-        view.Text({card.x + card.width - 6, card.y + card.height - 14}, combat.c_str(), theme::kMuted,
-                  micropixel::SystemFont::kSmall, true);
+            Line combat;
+            (void)combat.Append(context.strings.Get(ids::Id::kUiAtk));
+            (void)combat.AppendUint(MemberAttack(member));
+            (void)combat.Append(" ");
+            (void)combat.Append(context.strings.Get(ids::Id::kUiDef));
+            (void)combat.AppendUint(MemberDefense(member));
+            (void)combat.Append(" ");
+            (void)combat.Append(context.strings.Get(ids::Id::kUiSpd));
+            (void)combat.AppendUint(MemberSpeed(member));
+            view.Text({card.x + card.width - 6, card.y + card.height - 14}, combat.c_str(), theme::kMuted,
+                      micropixel::SystemFont::kSmall, true);
+            continue;
+        }
+
+        // Short card: the bars sit on the bottom edge, under the name row.
+        view.Bar({text_x, card.y + card.height - 15, text_w, 6}, member.hp, MemberMaxHp(member), theme::kHp);
+        view.Bar({text_x, card.y + card.height - 8, text_w, 6}, member.mp, MemberMaxMp(member), theme::kMp);
     }
 
     // Bag.
