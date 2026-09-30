@@ -144,6 +144,16 @@ class GameView final {
         updating_ = false;
         const auto presented = renderer_.Present(scene_);
         last_frame_rejected_ = !presented.has_value();
+        if (dropped_ > 0U) {
+            // Surface resource exhaustion instead of dying from it: the count
+            // shows up through the device's app-error channel.
+            Line line;
+            (void)line.Append("pal: dropped draws=");
+            (void)line.AppendUint(dropped_);
+            (void)line.Append(" (resource exhausted)");
+            log_.Error(line.c_str());
+            dropped_ = 0U;
+        }
         if (!presented.has_value()) {
             // A rejected frame leaves the previous one on screen. Report it with
             // the frame's node counts and keep running: trapping here would take
@@ -185,8 +195,16 @@ class GameView final {
         }
         Layer& layer = Current();
         if (layer.label_count == layer.label_nodes.size()) {
-            layer.label_nodes.push_back(
-                layer.labels.CreateLabel(position, text, color, font, centered).value());
+            // Node creation is fallible: the Host reports kResourceExhausted once
+            // its text/node budget is spent (kMaxTextBytes is 1024 and the Host
+            // may report less). Dropping this label keeps the frame and the App
+            // alive, where calling .value() on the error would trap the guest.
+            const auto created = layer.labels.CreateLabel(position, text, color, font, centered);
+            if (!created.has_value()) {
+                ++dropped_;
+                return;
+            }
+            layer.label_nodes.push_back(created.value());
         }
         micropixel::LabelNode& node = layer.label_nodes[layer.label_count++];
         node.SetPosition(position);
@@ -284,7 +302,13 @@ class GameView final {
             style.stroke = stroke;
             style.radius = radius;
             style.stroke_width = stroke_width;
-            layer.rect_nodes.push_back(layer.rects.CreateRoundedRect(rect, style).value());
+            // Same reasoning as Text(): skip the draw rather than trap.
+            const auto created = layer.rects.CreateRoundedRect(rect, style);
+            if (!created.has_value()) {
+                ++dropped_;
+                return;
+            }
+            layer.rect_nodes.push_back(created.value());
         }
         micropixel::RoundedRectNode& node = layer.rect_nodes[layer.rect_count++];
         node.SetRect(rect);
@@ -304,6 +328,7 @@ class GameView final {
     bool on_map_layer_{};
     bool updating_{};
     bool last_frame_rejected_{};
+    uint32_t dropped_{};  // draws skipped this frame because creation failed
 };
 
 // ---------------------------------------------------------------------------
