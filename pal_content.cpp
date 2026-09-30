@@ -30,7 +30,7 @@ enum : uint8_t {
     kSkCount,
 };
 
-constexpr SkillDef kSkills[kSkCount] = {
+constexpr SkillDef kSkills[] = {
     {ids::Id::kSkillSlash, SkillKind::kPhysical, TargetSide::kOneEnemy, 0U, 130U, false},
     {ids::Id::kSkillThrust, SkillKind::kPhysical, TargetSide::kOneEnemy, 8U, 190U, false},
     {ids::Id::kSkillWave, SkillKind::kPhysical, TargetSide::kAllEnemies, 14U, 105U, false},
@@ -50,7 +50,7 @@ constexpr SkillDef kSkills[kSkCount] = {
 };
 
 // --- party ------------------------------------------------------------------
-constexpr CharacterDef kCharacters[kCharacterCount] = {
+constexpr CharacterDef kCharacters[] = {
     {ids::Id::kCharXiao, 0U, 120U, 30U, 26U, 16U, 15U, 18U, 4U, 4U, 3U, 2U, 4U,
      {kSkSlash, kSkThrust, kSkWave, kSkSwordRain}},
     {ids::Id::kCharLingxi, 1U, 92U, 60U, 16U, 12U, 18U, 12U, 10U, 2U, 2U, 3U, 4U,
@@ -60,7 +60,7 @@ constexpr CharacterDef kCharacters[kCharacterCount] = {
 };
 
 // --- items ------------------------------------------------------------------
-constexpr ItemDef kItems[kItemIdxCount] = {
+constexpr ItemDef kItems[] = {
     {ids::Id::kItemPillHp, ItemEffect::kHealHp, 80U, true, true},
     {ids::Id::kItemPillMp, ItemEffect::kHealMp, 40U, true, true},
     {ids::Id::kItemHerb, ItemEffect::kCurePoison, 0U, true, true},
@@ -90,7 +90,7 @@ enum : uint8_t {
     kFoeCount,
 };
 
-constexpr EnemyDef kEnemies[kFoeCount] = {
+constexpr EnemyDef kEnemies[] = {
     {ids::Id::kEnemyWolf, 0U, 90U, 0U, 18U, 6U, 12U, 0U, {0U, 0U}, 26U, 14U, kItemNone},
     {ids::Id::kEnemyBandit, 1U, 130U, 0U, 24U, 10U, 10U, 0U, {0U, 0U}, 38U, 22U, kIdxPillHp},
     {ids::Id::kEnemyGhost, 2U, 165U, 20U, 29U, 8U, 16U, 1U, {kSkDrain, 0U}, 54U, 30U, kIdxPillMp},
@@ -111,7 +111,7 @@ constexpr EnemyDef kEnemies[kFoeCount] = {
     {ids::Id::kEnemyOverlord, 3U, 1600U, 200U, 52U, 28U, 24U, 2U, {kSkFlame, kSkRite}, 800U, 600U, kIdxJade},
 };
 
-constexpr BattleDef kBattles[kBattleCount] = {
+constexpr BattleDef kBattles[] = {
     {2U, {kFoeWolf, kFoeWasp, 0U}},
     {3U, {kFoeBandit, kFoeBandit, kFoeTreant}},
     {2U, {kFoeGhost, kFoeGhost, 0U}},
@@ -126,7 +126,7 @@ constexpr BattleDef kBattles[kBattleCount] = {
 };
 
 // --- dialogue graph ---------------------------------------------------------
-constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
+constexpr DialogueNodeDef kDialogue[] = {
     // 0 kDlgIntro — 酒剑仙 sends 李逍遥 to 仙灵岛
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryIntroL0, 0xFFU, 0U},
@@ -330,7 +330,7 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
 };
 
 // --- maps -------------------------------------------------------------------
-const char* const kVillageRows[] = {
+constexpr const char* kVillageRows[] = {
     "TTTTTTTTTTTTTTTT",
     "T..............T",
     "T.RRRR....RRRR.T",
@@ -345,7 +345,7 @@ const char* const kVillageRows[] = {
     "TTTTTTTTTTTTTTTT",
 };
 
-const char* const kForestRows[] = {
+constexpr const char* kForestRows[] = {
     "TTTTTTTTTTTTTTTT",
     "T..............T",
     "T.TTTT....TTTT.T",
@@ -360,7 +360,7 @@ const char* const kForestRows[] = {
     "TTTTTTTTTTTTTTTT",
 };
 
-const char* const kPassRows[] = {
+constexpr const char* kPassRows[] = {
     "################",
     "#______________#",
     "#______________#",
@@ -375,7 +375,7 @@ const char* const kPassRows[] = {
     "################",
 };
 
-const char* const kHallRows[] = {
+constexpr const char* kHallRows[] = {
     "############",
     "#__________#",
     "#_##____##_#",
@@ -389,7 +389,7 @@ const char* const kHallRows[] = {
 };
 
 // 苏州城 — canals cut the town into islands of houses.
-const char* const kSuzhouRows[] = {
+constexpr const char* kSuzhouRows[] = {
     "TTTTTTTTTTTTTTTT",
     "T....~~~~......T",
     "T....~~~~......T",
@@ -405,7 +405,7 @@ const char* const kSuzhouRows[] = {
 };
 
 // 林家堡 — an open courtyard with colonnades, entered from the north.
-const char* const kFortRows[] = {
+constexpr const char* kFortRows[] = {
     "################",
     "#______________#",
     "#___##____##___#",
@@ -421,7 +421,7 @@ const char* const kFortRows[] = {
 };
 
 // 蜀山 — stone platforms and spirit pools along the ridge.
-const char* const kShuRows[] = {
+constexpr const char* kShuRows[] = {
     "TTTTTTTTTTTTTTTT",
     "T..~~~~........T",
     "T..~~~~..####..T",
@@ -437,7 +437,7 @@ const char* const kShuRows[] = {
 };
 
 // 锁妖塔 — a warren of cells broken by load-bearing walls.
-const char* const kTowerRows[] = {
+constexpr const char* kTowerRows[] = {
     "################",
     "#___#____#_____#",
     "#___#____#_____#",
@@ -453,7 +453,7 @@ const char* const kTowerRows[] = {
 };
 
 // 南诏祭坛 — an arena ringed by water, with the moon over the array.
-const char* const kAltarRows[] = {
+constexpr const char* kAltarRows[] = {
     "~~~~~~~~~~~~~~~~",
     "~______________~",
     "~___##____##___~",
@@ -468,7 +468,7 @@ const char* const kAltarRows[] = {
     "~~~~~~~~~~~~~~~~",
 };
 
-constexpr MapDef kMaps[kMapCount] = {
+constexpr MapDef kMaps[] = {
     {ids::Id::kMapVillage,
      16U,
      12U,
@@ -547,8 +547,80 @@ constexpr MapDef kMaps[kMapCount] = {
 };
 
 // Starting tile per map (the tile the party stands on when a chapter opens).
-constexpr uint8_t kMapStartX[kMapCount] = {7U, 7U, 7U, 5U, 7U, 7U, 7U, 7U, 7U};
-constexpr uint8_t kMapStartY[kMapCount] = {4U, 1U, 1U, 1U, 4U, 1U, 4U, 4U, 4U};
+constexpr uint8_t kMapStartX[] = {7U, 7U, 7U, 5U, 7U, 7U, 7U, 7U, 7U};
+constexpr uint8_t kMapStartY[] = {4U, 1U, 1U, 1U, 4U, 1U, 4U, 4U, 4U};
+
+// --- table shape guards -----------------------------------------------------
+// The tables are deliberately declared without a bound so these asserts can
+// compare their real length against the count enum. A table that is one row
+// short would otherwise be quietly zero-filled, handing the UI an entry whose
+// ids are all zero; a map whose rows do not match its declared size would make
+// MapTileAt walk off the end of a string literal. Both are compile errors here
+// instead of crashes on the device.
+constexpr uint32_t TextLength(const char* text) {
+    uint32_t length = 0U;
+    while (text != nullptr && text[length] != '\0') {
+        ++length;
+    }
+    return length;
+}
+
+constexpr bool MapRowsMatchDeclaredSize() {
+    for (uint8_t map = 0U; map < kMapCount; ++map) {
+        if (kMaps[map].rows == nullptr) {
+            return false;
+        }
+        for (uint8_t row = 0U; row < kMaps[map].height; ++row) {
+            if (TextLength(kMaps[map].rows[row]) != kMaps[map].width) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+static_assert(sizeof(kSkills) / sizeof(kSkills[0]) == kSkCount, "skill table length mismatch");
+static_assert(sizeof(kCharacters) / sizeof(kCharacters[0]) == kCharacterCount,
+              "character table length mismatch");
+static_assert(sizeof(kItems) / sizeof(kItems[0]) == kItemIdxCount, "item table length mismatch");
+static_assert(sizeof(kEnemies) / sizeof(kEnemies[0]) == kFoeCount, "enemy table length mismatch");
+static_assert(sizeof(kBattles) / sizeof(kBattles[0]) == kBattleCount, "battle table length mismatch");
+static_assert(sizeof(kDialogue) / sizeof(kDialogue[0]) == kDialogueCount,
+              "dialogue table length mismatch");
+static_assert(sizeof(kMaps) / sizeof(kMaps[0]) == kMapCount, "map table length mismatch");
+static_assert(sizeof(kMapStartX) / sizeof(kMapStartX[0]) == kMapCount, "map start X length mismatch");
+static_assert(sizeof(kMapStartY) / sizeof(kMapStartY[0]) == kMapCount, "map start Y length mismatch");
+static_assert(MapRowsMatchDeclaredSize(), "a map's rows do not match its declared width/height");
+
+// Per-entry counts must fit the fixed arrays the engine indexes them with.
+// The battle and map code guards its cursors, but a content row that declares
+// more skills/foes/npcs than the array holds is an out-of-bounds read waiting
+// to happen, so it is rejected here instead.
+constexpr bool EntryCountsFitEngineArrays() {
+    for (uint8_t index = 0U; index < kCharacterCount; ++index) {
+        if (kCharacters[index].skill_count > kMaxCharacterSkills) {
+            return false;
+        }
+    }
+    for (uint8_t index = 0U; index < kFoeCount; ++index) {
+        if (kEnemies[index].skill_count > kMaxEnemySkills) {
+            return false;
+        }
+    }
+    for (uint8_t index = 0U; index < kBattleCount; ++index) {
+        if (kBattles[index].enemy_count > kMaxBattleEnemies) {
+            return false;
+        }
+    }
+    for (uint8_t index = 0U; index < kMapCount; ++index) {
+        if (kMaps[index].npc_count > kMaxMapNpcs || kMaps[index].trigger_count > kMaxMapTriggers) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static_assert(EntryCountsFitEngineArrays(), "a content row declares more entries than the engine array holds");
 
 // --- chapter script ---------------------------------------------------------
 constexpr ScriptStepDef kScript[] = {
