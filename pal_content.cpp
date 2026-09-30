@@ -24,6 +24,9 @@ enum : uint8_t {
     kSkDrain,
     kSkMiasma,
     kSkFlame,
+    kSkSwordRain,
+    kSkWaterDragon,
+    kSkRedLotus,
     kSkCount,
 };
 
@@ -40,13 +43,20 @@ constexpr SkillDef kSkills[kSkCount] = {
     {ids::Id::kSkillDrain, SkillKind::kDrain, TargetSide::kOneEnemy, 0U, 125U, false},
     {ids::Id::kSkillMiasma, SkillKind::kMagic, TargetSide::kAllEnemies, 0U, 100U, false},
     {ids::Id::kSkillFlame, SkillKind::kMagic, TargetSide::kOneEnemy, 0U, 185U, false},
+    // Act 3 ultimates, one per hero, so the late fights are winnable.
+    {ids::Id::kSkillSwordRain, SkillKind::kPhysical, TargetSide::kAllEnemies, 20U, 175U, false},
+    {ids::Id::kSkillWaterDragon, SkillKind::kMagic, TargetSide::kAllEnemies, 18U, 150U, false},
+    {ids::Id::kSkillRedLotus, SkillKind::kMagic, TargetSide::kOneEnemy, 14U, 230U, false},
 };
 
 // --- party ------------------------------------------------------------------
 constexpr CharacterDef kCharacters[kCharacterCount] = {
-    {ids::Id::kCharXiao, 0U, 120U, 30U, 26U, 16U, 15U, 18U, 4U, 4U, 3U, 2U, 3U, {kSkSlash, kSkThrust, kSkWave}},
-    {ids::Id::kCharLingxi, 1U, 92U, 60U, 16U, 12U, 18U, 12U, 10U, 2U, 2U, 3U, 3U, {kSkThunder, kSkRain, kSkFrost}},
-    {ids::Id::kCharYunyang, 2U, 108U, 55U, 18U, 15U, 13U, 14U, 9U, 3U, 3U, 2U, 3U, {kSkCalm, kSkGuard, kSkRite}},
+    {ids::Id::kCharXiao, 0U, 120U, 30U, 26U, 16U, 15U, 18U, 4U, 4U, 3U, 2U, 4U,
+     {kSkSlash, kSkThrust, kSkWave, kSkSwordRain}},
+    {ids::Id::kCharLingxi, 1U, 92U, 60U, 16U, 12U, 18U, 12U, 10U, 2U, 2U, 3U, 4U,
+     {kSkThunder, kSkRain, kSkFrost, kSkWaterDragon}},
+    {ids::Id::kCharYunyang, 2U, 108U, 55U, 18U, 15U, 13U, 14U, 9U, 3U, 3U, 2U, 4U,
+     {kSkCalm, kSkGuard, kSkRite, kSkRedLotus}},
 };
 
 // --- items ------------------------------------------------------------------
@@ -59,6 +69,8 @@ constexpr ItemDef kItems[kItemIdxCount] = {
     {ids::Id::kItemRelic, ItemEffect::kKey, 0U, false, false},
     {ids::Id::kItemLingzhi, ItemEffect::kHealHp, 150U, true, true},
     {ids::Id::kItemOxhorn, ItemEffect::kDamageAll, 90U, true, false},
+    {ids::Id::kItemJade, ItemEffect::kHealHp, 250U, true, true},
+    {ids::Id::kItemShuTalisman, ItemEffect::kDamageAll, 150U, true, false},
 };
 
 // --- enemies ----------------------------------------------------------------
@@ -71,6 +83,10 @@ enum : uint8_t {
     kFoeWasp,
     kFoeChief,
     kFoeCultist,
+    kFoeSerpent,
+    kFoeGolem,
+    kFoePriest,
+    kFoeOverlord,
     kFoeCount,
 };
 
@@ -87,6 +103,12 @@ constexpr EnemyDef kEnemies[kFoeCount] = {
     {ids::Id::kEnemyChief, 1U, 320U, 30U, 30U, 14U, 14U, 2U, {kSkThrust, kSkSlash}, 92U, 64U, kIdxPillHp},
     // Act 2: cult casters, the first foes that answer with real magic.
     {ids::Id::kEnemyCultist, 3U, 240U, 40U, 26U, 12U, 18U, 2U, {kSkThunder, kSkFrost}, 110U, 72U, kIdxLingzhi},
+    // Act 3. The tower's serpents are fast, its golems are a wall, and the
+    // priests heal the thing the party is trying to kill.
+    {ids::Id::kEnemySerpent, 0U, 220U, 20U, 28U, 12U, 20U, 2U, {kSkMiasma, kSkFrost}, 96U, 60U, kIdxHerb},
+    {ids::Id::kEnemyGolem, 3U, 420U, 0U, 34U, 24U, 5U, 2U, {kSkSlash, kSkGuard}, 130U, 80U, kIdxLingzhi},
+    {ids::Id::kEnemyPriest, 3U, 300U, 80U, 30U, 14U, 16U, 2U, {kSkRite, kSkDrain}, 160U, 100U, kIdxPillMp},
+    {ids::Id::kEnemyOverlord, 3U, 1600U, 200U, 52U, 28U, 24U, 2U, {kSkFlame, kSkRite}, 800U, 600U, kIdxJade},
 };
 
 constexpr BattleDef kBattles[kBattleCount] = {
@@ -97,6 +119,10 @@ constexpr BattleDef kBattles[kBattleCount] = {
     {2U, {kFoeChief, kFoeWasp, 0U}},
     {2U, {kFoeCultist, kFoeCultist, 0U}},
     {3U, {kFoeCultist, kFoeTreant, kFoeCultist}},
+    {2U, {kFoeGolem, kFoeSerpent, 0U}},
+    {3U, {kFoeSerpent, kFoeGolem, kFoeSerpent}},
+    {3U, {kFoePriest, kFoeCultist, kFoePriest}},
+    {3U, {kFoeOverlord, kFoePriest, kFoeGolem}},
 };
 
 // --- dialogue graph ---------------------------------------------------------
@@ -237,7 +263,47 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 16 kDlgEndGood
+    // 16 kDlgShu — 蜀山掌门 explains what the cult is really after
+    {3U,
+     {{ids::Id::kCharShu, ids::Id::kStoryShuL0, 3U, 0U},
+      {ids::Id::kCharShu, ids::Id::kStoryShuL1, 3U, 0U},
+      {ids::Id::kCharXiao, ids::Id::kStoryShuL2, 0U, 0U}},
+     0U,
+     {},
+     -1},
+    // 17 kDlgShuNpc — the sect leader's aside on 蜀山
+    {2U,
+     {{ids::Id::kCharShu, ids::Id::kStoryShunpcL0, 3U, 2U},
+      {ids::Id::kCharShu, ids::Id::kStoryShunpcL1, 3U, 0U},
+      {}},
+     0U,
+     {},
+     -1},
+    // 18 kDlgTower — entering 锁妖塔
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryTowerL0, 0U, 0U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryTowerL1, 1U, 2U},
+      {ids::Id::kCharYunyang, ids::Id::kStoryTowerL2, 2U, 0U}},
+     0U,
+     {},
+     -1},
+    // 19 kDlgTowerTop — 赵灵儿 learns where she comes from
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryTowertopL0, 0U, 0U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryTowertopL1, 1U, 2U},
+      {ids::Id::kCharXiao, ids::Id::kStoryTowertopL2, 0U, 3U}},
+     0U,
+     {},
+     -1},
+    // 20 kDlgAltar — the 南诏 showdown
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryAltarL0, 0U, 0U},
+      {ids::Id::kCharDemon, ids::Id::kStoryAltarL1, 5U, 2U},
+      {ids::Id::kCharXiao, ids::Id::kStoryAltarL2, 0U, 1U}},
+     0U,
+     {},
+     -1},
+    // 21 kDlgEndGood
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryEndGoodL0, 0xFFU, 0U},
       {ids::Id::kCharLingxi, ids::Id::kStoryEndGoodL1, 1U, 3U},
@@ -245,7 +311,7 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 17 kDlgEndMid
+    // 22 kDlgEndMid
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryEndMidL0, 0xFFU, 0U},
       {ids::Id::kCharYunyang, ids::Id::kStoryEndMidL1, 2U, 0U},
@@ -253,7 +319,7 @@ constexpr DialogueNodeDef kDialogue[kDialogueCount] = {
      0U,
      {},
      -1},
-    // 18 kDlgEndBad
+    // 23 kDlgEndBad
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryEndBadL0, 0xFFU, 0U},
       {ids::Id::kCharLingxi, ids::Id::kStoryEndBadL1, 1U, 2U},
@@ -354,6 +420,54 @@ const char* const kFortRows[] = {
     "################",
 };
 
+// 蜀山 — stone platforms and spirit pools along the ridge.
+const char* const kShuRows[] = {
+    "TTTTTTTTTTTTTTTT",
+    "T..~~~~........T",
+    "T..~~~~..####..T",
+    "T........####..T",
+    "T..RRRR........T",
+    "T..RRRR...RRRR.T",
+    "T.........RRRR.T",
+    "T..~~~~........T",
+    "T..~~~~..####..T",
+    "T........####..T",
+    "T......**......T",
+    "TTTTTTTTTTTTTTTT",
+};
+
+// 锁妖塔 — a warren of cells broken by load-bearing walls.
+const char* const kTowerRows[] = {
+    "################",
+    "#___#____#_____#",
+    "#___#____#_____#",
+    "#___######_____#",
+    "#______________#",
+    "#_####_####_####",
+    "#______________#",
+    "#_###_####_#####",
+    "#______________#",
+    "#_####_####____#",
+    "#______**______#",
+    "################",
+};
+
+// 南诏祭坛 — an arena ringed by water, with the moon over the array.
+const char* const kAltarRows[] = {
+    "~~~~~~~~~~~~~~~~",
+    "~______________~",
+    "~___##____##___~",
+    "~___##____##___~",
+    "~______________~",
+    "~______________~",
+    "~___##____##___~",
+    "~___##____##___~",
+    "~______________~",
+    "~______________~",
+    "~_____****_____~",
+    "~~~~~~~~~~~~~~~~",
+};
+
 constexpr MapDef kMaps[kMapCount] = {
     {ids::Id::kMapVillage,
      16U,
@@ -406,11 +520,35 @@ constexpr MapDef kMaps[kMapCount] = {
      {{}, {}, {}, {}},
      1U,
      {{7U, 10U, 2U, 1U}, {}}},
+    {ids::Id::kMapShu,
+     16U,
+     12U,
+     kShuRows,
+     1U,
+     {{ids::Id::kCharShu, 3U, 9U, 4U, kDlgShuNpc}, {}, {}, {}},
+     1U,
+     {{7U, 10U, 2U, 1U}, {}}},
+    {ids::Id::kMapTower,
+     16U,
+     12U,
+     kTowerRows,
+     0U,
+     {{}, {}, {}, {}},
+     1U,
+     {{7U, 10U, 2U, 1U}, {}}},
+    {ids::Id::kMapAltar,
+     16U,
+     12U,
+     kAltarRows,
+     0U,
+     {{}, {}, {}, {}},
+     1U,
+     {{6U, 10U, 4U, 1U}, {}}},
 };
 
 // Starting tile per map (the tile the party stands on when a chapter opens).
-constexpr uint8_t kMapStartX[kMapCount] = {7U, 7U, 7U, 5U, 7U, 7U};
-constexpr uint8_t kMapStartY[kMapCount] = {4U, 1U, 1U, 1U, 4U, 1U};
+constexpr uint8_t kMapStartX[kMapCount] = {7U, 7U, 7U, 5U, 7U, 7U, 7U, 7U, 7U};
+constexpr uint8_t kMapStartY[kMapCount] = {4U, 1U, 1U, 1U, 4U, 1U, 4U, 4U, 4U};
 
 // --- chapter script ---------------------------------------------------------
 constexpr ScriptStepDef kScript[] = {
@@ -439,6 +577,17 @@ constexpr ScriptStepDef kScript[] = {
     {StepKind::kDialogue, kDlgFort},
     {StepKind::kBattle, kBattleFort},
     {StepKind::kDialogue, kDlgFinal},
+    {StepKind::kExplore, kMapShu},
+    {StepKind::kDialogue, kDlgShu},
+    {StepKind::kBattle, kBattleTrial},
+    {StepKind::kExplore, kMapTower},
+    {StepKind::kDialogue, kDlgTower},
+    {StepKind::kBattle, kBattleTower},
+    {StepKind::kDialogue, kDlgTowerTop},
+    {StepKind::kBattle, kBattlePriests},
+    {StepKind::kExplore, kMapAltar},
+    {StepKind::kDialogue, kDlgAltar},
+    {StepKind::kBattle, kBattleOverlord},
     {StepKind::kEnding, 0U},
 };
 

@@ -50,6 +50,7 @@
   "char.elder": "吴伯",
   "char.kid": "小顽童",
   "char.hostess": "婶婶",
+  "char.shu": "蜀山掌门",
 
   "enemy.wolf": "蛇妖",
   "enemy.bandit": "山贼",
@@ -59,6 +60,10 @@
   "enemy.wasp": "妖蜂",
   "enemy.chief": "山贼头目",
   "enemy.cultist": "拜月教徒",
+  "enemy.serpent": "妖蛇",
+  "enemy.golem": "石魔",
+  "enemy.priest": "拜月祭司",
+  "enemy.overlord": "拜月教主·真身",
 
   "item.pill_hp": "金创药",
   "item.pill_mp": "灵葫仙丹",
@@ -68,6 +73,8 @@
   "item.relic": "水灵珠",
   "item.lingzhi": "千年灵芝",
   "item.oxhorn": "蛮牛角",
+  "item.jade": "天仙玉露",
+  "item.shu_talisman": "蜀山灵符",
 
   "skill.slash": "御剑术",
   "skill.thrust": "万剑诀",
@@ -81,6 +88,9 @@
   "skill.drain": "噬魂咒",
   "skill.miasma": "蚀骨毒雾",
   "skill.flame": "炎杀",
+  "skill.sword_rain": "万剑归宗",
+  "skill.water_dragon": "水龙吟",
+  "skill.red_lotus": "红莲剑",
 
   "map.village": "余杭镇",
   "map.forest": "十里坡",
@@ -88,6 +98,9 @@
   "map.hall": "水月宫",
   "map.suzhou": "苏州城",
   "map.fort": "林家堡",
+  "map.shu": "蜀山",
+  "map.tower": "锁妖塔",
+  "map.altar": "南诏祭坛",
 
   "battle.begin": "妖气逼近，拔剑！",
   "battle.enemy_phase": "敌方行动",
@@ -139,6 +152,25 @@
   "story.final.l0": "阵破了，教徒四散，苏州城的灯火重新亮起。",
   "story.final.l1": "赵灵儿：教主还在，这一程还没走完。",
   "story.final.l2": "李逍遥收起木剑：那就接着走。",
+
+  "story.shu.l0": "蜀山的石阶被云漫过，剑派的钟声在头顶敲了七下。",
+  "story.shu.l1": "蜀山掌门：锁妖塔的封印松了，拜月教要的不是塔，是塔底那件东西。",
+  "story.shu.l2": "李逍遥：那我们上山，还是进塔？",
+
+  "story.shunpc.l0": "蜀山掌门：塔里的东西，不是剑能斩干净的。",
+  "story.shunpc.l1": "他递来一道灵符：留着，塔底用得着。",
+
+  "story.tower.l0": "锁妖塔的砖缝里渗着黑气，每一层都有人在低声念咒。",
+  "story.tower.l1": "赵灵儿按住胸口：这里的味道，我认得。",
+  "story.tower.l2": "林月如：认得就好，认得就说明来对了。",
+
+  "story.towertop.l0": "塔顶的锁链断了三根，剩下的在风里颠。",
+  "story.towertop.l1": "赵灵儿：我娘当年，也是从这里下去的。",
+  "story.towertop.l2": "李逍遥：这次上去的，是我们三个。",
+
+  "story.altar.l0": "南诏的祭坛浸在水里，月亮倒悬在阵心。",
+  "story.altar.l1": "拜月教主：你们终于来了——可惜塔底那件东西，已经醒了。",
+  "story.altar.l2": "李逍遥拔剑：那就让它醒着看。",
 
   "story.wolves.l0": "蛇妖化作黑烟散去，十里坡安静下来。",
   "story.wolves.l1": "赵灵儿：你为我挡了一剑，我随你走一趟。",
