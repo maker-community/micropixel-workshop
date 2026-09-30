@@ -221,8 +221,87 @@ void DrawCommandPanel(GameContext& context) {
 
 }  // namespace
 
+// A skill and an item announce themselves by the localized name the rules wrote
+// into the message strip, so match the content tables instead of keeping a
+// second list of message ids to sync by hand.
+bool IsSkillName(ids::Id message) {
+    for (uint8_t index = 0U; index < SkillCount(); ++index) {
+        if (Skill(index).name == message) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool IsItemName(ids::Id message) {
+    for (uint8_t index = 0U; index < ItemCount(); ++index) {
+        if (Item(index).name == message) {
+            return true;
+        }
+    }
+    return false;
+}
+
+uint8_t AliveFoes(const BattleState& battle) {
+    uint8_t count = 0U;
+    for (uint8_t index = 0U; index < battle.unit_count; ++index) {
+        if (battle.units[index].enemy && battle.units[index].alive) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+// One cue per change of the message strip, which is the channel the battle rules
+// already use to announce every action they resolve.
+void BattleAudioCue(GameContext& context, const BattleState& battle) {
+    const ids::Id message = battle.message;
+    if (IsSkillName(message)) {
+        context.audio.PlaySfx(SfxId::kSkill);
+        return;
+    }
+    if (IsItemName(message)) {
+        context.audio.PlaySfx(SfxId::kItem);
+        return;
+    }
+    switch (message) {
+        case ids::Id::kUiAttack:
+            // The strip names the unit that was hit, so the side that unit
+            // stands on decides whether this was our blade or theirs.
+            context.audio.PlaySfx(battle.message_unit < battle.unit_count &&
+                                          !battle.units[battle.message_unit].enemy
+                                      ? SfxId::kHurt
+                                      : SfxId::kAttack);
+            break;
+        case ids::Id::kBattleHealNote:
+        case ids::Id::kBattleReviveNote:
+            context.audio.PlaySfx(SfxId::kHeal);
+            break;
+        case ids::Id::kBattleDefendNote:
+            context.audio.PlaySfx(SfxId::kGuard);
+            break;
+        case ids::Id::kBattleFleeFail:
+        case ids::Id::kUiEscaped:
+            context.audio.PlaySfx(SfxId::kCancel);
+            break;
+        case ids::Id::kBattlePoisonTick:
+            context.audio.PlaySfx(SfxId::kPoison);
+            break;
+        case ids::Id::kUiVictory:
+            context.audio.PlaySfx(SfxId::kVictory);
+            break;
+        case ids::Id::kUiDefeat:
+        case ids::Id::kUiGameOver:
+            context.audio.PlaySfx(SfxId::kDefeat);
+            break;
+        default:
+            break;
+    }
+}
+
 void BattleSceneEnter(GameContext& context) {
     context.cursor = 0U;
+    context.audio.PlaySfx(SfxId::kEncounter);
     context.dirty = true;
 }
 
@@ -246,7 +325,20 @@ uint32_t BattleSignature(const BattleState& battle) {
 
 void BattleSceneUpdate(GameContext& context, uint32_t delta_ms) {
     const uint32_t before = BattleSignature(context.battle);
+    const ids::Id message_before = context.battle.message;
+    const uint8_t foes_before = AliveFoes(context.battle);
+    const uint8_t levels_before = context.battle.level_ups;
     BattleUpdate(context.battle, context.progress, delta_ms, context.rng);
+
+    if (context.battle.message != message_before) {
+        BattleAudioCue(context, context.battle);
+    }
+    if (AliveFoes(context.battle) < foes_before) {
+        context.audio.PlaySfx(SfxId::kFoeDown);
+    }
+    if (context.battle.level_ups != levels_before) {
+        context.audio.PlaySfx(SfxId::kLevelUp);
+    }
 
     if (BattleFinished(context.battle)) {
         LogTrace(context, "battle-end", BattleWon(context.battle) ? 1 : 0,

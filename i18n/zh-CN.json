@@ -53,7 +53,7 @@
   "char.demon": "拜月教主",
   "char.elder": "吴伯",
   "char.kid": "小顽童",
-  "char.hostess": "婶婶",
+  "char.hostess": "李大娘",
   "char.shu": "蜀山掌门",
   "char.anu": "阿奴",
   "char.queen": "巫后",
@@ -125,7 +125,8 @@
   "map.baihe": "白河村",
   "map.miao": "苗疆",
   "map.grove": "神木林",
-  "map.temple": "女蜗神殿",  "map.swordtomb": "蜀山剑冢",
+  "map.temple": "女蜗神殿",
+  "map.swordtomb": "蜀山剑冢",
   "map.valley": "毒瘴谷",
   "battle.begin": "妖气逼近，拔剑!",
   "battle.enemy_phase": "敌方行动",
@@ -228,7 +229,7 @@
   "story.hall.l1": "拜月教主：区区凡人，也配谈天命？",
   "story.hall.l2": "赵灵儿挡在你身前，灵光映着她的发梢。",
 
-  "story.end.good.l0": "月华散去，南昭祭坛归于寡静，拜月教主化作飞灰。",
+  "story.end.good.l0": "月华散去，南昭祭坛归于寂静，拜月教主化作飞灰。",
   "story.end.good.l1": "赵灵儿把水灵珠放回你掌心：这一次，我们一起回家。",
   "story.end.good.l2": "余杭镇的药炉重新燃起，李小遥之名写入仙门。",
 
@@ -287,9 +288,9 @@
 
   "story.swordtomb.l0": "剑冢深处，千柄断剑插在石缝里，风过时嗡嗡作响。",
   "story.swordtomb.l1": "酒剑仙：小李子，这里埋着蜀山历代的剑意，能拿多少，看你自己。",
-  "story.swordtomb.l2": "李逍遥：师父，别灌我酒了，我这就拔剑！",
+  "story.swordtomb.l2": "李小遥：师父，别灌我酒了，我这就拔剑！",
 
-  "story.swordafter.l0": "剑灵散去，断剑齐鸣，一道剑气没入李逍遥掌心。",
+  "story.swordafter.l0": "剑灵散去，断剑齐鸣，一道剑气没入李小遥掌心。",
   "story.swordafter.l1": "酒剑仙：好，这一式叫万剑归宗——记住手感，别记招式。",
   "story.swordafter.l2": "酒剑仙塞来两株千年灵芝：受伤就嚼，别学我喝酒。",
 

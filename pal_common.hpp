@@ -16,6 +16,7 @@
 #include "pal_strings.hpp"
 #include "sdk/micropixel.hpp"
 
+#include "pal_audio.hpp"
 #include "pal_battle.hpp"
 #include "pal_content.hpp"
 #include "pal_dialogue.hpp"
@@ -457,7 +458,8 @@ inline constexpr uint8_t kNoDialogue = 0xFFU;
 struct GameContext final {
     GameContext(micropixel::Application& application, ids::Catalog catalog, micropixel::InputInfo input_info,
                 GameLayout layout_value, micropixel::Scene& scene_ref, micropixel::ContainerNode root_node,
-                GameView& view_ref, micropixel::XorShift32 generator)
+                GameView& view_ref, micropixel::XorShift32 generator, micropixel::Audio audio_handle,
+                bool audio_available)
         : app(application),
           strings(catalog),
           input(input_info),
@@ -465,7 +467,8 @@ struct GameContext final {
           scene(scene_ref),
           root(root_node),
           view(view_ref),
-          rng(generator) {}
+          rng(generator),
+          audio(audio_handle, audio_available) {}
 
     micropixel::Application& app;
     ids::Catalog strings;
@@ -480,6 +483,7 @@ struct GameContext final {
     DialogueState dialogue{};
     BattleState battle{};
     micropixel::XorShift32 rng{};
+    AudioDirector audio;
 
     uint8_t scene_id{kSceneTitle};
     uint8_t previous_scene{kSceneTitle};  // the menu returns here

@@ -154,9 +154,15 @@ void DrawMap(GameContext& context) {
 }
 
 void TryStep(GameContext& context, int32_t dx, int32_t dy) {
-    if (WorldStep(context.world, dx, dy) != WorldStepResult::kNone) {
-        context.dirty = true;
+    const WorldStepResult result = WorldStep(context.world, dx, dy);
+    if (result == WorldStepResult::kNone) {
+        return;
     }
+    // Walking into a wall or an NPC is silent; only a real tile gets a footstep.
+    if (result == WorldStepResult::kMoved) {
+        context.audio.PlaySfx(SfxId::kStep);
+    }
+    context.dirty = true;
 }
 
 }  // namespace

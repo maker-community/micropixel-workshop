@@ -33,6 +33,12 @@ micropixel --port COM3 run --aot-target xtensa --no-follow
   - `smart`、`skills-no-items` 必须**全部**通关（默认 300 局）；
   - `attack-only` 在需要技能的战斗上失败是**预期**的（不要为了让它通过去削数值）。
 - 只改文案或立绘时，第 2 步仍然要跑：它同时负责内容校验。
+- `audio/sfx.json` 是全部音效的清单（ToneSpec 配方，没有音频资源）。构建时会由 SDK 的
+  分析器检查瞬时响度、峰值与重复暴露，**不通过就直接构建失败**，并生成
+  `build/generated/pal_sfx_profiles.hpp`（`pal_sfx::k<PascalName>[]` + `k<PascalName>Count`）。
+  改完音效同样要重新 `micropixel build`。
+- 启动封面是 `tools\make-launch-cover.ps1` 生成的 `assets/launch.png`（360×360，所有官方
+  示例都是这个尺寸）。改封面请改脚本再重新生成，别直接手工改那张 PNG。
 
 ## 2. 设备操作要点
 
@@ -110,6 +116,10 @@ $m='C:\Users\gil\AppData\Local\MicroPixel\bin\micropixel.exe'
   改 `app_id` 要同步 `#include` 和 `namespace ids =`。
 - 新敌人/新立绘走 `widgets::EnemySprite` / `widgets::Portrait` 的 selector，
   `CharacterDef::portrait` 和 `MapNpcDef::portrait` 用的是同一套编号。
+- 新增音效 = 在 `audio/sfx.json` 的 `effects` 里加一条 + 在 `pal_audio.hpp` 的 `SfxId`
+  加枚举 + 在 `pal_audio.cpp` 的 `kProfiles[]` 加一行（两者顺序必须一致，有 `static_assert` 兜）。
+  触发点只放在场景的咽喉函数里（`TryStep`、`Confirm`、`Activate` 以及
+  `BattleSceneUpdate` 的消息差分 `BattleAudioCue`），不要再往每个按钮上单独撒调用。
 
 ## 7. 已知坑（都真踩过）
 
@@ -125,6 +135,11 @@ $m='C:\Users\gil\AppData\Local\MicroPixel\bin\micropixel.exe'
 - **方向键的位置取决于面板形状**：`MeasureRing()` 量出环带够深（≥ 34 px）时才把四个键放到环带并
   把 footer 压到 h 的 15%（正方形几乎全给画面）；长方形宿主机（`safe_area` == surface，没有环带）
   自动退回 footer 里的十字键 + 54% footer。动 footer 比例或 dpad 时两条路径都要过一遍。
+- **字体缺字会冻屏，最终崩溃**（2026-09 实测）：宿主的 zh-CN 系统字体是子集，缺「逍」
+  （U+900D），很可能也缺「娲」「诏」。标签里出现缺字会拿到空位图 → Host 拒帧 → 连续被拒
+  64 次后 guest trap，设备弹「应用运行失败」。症状是**画面冻住但逻辑仍在跑**（输入有效、
+  截图永远一样），所以别把"截图没变化"当成死机。构建期**没有**字形校验，只能在设备上暴露 ——
+  i18n 里加任何新字前先假定它可能不存在，目前沿用 李小遥 / 女蜗 / 南昭。
 - 临时调试块（`scenes/title_scene.cpp` 里的 `DEBUG-JUMP` / `DEBUG-XP`）方便跑通后半段剧情，
   但**提交前必须删掉**（没有它们时标题的"新的旅程"从第 0 步开始）。
 - 提交信息用英文；`build/`、`screenshots/`、`devlog.txt`、`.env`、`micropixel.lock.json`

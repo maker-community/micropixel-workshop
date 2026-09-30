@@ -53,9 +53,11 @@ void Activate(GameContext& context, uint8_t index) {
         StoreProgress(context);
         context.notice_text = ids::Id::kUiSaved;
         context.notice_ms = 1500U;
+        context.audio.PlaySfx(SfxId::kSave);
         context.dirty = true;
         return;
     }
+    context.audio.PlaySfx(SfxId::kConfirm);
     PushScene(context, context.previous_scene);
 }
 
@@ -140,6 +142,7 @@ void UseBagItem(GameContext& context, uint8_t slot) {
     }
     (void)BagConsume(progress, item_id, 1U);
     context.notice_text = ids::Id::kUiUsed;
+    context.audio.PlaySfx(SfxId::kItem);
 }
 
 }  // namespace
@@ -187,6 +190,7 @@ bool MenuSceneKey(GameContext& context, micropixel::KeyCode code) {
         case micropixel::KeyCode::kUp:
         case micropixel::KeyCode::kDown:
             context.cursor = context.cursor == 0U ? 1U : 0U;
+            context.audio.PlaySfx(SfxId::kCursor);
             context.dirty = true;
             return true;
         case micropixel::KeyCode::kConfirm:

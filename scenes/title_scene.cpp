@@ -77,11 +77,13 @@ void ContinueGame(GameContext& context) {
 }
 
 void Activate(GameContext& context, uint8_t index) {
-    if (index == kTitleNew) {
-        StartNewGame(context);
-        return;
+    const bool start_new = index == kTitleNew;
+    if (!start_new && !context.has_save) {
+        return;  // 继续前缘 stays dead until there is something to continue
     }
-    if (!context.has_save) {
+    context.audio.PlaySfx(SfxId::kConfirm);
+    if (start_new) {
+        StartNewGame(context);
         return;
     }
     ContinueGame(context);
@@ -119,11 +121,13 @@ bool TitleSceneKey(GameContext& context, micropixel::KeyCode code) {
         case micropixel::KeyCode::kUp:
         case micropixel::KeyCode::kLeft:
             context.cursor = context.cursor == 0U ? 1U : 0U;
+            context.audio.PlaySfx(SfxId::kCursor);
             context.dirty = true;
             return true;
         case micropixel::KeyCode::kDown:
         case micropixel::KeyCode::kRight:
             context.cursor = context.cursor == 0U ? 1U : 0U;
+            context.audio.PlaySfx(SfxId::kCursor);
             context.dirty = true;
             return true;
         case micropixel::KeyCode::kConfirm:

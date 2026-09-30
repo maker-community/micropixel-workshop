@@ -122,6 +122,7 @@ void FinishOrContinue(GameContext& context) {
 }
 
 void Confirm(GameContext& context) {
+    context.audio.PlaySfx(SfxId::kCursor);
     if (DialogueConfirm(context.dialogue, context.strings)) {
         FinishOrContinue(context);
     }
@@ -160,6 +161,7 @@ bool DialogueSceneTouch(GameContext& context, const micropixel::TouchEvent& touc
     for (uint8_t index = 0U; index < node.choice_count; ++index) {
         if (ChoiceRect(context, index).contains(touch.position())) {
             context.dialogue.selected = index;
+            context.audio.PlaySfx(SfxId::kConfirm);
             DialoguePick(context.dialogue, context.strings, context.progress.flags);
             FinishOrContinue(context);
             context.dirty = true;
@@ -175,15 +177,18 @@ bool DialogueSceneKey(GameContext& context, micropixel::KeyCode code) {
             case micropixel::KeyCode::kUp:
             case micropixel::KeyCode::kLeft:
                 DialogueMove(context.dialogue, -1);
+                context.audio.PlaySfx(SfxId::kCursor);
                 context.dirty = true;
                 return true;
             case micropixel::KeyCode::kDown:
             case micropixel::KeyCode::kRight:
                 DialogueMove(context.dialogue, 1);
+                context.audio.PlaySfx(SfxId::kCursor);
                 context.dirty = true;
                 return true;
             case micropixel::KeyCode::kConfirm:
             case micropixel::KeyCode::kSouth:
+                context.audio.PlaySfx(SfxId::kConfirm);
                 DialoguePick(context.dialogue, context.strings, context.progress.flags);
                 FinishOrContinue(context);
                 context.dirty = true;

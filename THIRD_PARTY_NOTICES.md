@@ -19,6 +19,28 @@ The systems and code organization follow these open-source projects as
   仙剑奇侠传 (grid exploration, turn-based battle flow, 五灵 spell model).
 - MicroPixel's own `guest/apps` examples (`sdk-demo`, `tomb-explorer`).
 
+### SDLPAL license boundary (GPL-3.0)
+
+SDLPAL is licensed under the GNU General Public License v3.0. It is used here
+the way a design document is used: the damage curves, the dexterity-based action
+order, elemental resistance and level-gated spell learning were read,
+understood, and then re-implemented independently in this project's own C++23
+sources. Ideas and formulas are not copyrightable; their expression is.
+
+Rules that anyone extending this app has to respect:
+
+- **Nothing may be copied or translated out of SDLPAL** — not a function, not a
+  comment, not a file under its `docs/`. Copying any part of it would relicense
+  this entire app (sources and Bundle) under GPL-3.0, which is not the license
+  this project is distributed under (see the SPDX headers: Apache-2.0).
+- SDLPAL contains no data from the original commercial game either; it requires
+  the user to supply those files separately, so nothing here was obtained
+  through it.
+- [gramlib/sdlpal-wasm](https://github.com/gramlib/sdlpal-wasm) was reviewed and
+  **not** used. The repository carries no license file, and its payload is a wasm
+  build derived from GPL-3.0 SDLPAL. The official SDLPAL tree already ships its
+  own `emscripten/` web target, so that wrapper adds no engine code anyway.
+
 ## MicroPixel SDK
 
 This app is compiled against the MicroPixel SDK, which is distributed

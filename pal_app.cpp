@@ -26,6 +26,31 @@ void LogTrace(GameContext& context, const char* label, int32_t first, int32_t se
 // Scene routing and the chapter script
 // ---------------------------------------------------------------------------
 
+// One music rule for the whole game, applied on every route in and out of a
+// scene. The epilogue reuses the title theme; 锁妖塔 and 毒瘴谷 get the tense
+// track instead of the field one.
+void SyncSceneAudio(GameContext& context) {
+    switch (context.scene_id) {
+        case kSceneTitle:
+            context.audio.SetBgm(BgmId::kTitle);
+            break;
+        case kSceneEnding:
+            context.audio.SetBgm(BgmId::kTitle);
+            context.audio.PlaySfx(SfxId::kChapter);
+            break;
+        case kSceneBattle:
+            context.audio.SetBgm(BgmId::kBattle);
+            break;
+        case kSceneExplore:
+            context.audio.SetBgm(context.world.map == kMapTower || context.world.map == kMapValley
+                                     ? BgmId::kTense
+                                     : BgmId::kField);
+            break;
+        default:
+            break;  // dialogue and the menu keep whatever they inherited
+    }
+}
+
 void PushScene(GameContext& context, uint8_t scene_id) {
     context.scene_id = scene_id < kSceneCount ? scene_id : kSceneTitle;
     LogTrace(context, "scene", context.scene_id, 0);
@@ -49,6 +74,7 @@ void PushScene(GameContext& context, uint8_t scene_id) {
             EndingSceneEnter(context);
             break;
     }
+    SyncSceneAudio(context);
     context.dirty = true;
 }
 
@@ -140,10 +166,12 @@ class PalApp final {
           root_(scene_.CreateContainer({.z_order = 0}).value()),
           view_(renderer_, app_.log(), scene_, root_),
           context_(app_, ids::ForLocale(app_.localization().CurrentLocale()), app_.input().info(),
-                   BuildLayout(info_), scene_, root_, view_, micropixel::XorShift32{app_.random().U32()}) {}
+                   BuildLayout(info_), scene_, root_, view_, micropixel::XorShift32{app_.random().U32()},
+                   app_.audio(), app_.audio().info().has_value()) {}
 
     int Run() {
         TitleSceneEnter(context_);
+        SyncSceneAudio(context_);
         RenderCurrent();
 
         micropixel::Timer ticker = app_.timers().Every(micropixel::Duration::Milliseconds(kTickMs)).value();
@@ -175,6 +203,8 @@ class PalApp final {
             context_.layout = BuildLayout(renderer_.info());
             context_.dirty = true;
         }
+        // Steps the background melody and the queued note delays of any effect.
+        context_.audio.Advance(micropixel::Duration::Milliseconds(delta_ms));
         elapsed_ms_ += delta_ms;
         context_.progress.play_seconds = elapsed_ms_ / 1000U;
 
