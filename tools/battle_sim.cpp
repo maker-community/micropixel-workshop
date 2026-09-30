@@ -476,20 +476,23 @@ void CheckSaveRoundTrip() {
         loaded.party_size != progress.party_size || loaded.flags != progress.flags) {
         Problem("save round trip", size, 0);
     }
-    // A v1 blob resuming past the inserted chapters must be shifted.
-    Progress migrated{};
-    Progress old = progress;
-    old.script_index = 33U;
-    const uint32_t old_size = ProgressSerialize(old, blob, sizeof(blob));
-    blob[0] = 1U;
-    if (old_size == 0U || !ProgressDeserialize(migrated, blob, old_size) || migrated.script_index != 53U) {
-        Problem("save v1 migration", migrated.script_index, 0);
-    }
-    old.script_index = 27U;
-    const uint32_t mid_size = ProgressSerialize(old, blob, sizeof(blob));
-    blob[0] = 1U;
-    if (mid_size == 0U || !ProgressDeserialize(migrated, blob, mid_size) || migrated.script_index != 28U) {
-        Problem("save v1 migration (Shu gift)", migrated.script_index, 0);
+    // Older blobs must resume at the same story beat after the inserted chapters.
+    const struct {
+        uint8_t version;
+        uint8_t saved;
+        uint8_t expected;
+    } cases[] = {{1U, 26U, 26U}, {1U, 27U, 28U}, {1U, 28U, 34U}, {1U, 33U, 63U}, {2U, 28U, 28U},
+                 {2U, 29U, 34U}, {2U, 44U, 49U}, {2U, 45U, 55U}, {3U, 50U, 50U}};
+    for (const auto& item : cases) {
+        Progress old = progress;
+        old.script_index = item.saved;
+        const uint32_t old_size = ProgressSerialize(old, blob, sizeof(blob));
+        blob[0] = item.version;
+        Progress migrated{};
+        if (old_size == 0U || !ProgressDeserialize(migrated, blob, old_size) ||
+            migrated.script_index != item.expected) {
+            Problem("save migration", item.version * 1000 + item.saved, migrated.script_index);
+        }
     }
     printf("save checks done (%u bytes)\n", size);
 }

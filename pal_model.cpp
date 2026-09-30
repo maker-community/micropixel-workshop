@@ -373,18 +373,26 @@ uint32_t ProgressSerialize(const Progress& progress, uint8_t* out, uint32_t capa
 bool ProgressDeserialize(Progress& progress, const uint8_t* data, uint32_t size) {
     BlobReader reader{data, size};
     const uint32_t version = reader.U32();
-    if (version != kSaveVersion && version != 1U) {
+    if (version != kSaveVersion && version != 1U && version != 2U) {
         return false;
     }
     Progress loaded{};
     loaded.flags = reader.U32();
     loaded.script_index = static_cast<uint8_t>(reader.U32());
-    // v1 saves predate the steps inserted before the 南诏 finale.
+    // Older saves predate the steps inserted before the 南诏 finale; apply each
+    // version's shift in order.
     if (version == 1U) {
         if (loaded.script_index >= kSaveV1ActFourAt) {
             loaded.script_index = static_cast<uint8_t>(loaded.script_index + 20U);
         } else if (loaded.script_index >= kSaveV1ShuGrantAt) {
             loaded.script_index = static_cast<uint8_t>(loaded.script_index + 1U);
+        }
+    }
+    if (version <= 2U) {
+        if (loaded.script_index >= kSaveV2ValleyAt) {
+            loaded.script_index = static_cast<uint8_t>(loaded.script_index + 10U);
+        } else if (loaded.script_index >= kSaveV2SwordTombAt) {
+            loaded.script_index = static_cast<uint8_t>(loaded.script_index + 5U);
         }
     }
     loaded.gold = reader.U32();

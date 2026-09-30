@@ -57,6 +57,8 @@
   "char.queen": "巫后",
   "char.fisher": "老渔夫",
   "char.stele": "石碑",
+  "char.disciple": "蜀山弟子",
+  "char.herbalist": "采药人",
 
   "enemy.wolf": "蛇妖",
   "enemy.bandit": "山贼",
@@ -74,6 +76,8 @@
   "enemy.shaman": "蛊师",
   "enemy.treespirit": "树妖",
   "enemy.waterbeast": "水魔兽",
+  "enemy.swordspirit": "剑灵",
+  "enemy.spiderqueen": "蛛后",
 
   "item.pill_hp": "金创药",
   "item.pill_mp": "灵葫仙丹",
@@ -119,8 +123,8 @@
   "map.baihe": "白河村",
   "map.miao": "苗疆",
   "map.grove": "神木林",
-  "map.temple": "女蜗神殿",
-
+  "map.temple": "女蜗神殿",  "map.swordtomb": "蜀山剑冢",
+  "map.valley": "毒瘴谷",
   "battle.begin": "妖气逼近，拔剑!",
   "battle.enemy_phase": "敌方行动",
   "battle.flee_fail": "遁走失败",
@@ -277,5 +281,27 @@
   "story.templeafter.l2": "阿奴：拜月的老妖怪，这回让我的蛊虫们尝尝鲜!",
 
   "story.stele.l0": "石碑刻着古篆：水火相济，方可镇妖。",
-  "story.stele.l1": "碑角有一行小字：后来者，替我们守住人间。"
+  "story.stele.l1": "碑角有一行小字：后来者，替我们守住人间。",
+
+  "story.swordtomb.l0": "剑冢深处，千柄断剑插在石缝里，风过时嗡嗡作响。",
+  "story.swordtomb.l1": "酒剑仙：小李子，这里埋着蜀山历代的剑意，能拿多少，看你自己。",
+  "story.swordtomb.l2": "李逍遥：师父，别灌我酒了，我这就拔剑！",
+
+  "story.swordafter.l0": "剑灵散去，断剑齐鸣，一道剑气没入李逍遥掌心。",
+  "story.swordafter.l1": "酒剑仙：好，这一式叫万剑归宗——记住手感，别记招式。",
+  "story.swordafter.l2": "酒剑仙塞来两株千年灵芝：受伤就嚼，别学我喝酒。",
+
+  "story.swordnpc.l0": "蜀山弟子：剑冢的剑，认主不认人。",
+  "story.swordnpc.l1": "他压低声音：师尊每次来，都要先倒一壶酒。",
+
+  "story.valley.l0": "毒瘴谷的雾是紫色的，落在草叶上，草叶就卷了边。",
+  "story.valley.l1": "阿奴：屏住气，跟紧我。这里的虫子，认得我的蛊。",
+  "story.valley.l2": "赵灵儿：谷底有东西在动……很大。",
+
+  "story.valleyafter.l0": "蛛后翻倒在网里，谷中的紫雾慢慢淡了。",
+  "story.valleyafter.l1": "阿奴：这是阿爹说过的守谷蛛后……原来它一直在护着神木林。",
+  "story.valleyafter.l2": "阿奴采下三株解毒草分给你：路还长，别中毒。",
+
+  "story.herbalist.l0": "采药人：紫雾一起，连鸟都不敢飞。",
+  "story.herbalist.l1": "他晃晃药篓：解毒草，只长在蛛网底下。"
 }

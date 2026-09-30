@@ -104,6 +104,8 @@ enum : uint8_t {
     kFoeShaman,
     kFoeTreeSpirit,
     kFoeWaterBeast,
+    kFoeSwordSpirit,
+    kFoeSpiderQueen,
     kFoeCount,
 };
 
@@ -125,12 +127,15 @@ constexpr EnemyDef kEnemies[] = {
     {ids::Id::kEnemySerpent, 0U, 420U, 20U, 36U, 18U, 20U, 2U, {kSkMiasma, kSkFrost}, 96U, 60U, kIdxHerb},
     {ids::Id::kEnemyGolem, 3U, 800U, 24U, 42U, 30U, 5U, 2U, {kSkSlash, kSkGuard}, 130U, 80U, kIdxLingzhi},
     {ids::Id::kEnemyPriest, 3U, 520U, 120U, 38U, 20U, 16U, 2U, {kSkRite, kSkDrain}, 160U, 100U, kIdxPillMp},
-    {ids::Id::kEnemyOverlord, 3U, 3400U, 400U, 100U, 38U, 24U, 2U, {kSkFlame, kSkRite}, 800U, 600U, kIdxJade},
+    {ids::Id::kEnemyOverlord, 3U, 3600U, 400U, 118U, 44U, 24U, 2U, {kSkFlame, kSkRite}, 800U, 600U, kIdxJade},
     // Act 4-5: 白河/苗疆's venom, the grove's living wood and the temple's guardian.
     {ids::Id::kEnemySpider, 4U, 640U, 0U, 46U, 24U, 18U, 1U, {kSkMiasma, 0U}, 130U, 70U, kIdxHerb},
     {ids::Id::kEnemyShaman, 3U, 700U, 60U, 48U, 24U, 15U, 2U, {kSkGuDu, kSkFrost}, 170U, 100U, kIdxLingzhi},
     {ids::Id::kEnemyTreespirit, 6U, 1000U, 60U, 56U, 32U, 8U, 2U, {kSkCalm, kSkSlash}, 210U, 120U, kIdxLingzhi},
-    {ids::Id::kEnemyWaterbeast, 5U, 3000U, 320U, 96U, 38U, 19U, 2U, {kSkTide, kSkSlash}, 1000U, 700U, kIdxJade},
+    {ids::Id::kEnemyWaterbeast, 5U, 3400U, 320U, 108U, 42U, 19U, 2U, {kSkTide, kSkSlash}, 1000U, 700U, kIdxJade},
+    // Side chapters: 蜀山剑冢's blades and 毒瘴谷's queen.
+    {ids::Id::kEnemySwordspirit, 7U, 600U, 40U, 44U, 26U, 21U, 2U, {kSkThrust, kSkSlash}, 140U, 90U, kIdxLingzhi},
+    {ids::Id::kEnemySpiderqueen, 4U, 2600U, 120U, 80U, 34U, 20U, 2U, {kSkMiasma, kSkGuDu}, 320U, 200U, kIdxJade},
 };
 
 constexpr BattleDef kBattles[] = {
@@ -149,6 +154,8 @@ constexpr BattleDef kBattles[] = {
     {3U, {kFoeShaman, kFoeSpider, kFoeShaman}, false},
     {3U, {kFoeTreeSpirit, kFoeTreant, kFoeTreeSpirit}, false},
     {3U, {kFoeWaterBeast, kFoeSerpent, kFoeSerpent}, true},
+    {3U, {kFoeSwordSpirit, kFoeSwordSpirit, kFoeGolem}, false},
+    {3U, {kFoeSpiderQueen, kFoeSpider, kFoeSpider}, true},
 };
 
 // --- dialogue graph ---------------------------------------------------------
@@ -451,6 +458,54 @@ constexpr DialogueNodeDef kDialogue[] = {
      0U,
      {},
      -1},
+    // 36 kDlgSwordTomb — 酒剑仙 leads the party into 蜀山剑冢
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStorySwordtombL0, 0xFFU, 0U},
+      {ids::Id::kCharMaster, ids::Id::kStorySwordtombL1, 3U, 3U},
+      {ids::Id::kCharXiao, ids::Id::kStorySwordtombL2, 0U, 1U}},
+     0U,
+     {},
+     -1},
+    // 37 kDlgSwordAfter — 万剑归宗, and two 千年灵芝
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStorySwordafterL0, 0xFFU, 0U},
+      {ids::Id::kCharMaster, ids::Id::kStorySwordafterL1, 3U, 3U},
+      {ids::Id::kCharMaster, ids::Id::kStorySwordafterL2, 3U, 0U}},
+     0U,
+     {},
+     -1},
+    // 38 kDlgSwordNpc — a disciple's aside
+    {2U,
+     {{ids::Id::kCharDisciple, ids::Id::kStorySwordnpcL0, 4U, 0U},
+      {ids::Id::kCharDisciple, ids::Id::kStorySwordnpcL1, 4U, 3U},
+      {}},
+     0U,
+     {},
+     -1},
+    // 39 kDlgValley — into the purple mist
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryValleyL0, 0xFFU, 0U},
+      {ids::Id::kCharAnu, ids::Id::kStoryValleyL1, 6U, 0U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryValleyL2, 1U, 2U}},
+     0U,
+     {},
+     -1},
+    // 40 kDlgValleyAfter — 蛛后 was guarding the grove; three antidotes
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryValleyafterL0, 0xFFU, 0U},
+      {ids::Id::kCharAnu, ids::Id::kStoryValleyafterL1, 6U, 2U},
+      {ids::Id::kCharAnu, ids::Id::kStoryValleyafterL2, 6U, 3U}},
+     0U,
+     {},
+     -1},
+    // 41 kDlgHerbalist — 毒瘴谷 rumour
+    {2U,
+     {{ids::Id::kCharHerbalist, ids::Id::kStoryHerbalistL0, 4U, 0U},
+      {ids::Id::kCharHerbalist, ids::Id::kStoryHerbalistL1, 4U, 3U},
+      {}},
+     0U,
+     {},
+     -1},
 };
 
 // --- maps -------------------------------------------------------------------
@@ -656,6 +711,38 @@ constexpr const char* kTempleRows[] = {
     "################",
 };
 
+// 蜀山剑冢 — a stone hall of buried blades around a spirit pool.
+constexpr const char* kSwordTombRows[] = {
+    "################",
+    "#______________#",
+    "#_##__~~~~__##_#",
+    "#_##__~~~~__##_#",
+    "#______________#",
+    "#__###____###__#",
+    "#______________#",
+    "#__###____###__#",
+    "#______________#",
+    "#______________#",
+    "#______**______#",
+    "################",
+};
+
+// 毒瘴谷 — a mist-choked ravine; the path is the only clean ground.
+constexpr const char* kValleyRows[] = {
+    "TTTTTTTTTTTTTTTT",
+    "T~~..TT....~~..T",
+    "T~~..TT....~~..T",
+    "T..............T",
+    "T..TTT.....TT..T",
+    "T..TTT.::......T",
+    "T......::...~~.T",
+    "T.TT...::......T",
+    "T.TT...::..TT..T",
+    "T......::......T",
+    "T......**......T",
+    "TTTTTTTTTTTTTTTT",
+};
+
 constexpr MapDef kMaps[] = {
     {ids::Id::kMapVillage,
      16U,
@@ -764,11 +851,27 @@ constexpr MapDef kMaps[] = {
      {{ids::Id::kCharStele, 3U, 7U, 2U, kDlgStele}, {}, {}, {}},
      1U,
      {{7U, 10U, 2U, 1U}, {}}},
+    {ids::Id::kMapSwordtomb,
+     16U,
+     12U,
+     kSwordTombRows,
+     1U,
+     {{ids::Id::kCharDisciple, 4U, 3U, 4U, kDlgSwordNpc}, {}, {}, {}},
+     1U,
+     {{7U, 10U, 2U, 1U}, {}}},
+    {ids::Id::kMapValley,
+     16U,
+     12U,
+     kValleyRows,
+     1U,
+     {{ids::Id::kCharHerbalist, 4U, 11U, 3U, kDlgHerbalist}, {}, {}, {}},
+     1U,
+     {{7U, 10U, 2U, 1U}, {}}},
 };
 
 // Starting tile per map (the tile the party stands on when a chapter opens).
-constexpr uint8_t kMapStartX[] = {7U, 7U, 7U, 5U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U};
-constexpr uint8_t kMapStartY[] = {4U, 1U, 1U, 1U, 4U, 1U, 4U, 4U, 4U, 4U, 4U, 4U, 4U};
+constexpr uint8_t kMapStartX[] = {7U, 7U, 7U, 5U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U};
+constexpr uint8_t kMapStartY[] = {4U, 1U, 1U, 1U, 4U, 1U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U, 4U};
 
 // --- table shape guards -----------------------------------------------------
 // The tables are deliberately declared without a bound so these asserts can
@@ -873,6 +976,12 @@ constexpr ScriptStepDef kScript[] = {
     {StepKind::kDialogue, kDlgShu},
     {StepKind::kGrant, kIdxShuTalisman, 2U},
     {StepKind::kBattle, kBattleTrial},
+    // The buried blades under 蜀山.
+    {StepKind::kExplore, kMapSwordTomb},
+    {StepKind::kDialogue, kDlgSwordTomb},
+    {StepKind::kBattle, kBattleSwordTomb},
+    {StepKind::kDialogue, kDlgSwordAfter},
+    {StepKind::kGrant, kIdxLingzhi, 2U},
     {StepKind::kExplore, kMapTower},
     {StepKind::kDialogue, kDlgTower},
     {StepKind::kBattle, kBattleTower},
@@ -890,6 +999,12 @@ constexpr ScriptStepDef kScript[] = {
     {StepKind::kBattle, kBattleMiao},
     {StepKind::kDialogue, kDlgAnuAfter},
     {StepKind::kGrant, kIdxOxhorn, 2U},
+    // The mist ravine between 苗疆 and the grove.
+    {StepKind::kExplore, kMapValley},
+    {StepKind::kDialogue, kDlgValley},
+    {StepKind::kBattle, kBattleValley},
+    {StepKind::kDialogue, kDlgValleyAfter},
+    {StepKind::kGrant, kIdxHerb, 3U},
     // Act 5: the grove, the temple, and the showdown.
     {StepKind::kExplore, kMapGrove},
     {StepKind::kDialogue, kDlgGrove},

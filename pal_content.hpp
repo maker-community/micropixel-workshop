@@ -42,7 +42,9 @@ enum : uint8_t {
     kMapMiao = 10U,    // 苗疆
     kMapGrove = 11U,   // 神木林
     kMapTemple = 12U,  // 女娲神殿
-    kMapCount = 13U,
+    kMapSwordTomb = 13U,  // 蜀山剑冢
+    kMapValley = 14U,     // 毒瘴谷
+    kMapCount = 15U,
 };
 
 enum DialogueId : uint8_t {
@@ -83,6 +85,13 @@ enum DialogueId : uint8_t {
     kDlgTemple,
     kDlgTempleAfter,
     kDlgStele,
+    // Act 3 and 5 side chapters: 蜀山剑冢 and 毒瘴谷.
+    kDlgSwordTomb,
+    kDlgSwordAfter,
+    kDlgSwordNpc,
+    kDlgValley,
+    kDlgValleyAfter,
+    kDlgHerbalist,
     kDialogueCount,
 };
 
@@ -102,6 +111,8 @@ enum BattleId : uint8_t {
     kBattleMiao,       // 蛊师 in 苗疆
     kBattleGrove,      // 树妖 in 神木林
     kBattleGuardian,   // 水魔兽 under 女娲神殿
+    kBattleSwordTomb,  // 剑灵 in 蜀山剑冢
+    kBattleValley,     // 蛛后 in 毒瘴谷
     kBattleCount,
 };
 

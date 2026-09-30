@@ -348,6 +348,22 @@ void EnemySprite(GameView& view, micropixel::Rect area, uint8_t sprite, bool ali
             view.Round(Cell(area, 430, 660, 140, 60), bark_edge, bark_edge, 24U, 0U, alpha);
             break;
         }
+        case 7U: {  // 剑灵 — a haunted blade hanging in the air
+            const micropixel::Color steel = micropixel::Color::Rgb(170U, 190U, 214U);
+            const micropixel::Color edge = micropixel::Color::Rgb(90U, 110U, 150U);
+            view.Round(Cell(area, 400, 40, 200, 640), steel, edge, 90U, 2U, alpha);
+            view.Round(Cell(area, 230, 640, 540, 90), micropixel::Color::Rgb(196U, 170U, 96U),
+                       micropixel::Color::Rgb(120U, 96U, 50U), 40U, 2U, alpha);
+            view.Round(Cell(area, 440, 720, 120, 250), micropixel::Color::Rgb(84U, 62U, 44U),
+                       micropixel::Color::Rgb(50U, 36U, 26U), 40U, 1U, alpha);
+            view.Fill(Cell(area, 430, 200, 50, 60), theme::kBlood, alpha);
+            view.Fill(Cell(area, 520, 200, 50, 60), theme::kBlood, alpha);
+            view.Round(Cell(area, 30, 300, 260, 50), micropixel::Color::Rgb(120U, 150U, 210U),
+                       micropixel::Color::Rgb(120U, 150U, 210U), 24U, 0U, static_cast<uint8_t>(alpha / 2U));
+            view.Round(Cell(area, 710, 420, 260, 50), micropixel::Color::Rgb(120U, 150U, 210U),
+                       micropixel::Color::Rgb(120U, 150U, 210U), 24U, 0U, static_cast<uint8_t>(alpha / 2U));
+            break;
+        }
         default: {  // 拜月教主
             view.Round(Cell(area, 180, 520, 640, 440), micropixel::Color::Rgb(40U, 24U, 58U),
                        micropixel::Color::Rgb(120U, 62U, 150U), 120U, 2U, alpha);
