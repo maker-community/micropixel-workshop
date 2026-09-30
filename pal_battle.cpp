@@ -60,6 +60,7 @@ uint8_t CycleTarget(const BattleState& battle, uint8_t from, int32_t delta, bool
 }
 
 uint8_t RandomLivingAlly(const BattleState& battle, micropixel::XorShift32& rng) {
+    // Heroes only: this is what a foe picks when it wants someone to hit.
     uint8_t candidates[kMaxCombatants]{};
     uint8_t count = 0U;
     for (uint8_t index = 0U; index < battle.unit_count; ++index) {
@@ -71,6 +72,25 @@ uint8_t RandomLivingAlly(const BattleState& battle, micropixel::XorShift32& rng)
         return kEmptySlot;
     }
     return candidates[rng.Below(count)];
+}
+
+// The most wounded living unit on one side, or kEmptySlot when nobody is hurt
+// below `percent` of their maximum.
+uint8_t MostHurtOnSide(const BattleState& battle, bool enemy_side, uint32_t percent) {
+    uint8_t best = kEmptySlot;
+    uint32_t best_ratio = percent;
+    for (uint8_t index = 0U; index < battle.unit_count; ++index) {
+        const Combatant& unit = battle.units[index];
+        if (unit.enemy != enemy_side || !unit.alive || unit.max_hp == 0U) {
+            continue;
+        }
+        const uint32_t ratio = static_cast<uint32_t>(unit.hp) * 100U / unit.max_hp;
+        if (ratio < best_ratio) {
+            best_ratio = ratio;
+            best = index;
+        }
+    }
+    return best;
 }
 
 // --- damage -----------------------------------------------------------------
@@ -187,6 +207,16 @@ void PerformBasicAttack(BattleState& battle, micropixel::XorShift32& rng, uint8_
 
 uint8_t CollectTargets(const BattleState& battle, TargetSide side, uint8_t primary, uint8_t* out) {
     uint8_t count = 0U;
+    // "Enemy" and "ally" in a skill are relative to whoever casts it: a foe's
+    // area spell must land on the party, not on the foe's own side.
+    const bool caster_is_foe = battle.units[battle.actor].enemy;
+    const auto collect_side = [&](bool want_foes) {
+        for (uint8_t index = 0U; index < battle.unit_count; ++index) {
+            if (battle.units[index].enemy == want_foes && battle.units[index].alive) {
+                out[count++] = index;
+            }
+        }
+    };
     switch (side) {
         case TargetSide::kOneEnemy:
         case TargetSide::kOneAlly:
@@ -195,18 +225,10 @@ uint8_t CollectTargets(const BattleState& battle, TargetSide side, uint8_t prima
             }
             break;
         case TargetSide::kAllEnemies:
-            for (uint8_t index = 0U; index < battle.unit_count; ++index) {
-                if (battle.units[index].enemy && battle.units[index].alive) {
-                    out[count++] = index;
-                }
-            }
+            collect_side(!caster_is_foe);
             break;
         case TargetSide::kAllAllies:
-            for (uint8_t index = 0U; index < battle.unit_count; ++index) {
-                if (!battle.units[index].enemy && battle.units[index].alive) {
-                    out[count++] = index;
-                }
-            }
+            collect_side(caster_is_foe);
             break;
         case TargetSide::kSelf:
             out[count++] = battle.actor;
@@ -260,6 +282,16 @@ void PerformSkill(BattleState& battle, micropixel::XorShift32& rng, uint8_t skil
                 battle.units[victim].def_mod = -40;
                 battle.units[victim].def_mod_rounds = 3U;
                 break;
+            case SkillKind::kPoison: {
+                const int32_t base = static_cast<int32_t>(caster.atk) * skill.power / 100 +
+                                     static_cast<int32_t>(caster.level) * 2 -
+                                     EffectiveDefense(battle.units[victim]) / 3;
+                (void)DealDamage(battle, victim, Vary(rng, base < 1 ? 1 : base, 8U));
+                if (battle.units[victim].alive) {
+                    battle.units[victim].poisoned = true;
+                }
+                break;
+            }
             case SkillKind::kGuard:
                 battle.units[victim].defending = true;
                 break;
@@ -382,17 +414,36 @@ void BeginEnemyAction(BattleState& battle, micropixel::XorShift32& rng) {
     }
 
     uint8_t chosen = kEmptySlot;
+    uint8_t target = victim;
     if (definition.skill_count > 0U && rng.Below(100U) < 65U) {
         const uint8_t candidate = definition.skills[rng.Below(definition.skill_count)];
         const SkillDef& skill = Skill(candidate);
-        const bool worthwhile = skill.target != TargetSide::kAllEnemies || BattleLivingParty(battle) > 1U;
-        if (skill.mp_cost <= self.mp && worthwhile) {
-            chosen = candidate;
+        if (skill.mp_cost <= self.mp) {
+            switch (skill.kind) {
+                case SkillKind::kHeal: {
+                    // Only mend a foe that is actually hurt.
+                    const uint8_t hurt = MostHurtOnSide(battle, true, 60U);
+                    if (hurt != kEmptySlot) {
+                        chosen = candidate;
+                        target = skill.target == TargetSide::kOneAlly ? hurt : kEmptySlot;
+                    }
+                    break;
+                }
+                case SkillKind::kGuard:
+                    if (!self.defending) {
+                        chosen = candidate;
+                        target = kEmptySlot;
+                    }
+                    break;
+                default:
+                    chosen = candidate;
+                    break;
+            }
         }
     }
 
     if (chosen != kEmptySlot) {
-        PerformSkill(battle, rng, chosen, victim);
+        PerformSkill(battle, rng, chosen, target);
     } else {
         PerformBasicAttack(battle, rng, victim);
     }
@@ -417,7 +468,7 @@ void EndRound(BattleState& battle, micropixel::XorShift32& rng) {
     for (uint8_t index = 0U; index < battle.unit_count; ++index) {
         Combatant& unit = battle.units[index];
         if (unit.alive && unit.poisoned) {
-            const int32_t tick = micropixel::math::Max<int32_t>(3, static_cast<int32_t>(unit.max_hp) * 8 / 100);
+            const int32_t tick = micropixel::math::Clamp<int32_t>(static_cast<int32_t>(unit.max_hp) * 8 / 100, 3, 40);
             (void)DealDamage(battle, index, tick);
             battle.message = ids::Id::kBattlePoisonTick;
             battle.message_unit = index;
@@ -452,16 +503,22 @@ bool CheckOutcome(BattleState& battle, Progress& progress) {
             const EnemyDef& definition = Enemy(unit.species);
             xp += definition.xp_reward;
             gold += definition.gold_reward;
-            if (definition.drop_item != kItemNone) {
-                (void)BagAdd(progress, definition.drop_item, 1U);
+            if (definition.drop_item != kItemNone && BagAdd(progress, definition.drop_item, 1U)) {
                 battle.drop_item = definition.drop_item;
             }
         }
         battle.total_xp = xp;
         battle.total_gold = gold;
         progress.gold += gold;
-        battle.level_ups = static_cast<uint8_t>(PartyGrantXp(progress, static_cast<uint16_t>(xp)));
+        // Write the fight's HP back first: a level-up heals to full afterwards,
+        // which the other order would have overwritten with stale battle values.
         SyncPartyFromBattle(battle, progress);
+        for (uint8_t index = 0U; index < progress.party_size && index < kMaxParty; ++index) {
+            if (progress.party[index].character != kEmptySlot && progress.party[index].hp == 0U) {
+                progress.party[index].hp = 1U;  // no one is left down after the fight is won
+            }
+        }
+        battle.level_ups = static_cast<uint8_t>(PartyGrantXp(progress, static_cast<uint16_t>(xp)));
         battle.outcome = BattleOutcome::kWin;
         battle.phase = BattlePhase::kVictory;
         battle.message = ids::Id::kUiVictory;
@@ -578,7 +635,7 @@ void BattleBegin(BattleState& battle, const Progress& progress, uint8_t battle_i
     battle = BattleState{};
     battle.active = true;
     battle.battle_id = battle_id;
-    battle.allow_flee = battle_id != kBattleBoss;
+    battle.allow_flee = !Battle(battle_id).boss;
 
     uint8_t count = 0U;
     for (uint8_t index = 0U; index < progress.party_size && index < kMaxParty; ++index) {

@@ -24,7 +24,8 @@ enum : uint8_t {
     kCharXiao = 0U,    // 李逍遥 — the innkeeper's nephew
     kCharLingxi = 1U,  // 赵灵儿 — the water-spirit maiden
     kCharYunyang = 2U, // 林月如 — the swordswoman of 林家堡
-    kCharacterCount = 3U,
+    kCharAnu = 3U,     // 阿奴 — the 苗疆 girl who replaces 林月如 after 锁妖塔
+    kCharacterCount = 4U,
 };
 
 enum : uint8_t {
@@ -37,7 +38,11 @@ enum : uint8_t {
     kMapShu = 6U,      // 蜀山
     kMapTower = 7U,    // 锁妖塔
     kMapAltar = 8U,    // 南诏祭坛
-    kMapCount = 9U,
+    kMapBaihe = 9U,    // 白河村
+    kMapMiao = 10U,    // 苗疆
+    kMapGrove = 11U,   // 神木林
+    kMapTemple = 12U,  // 女娲神殿
+    kMapCount = 13U,
 };
 
 enum DialogueId : uint8_t {
@@ -65,6 +70,19 @@ enum DialogueId : uint8_t {
     kDlgEndGood,
     kDlgEndMid,
     kDlgEndBad,
+    // Act 4-5: the fall of 锁妖塔 and the road to 女娲神殿.
+    kDlgTowerFall,
+    kDlgBaihe,
+    kDlgFisher,
+    kDlgBaiheWife,
+    kDlgAnu,
+    kDlgAnuChat,
+    kDlgAnuAfter,
+    kDlgGrove,
+    kDlgQueenNpc,
+    kDlgTemple,
+    kDlgTempleAfter,
+    kDlgStele,
     kDialogueCount,
 };
 
@@ -80,6 +98,10 @@ enum BattleId : uint8_t {
     kBattleTower,      // 锁妖塔 guard
     kBattlePriests,    // 拜月祭司
     kBattleOverlord,   // 拜月教主·真身 at 南诏祭坛
+    kBattleBaihe,      // 毒蛛 outside 白河村
+    kBattleMiao,       // 蛊师 in 苗疆
+    kBattleGrove,      // 树妖 in 神木林
+    kBattleGuardian,   // 水魔兽 under 女娲神殿
     kBattleCount,
 };
 
@@ -91,6 +113,12 @@ inline constexpr uint32_t kFlagBold = 1U << 3U;          // flanked the bandits
 inline constexpr uint32_t kFlagCalm = 1U << 4U;          // waited and watched
 inline constexpr uint32_t kFlagYunyang = 1U << 5U;       // 林月如 in the party
 inline constexpr uint32_t kFlagCourtesy = 1U << 6U;      // invited her politely
+inline constexpr uint32_t kFlagYunyangGone = 1U << 7U;   // 林月如 fell in 锁妖塔
+inline constexpr uint32_t kFlagAnu = 1U << 8U;           // 阿奴 in the party
+inline constexpr uint32_t kFlagTrust = 1U << 9U;         // won 阿奴's trust
+
+// Bit index of kFlagYunyangGone, for StepKind::kFlag.
+inline constexpr uint8_t kBitYunyangGone = 7U;
 
 inline constexpr uint8_t kItemNone = 0xFFU;
 
@@ -105,6 +133,7 @@ enum class SkillKind : uint8_t {
     kGuard,     // raises defence of the target side
     kBind,      // lowers defence of one enemy
     kDrain,     // damage plus caster self-heal
+    kPoison,    // elemental damage that also poisons the target
 };
 
 enum class TargetSide : uint8_t {
@@ -225,6 +254,7 @@ inline constexpr uint8_t kMaxBattleEnemies = 3U;
 struct BattleDef final {
     uint8_t enemy_count;
     uint8_t enemies[kMaxBattleEnemies];
+    bool boss;  // no escape from a story boss
 };
 
 uint8_t BattleCount();
@@ -327,11 +357,14 @@ enum class StepKind : uint8_t {
     kExplore,   // walk map `arg` until its trigger fires
     kBattle,    // win battle `arg`
     kEnding,    // roll the credits based on the collected flags
+    kGrant,     // put `count` of item `arg` in the bag, then move on
+    kFlag,      // set story flag bit `arg`, then move on
 };
 
 struct ScriptStepDef final {
     StepKind kind;
     uint8_t arg;
+    uint8_t count{1U};
 };
 
 uint8_t ScriptCount();

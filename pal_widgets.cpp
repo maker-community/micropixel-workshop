@@ -115,7 +115,9 @@ void DrawRobe(GameView& view, const micropixel::Rect& area, micropixel::Color ba
 
 }  // namespace
 
-uint8_t PortraitForCharacter(uint8_t character) { return character < kCharacterCount ? character : kEmptySlot; }
+uint8_t PortraitForCharacter(uint8_t character) {
+    return character < kCharacterCount ? Character(character).portrait : kEmptySlot;
+}
 
 void Panel(GameView& view, micropixel::Rect rect, micropixel::Color fill, micropixel::Color edge, uint32_t radius) {
     view.Round(rect, fill, edge, radius, 1U);
@@ -205,6 +207,33 @@ void Portrait(GameView& view, micropixel::Rect area, uint8_t portrait, uint8_t e
             view.Round(Cell(area, 240U, 250U, 520U, 70U), theme::kBlood.Darkened(70U), theme::kBlood, 24U, 1U);
             break;
         }
+        case 6U: {  // 阿奴 — 苗疆 girl in red with silver hair ornaments
+            const FaceStyle style{micropixel::Color::Rgb(238U, 200U, 164U), micropixel::Color::Rgb(200U, 160U, 126U),
+                                  micropixel::Color::Rgb(52U, 34U, 40U), micropixel::Color::Rgb(120U, 84U, 92U),
+                                  micropixel::Color::Rgb(88U, 52U, 40U), 0U, false, true};
+            DrawRobe(view, area, micropixel::Color::Rgb(176U, 52U, 68U), micropixel::Color::Rgb(226U, 200U, 150U),
+                     true);
+            DrawHead(view, area, style, emotion);
+            // silver headdress
+            view.Round(Cell(area, 250, 90, 500, 70), micropixel::Color::Rgb(206U, 210U, 224U),
+                       micropixel::Color::White(), 30U, 1U);
+            view.Round(Cell(area, 150, 180, 70, 120), micropixel::Color::Rgb(206U, 210U, 224U),
+                       micropixel::Color::White(), 30U, 1U);
+            view.Round(Cell(area, 780, 180, 70, 120), micropixel::Color::Rgb(206U, 210U, 224U),
+                       micropixel::Color::White(), 30U, 1U);
+            break;
+        }
+        case 7U: {  // 巫后 — 灵儿's mother, veiled in teal
+            const FaceStyle style{micropixel::Color::Rgb(244U, 224U, 214U), micropixel::Color::Rgb(210U, 184U, 174U),
+                                  micropixel::Color::Rgb(70U, 62U, 96U), micropixel::Color::Rgb(150U, 140U, 190U),
+                                  micropixel::Color::Rgb(96U, 170U, 176U), 0U, false, false};
+            DrawRobe(view, area, micropixel::Color::Rgb(58U, 106U, 122U), micropixel::Color::Rgb(226U, 200U, 150U),
+                     true);
+            DrawHead(view, area, style, emotion);
+            view.Round(Cell(area, 300, 70, 400, 90), micropixel::Color::Rgb(226U, 200U, 150U),
+                       micropixel::Color::Rgb(255U, 240U, 200U), 40U, 1U);
+            break;
+        }
         default: {  // 拜月教主 — moon cult leader
             const FaceStyle style{micropixel::Color::Rgb(206U, 196U, 214U), micropixel::Color::Rgb(150U, 138U, 168U),
                                   micropixel::Color::Rgb(38U, 28U, 56U), micropixel::Color::Rgb(96U, 62U, 132U),
@@ -273,6 +302,52 @@ void EnemySprite(GameView& view, micropixel::Rect area, uint8_t sprite, bool ali
                        micropixel::Color::Rgb(24U, 40U, 44U), 28U, 0U, alpha);
             break;
         }
+        case 4U: {  // 毒蛛 — a fat body on eight legs
+            const micropixel::Color body = micropixel::Color::Rgb(128U, 96U, 156U);
+            const micropixel::Color edge = micropixel::Color::Rgb(78U, 56U, 100U);
+            for (int32_t leg = 0; leg < 4; ++leg) {
+                const int32_t y = 300 + leg * 110;
+                view.Round(Cell(area, 30, y, 260, 40), edge, edge, 16U, 0U, alpha);
+                view.Round(Cell(area, 710, y, 260, 40), edge, edge, 16U, 0U, alpha);
+            }
+            view.Round(Cell(area, 260, 330, 480, 560), body, edge, 200U, 2U, alpha);
+            view.Round(Cell(area, 320, 130, 360, 320), micropixel::Color::Rgb(160U, 122U, 190U), edge, 150U, 2U, alpha);
+            view.Fill(Cell(area, 380, 240, 80, 70), theme::kBlood, alpha);
+            view.Fill(Cell(area, 540, 240, 80, 70), theme::kBlood, alpha);
+            view.Round(Cell(area, 400, 560, 200, 150), micropixel::Color::Rgb(176U, 90U, 120U), edge, 60U, 1U, alpha);
+            break;
+        }
+        case 5U: {  // 水魔兽 — a tall wave with a maw
+            view.Round(Cell(area, 80, 250, 840, 700), micropixel::Color::Rgb(46U, 98U, 160U),
+                       micropixel::Color::Rgb(26U, 60U, 110U), 260U, 2U, alpha);
+            view.Round(Cell(area, 220, 60, 560, 520), micropixel::Color::Rgb(70U, 132U, 196U),
+                       micropixel::Color::Rgb(26U, 60U, 110U), 220U, 2U, alpha);
+            view.Round(Cell(area, 150, 40, 130, 220), micropixel::Color::Rgb(120U, 176U, 226U),
+                       micropixel::Color::Rgb(26U, 60U, 110U), 60U, 2U, alpha);
+            view.Round(Cell(area, 720, 40, 130, 220), micropixel::Color::Rgb(120U, 176U, 226U),
+                       micropixel::Color::Rgb(26U, 60U, 110U), 60U, 2U, alpha);
+            view.Fill(Cell(area, 340, 250, 100, 80), micropixel::Color::Rgb(255U, 226U, 120U), alpha);
+            view.Fill(Cell(area, 560, 250, 100, 80), micropixel::Color::Rgb(255U, 226U, 120U), alpha);
+            view.Round(Cell(area, 320, 420, 360, 140), micropixel::Color::Rgb(16U, 30U, 56U),
+                       micropixel::Color::Rgb(16U, 30U, 56U), 60U, 0U, alpha);
+            for (int32_t tooth = 0; tooth < 4; ++tooth) {
+                view.Fill(Cell(area, 350 + tooth * 85, 420, 40, 55), micropixel::Color::White(), alpha);
+            }
+            break;
+        }
+        case 6U: {  // 树妖 — a walking stump with a face in the bark
+            const micropixel::Color bark = micropixel::Color::Rgb(84U, 62U, 44U);
+            const micropixel::Color bark_edge = micropixel::Color::Rgb(50U, 36U, 26U);
+            view.Round(Cell(area, 300, 380, 400, 580), bark, bark_edge, 100U, 2U, alpha);
+            view.Round(Cell(area, 60, 40, 880, 460), micropixel::Color::Rgb(52U, 108U, 66U),
+                       micropixel::Color::Rgb(30U, 70U, 44U), 260U, 2U, alpha);
+            view.Round(Cell(area, 120, 400, 190, 60), bark, bark_edge, 24U, 1U, alpha);
+            view.Round(Cell(area, 690, 400, 190, 60), bark, bark_edge, 24U, 1U, alpha);
+            view.Fill(Cell(area, 380, 500, 90, 70), micropixel::Color::Rgb(240U, 210U, 90U), alpha);
+            view.Fill(Cell(area, 530, 500, 90, 70), micropixel::Color::Rgb(240U, 210U, 90U), alpha);
+            view.Round(Cell(area, 430, 660, 140, 60), bark_edge, bark_edge, 24U, 0U, alpha);
+            break;
+        }
         default: {  // 拜月教主
             view.Round(Cell(area, 180, 520, 640, 440), micropixel::Color::Rgb(40U, 24U, 58U),
                        micropixel::Color::Rgb(120U, 62U, 150U), 120U, 2U, alpha);
@@ -299,6 +374,10 @@ void HeroToken(GameView& view, micropixel::Rect area, uint8_t character, uint8_t
     } else if (character == kCharYunyang) {
         robe = micropixel::Color::Rgb(122U, 126U, 150U);
         hair = micropixel::Color::Rgb(232U, 232U, 236U);
+    } else if (character == kCharAnu) {
+        robe = micropixel::Color::Rgb(176U, 52U, 68U);
+        hair = micropixel::Color::Rgb(52U, 34U, 40U);
+        skin = micropixel::Color::Rgb(238U, 200U, 164U);
     }
 
     const int32_t w = area.width;

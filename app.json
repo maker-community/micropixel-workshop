@@ -36,6 +36,7 @@
   "launch_asset": "launch",
   "requirements": {
     "schema_version": 1,
+    "system_font": "zh-CN",
     "display": {
       "layouts": [
         "square",

@@ -57,6 +57,8 @@ uint8_t MemberDefense(const PartyMember& member);
 uint8_t MemberSpeed(const PartyMember& member);
 uint16_t MemberXpThreshold(uint8_t level);  // total xp required to hold `level`
 ids::Id MemberNameId(const PartyMember& member);
+// Localized name of a playable character id.
+ids::Id CharacterNameId(uint8_t character);
 // Localized name for a portrait selector (0..2 heroes, 3..5 story NPCs).
 ids::Id PortraitNameId(uint8_t portrait);
 
@@ -65,8 +67,11 @@ ids::Id PortraitNameId(uint8_t portrait);
 void ProgressReset(Progress& progress);
 int8_t PartyFind(const Progress& progress, uint8_t character);
 bool PartyAdd(Progress& progress, uint8_t character);
-// Ensures every character whose flag is set is actually in the party. Called
-// after dialogue so choices can recruit companions declaratively.
+// Drops a member and packs the remaining slots; false when they were not in the party.
+bool PartyRemove(Progress& progress, uint8_t character);
+// Ensures every character whose flag is set is actually in the party (and every
+// fallen one is gone). Called after dialogue so choices can recruit companions
+// declaratively.
 void PartySyncFromFlags(Progress& progress);
 uint32_t PartyGrantXp(Progress& progress, uint16_t xp);  // returns levels gained
 void PartyRestore(Progress& progress);                   // full heal and revive

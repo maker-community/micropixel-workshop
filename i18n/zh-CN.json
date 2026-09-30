@@ -13,6 +13,8 @@
   "ui.resume": "继续",
   "ui.save": "存档",
   "ui.saved": "已记录天机",
+  "ui.used": "已使用",
+  "ui.no_effect": "此刻用不上",
   "ui.status": "状态",
   "ui.inventory": "行囊",
   "ui.hp": "气血",
@@ -41,7 +43,7 @@
   "ui.ending_hint": "轻触返回标题",
   "ui.treasure": "拾得",
 
-  "char.xiao": "李逍遥",
+  "char.xiao": "李小遥",
   "char.lingxi": "赵灵儿",
   "char.yunyang": "林月如",
   "char.master": "酒剑仙",
@@ -51,6 +53,10 @@
   "char.kid": "小顽童",
   "char.hostess": "婶婶",
   "char.shu": "蜀山掌门",
+  "char.anu": "阿奴",
+  "char.queen": "巫后",
+  "char.fisher": "老渔夫",
+  "char.stele": "石碑",
 
   "enemy.wolf": "蛇妖",
   "enemy.bandit": "山贼",
@@ -64,6 +70,10 @@
   "enemy.golem": "石魔",
   "enemy.priest": "拜月祭司",
   "enemy.overlord": "拜月教主·真身",
+  "enemy.spider": "毒蛛",
+  "enemy.shaman": "蛊师",
+  "enemy.treespirit": "树妖",
+  "enemy.waterbeast": "水魔兽",
 
   "item.pill_hp": "金创药",
   "item.pill_mp": "灵葫仙丹",
@@ -91,6 +101,11 @@
   "skill.sword_rain": "万剑归宗",
   "skill.water_dragon": "水龙吟",
   "skill.red_lotus": "红莲剑",
+  "skill.gudu": "蛊毒",
+  "skill.serpent": "灵蛇咒",
+  "skill.spring": "回春咒",
+  "skill.swarm": "万蛊噬天",
+  "skill.tide": "水龙潮",
 
   "map.village": "余杭镇",
   "map.forest": "十里坡",
@@ -100,9 +115,13 @@
   "map.fort": "林家堡",
   "map.shu": "蜀山",
   "map.tower": "锁妖塔",
-  "map.altar": "南诏祭坛",
+  "map.altar": "南昭祭坛",
+  "map.baihe": "白河村",
+  "map.miao": "苗疆",
+  "map.grove": "神木林",
+  "map.temple": "女蜗神殿",
 
-  "battle.begin": "妖气逼近，拔剑！",
+  "battle.begin": "妖气逼近，拔剑!",
   "battle.enemy_phase": "敌方行动",
   "battle.flee_fail": "遁走失败",
   "battle.poison_tick": "毒发",
@@ -116,20 +135,20 @@
 
   "story.intro.l0": "余杭镇的晨雾还没散，客栈的灯笼摇了一夜。",
   "story.intro.l1": "酒剑仙按住你的肩：小李子，剑在人在。",
-  "story.intro.l2": "婶婶的咳嗽声从里屋传来——唯有仙灵岛的灵药能救她。",
+  "story.intro.l2": "婶婶的咳嗽声从里屋传来，唯有仙灵岛的灵药能救她。",
 
-  "story.elder.l0": "吴伯拄着竹杖：逍遥啊，往南过了十里坡就是往仙灵岛的水路。",
+  "story.elder.l0": "吴伯拄着竹杖：小遥啊，往南过了十里坡就是往仙灵岛的水路。",
   "story.elder.l1": "老人压低声音：岛上的人，轻易不肯见外人。",
 
-  "story.kid.l0": "小顽童拍手：听说岛上有会飞的仙女！",
+  "story.kid.l0": "小顽童拍手：听说岛上有会飞的仙女!",
   "story.kid.l1": "他一弯腰跑开了，鞋底拍得青石板啪啪作响。",
 
-  "story.hostess.l0": "婶婶倚在门边：逍遥，早去早回，婶婶等你。",
+  "story.hostess.l0": "婶婶倚在门边：小遥，早去早回，婶婶等你。",
   "story.hostess.l1": "她把一个布包塞进你手里，转身掩上了门。",
 
   "story.depart.l0": "酒剑仙把一柄木剑丢给你：先学会挨打，再谈行侠。",
   "story.depart.l1": "他指了指南边：仙灵岛走水路，十里坡口有船家。",
-  "story.depart.l2": "李逍遥：婶婶，等我带药回来。",
+  "story.depart.l2": "李小遥：婶婶，等我带药回来。",
 
   "story.road.l0": "十里坡口，两条路分岔：一条近却阴森，一条远些却有人烟。",
   "story.road.l1": "赵灵儿：走哪边，你拿主意。",
@@ -151,14 +170,14 @@
 
   "story.final.l0": "阵破了，教徒四散，苏州城的灯火重新亮起。",
   "story.final.l1": "赵灵儿：教主还在，这一程还没走完。",
-  "story.final.l2": "李逍遥收起木剑：那就接着走。",
+  "story.final.l2": "李小遥收起木剑：那就接着走。",
 
   "story.shu.l0": "蜀山的石阶被云漫过，剑派的钟声在头顶敲了七下。",
   "story.shu.l1": "蜀山掌门：锁妖塔的封印松了，拜月教要的不是塔，是塔底那件东西。",
-  "story.shu.l2": "李逍遥：那我们上山，还是进塔？",
+  "story.shu.l2": "掌门递来两道蜀山灵符：塔底的东西，用得着。",
 
   "story.shunpc.l0": "蜀山掌门：塔里的东西，不是剑能斩干净的。",
-  "story.shunpc.l1": "他递来一道灵符：留着，塔底用得着。",
+  "story.shunpc.l1": "他望向塔的方向：塔里的东西，比传说更老。",
 
   "story.tower.l0": "锁妖塔的砖缝里渗着黑气，每一层都有人在低声念咒。",
   "story.tower.l1": "赵灵儿按住胸口：这里的味道，我认得。",
@@ -166,11 +185,11 @@
 
   "story.towertop.l0": "塔顶的锁链断了三根，剩下的在风里颠。",
   "story.towertop.l1": "赵灵儿：我娘当年，也是从这里下去的。",
-  "story.towertop.l2": "李逍遥：这次上去的，是我们三个。",
+  "story.towertop.l2": "李小遥：这次上去的，是我们三个。",
 
-  "story.altar.l0": "南诏的祭坛浸在水里，月亮倒悬在阵心。",
-  "story.altar.l1": "拜月教主：你们终于来了——可惜塔底那件东西，已经醒了。",
-  "story.altar.l2": "李逍遥拔剑：那就让它醒着看。",
+  "story.altar.l0": "南昭的祭坛浸在水里，月亮倒悬在阵心。",
+  "story.altar.l1": "拜月教主：你们终于来了，可惜塔底那件东西，已经醒了。",
+  "story.altar.l2": "李小遥拔剑：那就让它醒着看。",
 
   "story.wolves.l0": "蛇妖化作黑烟散去，十里坡安静下来。",
   "story.wolves.l1": "赵灵儿：你为我挡了一剑，我随你走一趟。",
@@ -179,7 +198,7 @@
   "story.wolves.c1": "只请她带路",
 
   "story.forest.l0": "十里坡的雾里，一队赶集的乡民被山贼围住。",
-  "story.forest.l1": "村民嘶声喊：哪位仙长救命！",
+  "story.forest.l1": "村民嘶声喊：哪位仙长救命!",
   "story.forest.l2": "赵灵儿握紧了手，等你开口。",
   "story.forest.c0": "先救乡民",
   "story.forest.c1": "绕后突袭山贼",
@@ -203,15 +222,60 @@
   "story.hall.l1": "拜月教主：区区凡人，也配谈天命？",
   "story.hall.l2": "赵灵儿挡在你身前，灵光映着她的发梢。",
 
-  "story.end.good.l0": "剑光落下，法阵崩解，水月宫重归清静。",
-  "story.end.good.l1": "赵灵儿把水灵珠放回你掌心，珠中映出归途。",
-  "story.end.good.l2": "此后余杭镇再无妖气，李逍遥之名写入仙门。",
+  "story.end.good.l0": "月华散去，南昭祭坛归于寡静，拜月教主化作飞灰。",
+  "story.end.good.l1": "赵灵儿把水灵珠放回你掌心：这一次，我们一起回家。",
+  "story.end.good.l2": "余杭镇的药炉重新燃起，李小遥之名写入仙门。",
 
-  "story.end.mid.l0": "你独自斩断法阵，却没能护住身后的人。",
-  "story.end.mid.l1": "林月如叹道：劫数已了，人间尚存。",
-  "story.end.mid.l2": "你把剑埋在水月宫前，转身下山。",
+  "story.end.mid.l0": "教主伏诛，祭坛的水面却久久映着一个空位。",
+  "story.end.mid.l1": "阿奴：月如姐姐的剑，我替她收好了。",
+  "story.end.mid.l2": "你把剑埋在祭坛前，转身下山。",
 
-  "story.end.bad.l0": "结界洞开，水光吞没了仙灵岛。",
+  "story.end.bad.l0": "结界洞开，水光吞没了南昭祭坛。",
   "story.end.bad.l1": "赵灵儿的身影在光里碎成萤火。",
-  "story.end.bad.l2": "剑折人亡，只余一剑立于荒岛。"
+  "story.end.bad.l2": "剑折人亡，只余一人立于荒野。",
+
+  "story.towerfall.l0": "塔顶的封印裂开，黑气如潮水倒灌而下。",
+  "story.towerfall.l1": "林月如：小遥，带灵儿走。这一剑，我来断后。",
+  "story.towerfall.l2": "李小遥嘶声喊她的名字，塔门在身后轰然合拢。",
+
+  "story.baihe.l0": "白河村的炊烟很淡，锁妖塔的黑气也压到了这里。",
+  "story.baihe.l1": "赵灵儿：月如姐姐的剑鸣，还在我心里响着。",
+  "story.baihe.l2": "老渔夫塞来三株解毒草：南边的虫毒，见血封喉。",
+
+  "story.fisher.l0": "老渔夫：白河的水一夜涨了三尺，怕是山里有东西醒了。",
+  "story.fisher.l1": "他望着南边：那边的人，不欠外人的情。",
+
+  "story.baihewife.l0": "村民：塔那边来的？孩子他爸去了，再没回来。",
+  "story.baihewife.l1": "她低头搓着衣角：你们，替我们把它压回去吧。",
+
+  "story.anu.l0": "苗疆的竹楼架在水上，一个红衣女孩蹲在桥头逗蛇。",
+  "story.anu.l1": "阿奴：喂，外乡人!你们身上有五毒的味道。",
+  "story.anu.l2": "阿奴：我叫阿奴。灵儿姐姐，我认得你!",
+  "story.anu.c0": "笑着谢她带路",
+  "story.anu.c1": "先问清她的来意",
+
+  "story.anuchat.l0": "阿奴：别乱走，桥下的蛇比你脾气大。",
+  "story.anuchat.l1": "她吐吐舌头：往北就是神木林啦。",
+
+  "story.anuafter.l0": "阿奴：哼，蛊师的把戏，还不够我塞牙缝!",
+  "story.anuafter.l1": "阿奴递来一对蛮牛角：阿爹留的，打大家伙时用。",
+  "story.anuafter.l2": "赵灵儿：谢谢你，阿奴。神木林里，有我要见的人。",
+
+  "story.grove.l0": "神木林的树影里，一位素衣的妇人静静等着。",
+  "story.grove.l1": "巫后：灵儿，你终于回来了。你是女蜗后裔，这是你的劫。",
+  "story.grove.l2": "赵灵儿：娘，我愿担起它，只是，别让他们涉险。",
+
+  "story.queennpc.l0": "巫后：女蜗之力，只认心怀苍生的人。",
+  "story.queennpc.l1": "她看着你：小遥，替我看好灵儿。",
+
+  "story.temple.l0": "女蜗神殿的石阶浸着水光，殿心的水面映出一头巨影。",
+  "story.temple.l1": "赵灵儿：那是守殿的水魔兽，它只认力量。",
+  "story.temple.l2": "李小遥：那就让它认认，这一剑，是为月如挥的!",
+
+  "story.templeafter.l0": "水魔兽沉入池底，石碑旁浮起一瓶天仙玉露。",
+  "story.templeafter.l1": "赵灵儿：女蜗的灵力，在我身上醒了。我们去南昭。",
+  "story.templeafter.l2": "阿奴：拜月的老妖怪，这回让我的蛊虫们尝尝鲜!",
+
+  "story.stele.l0": "石碑刻着古篆：水火相济，方可镇妖。",
+  "story.stele.l1": "碑角有一行小字：后来者，替我们守住人间。"
 }

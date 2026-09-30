@@ -129,12 +129,20 @@ ids::Id PortraitNameId(uint8_t portrait) {
             return ids::Id::kCharMerchant;
         case 5U:
             return ids::Id::kCharDemon;
+        case 6U:
+            return ids::Id::kCharAnu;
+        case 7U:
+            return ids::Id::kCharQueen;
         default:
             return ids::Id::kUiEmpty;
     }
 }
 
-ids::Id MemberNameId(const PartyMember& member) { return PortraitNameId(member.character); }
+ids::Id CharacterNameId(uint8_t character) {
+    return character < kCharacterCount ? Character(character).name : ids::Id::kUiEmpty;
+}
+
+ids::Id MemberNameId(const PartyMember& member) { return CharacterNameId(member.character); }
 
 // --- party ------------------------------------------------------------------
 
@@ -169,23 +177,52 @@ bool PartyAdd(Progress& progress, uint8_t character) {
     if (progress.party_size >= kMaxParty) {
         return false;
     }
+    // A late recruit arrives at the party's average level, otherwise 阿奴 would
+    // walk into the final act at level 1 and be dead weight.
+    uint32_t level_sum = 0U;
+    uint32_t members = 0U;
+    for (uint8_t index = 0U; index < progress.party_size && index < kMaxParty; ++index) {
+        level_sum += progress.party[index].level;
+        ++members;
+    }
+    const uint8_t join_level = members == 0U ? 1U : static_cast<uint8_t>(level_sum / members);
     PartyMember& member = progress.party[progress.party_size];
     member = PartyMember{};
     member.character = character;
-    member.level = 1U;
+    member.level = join_level < 1U ? 1U : join_level;
     member.hp = MemberMaxHp(member);
     member.mp = MemberMaxMp(member);
-    member.xp = 0U;
+    member.xp = MemberXpThreshold(member.level);
     ++progress.party_size;
     return true;
 }
 
+bool PartyRemove(Progress& progress, uint8_t character) {
+    const int8_t found = PartyFind(progress, character);
+    if (found < 0) {
+        return false;
+    }
+    for (uint8_t index = static_cast<uint8_t>(found); index + 1U < progress.party_size && index + 1U < kMaxParty;
+         ++index) {
+        progress.party[index] = progress.party[index + 1U];
+    }
+    --progress.party_size;
+    progress.party[progress.party_size] = PartyMember{};
+    return true;
+}
+
 void PartySyncFromFlags(Progress& progress) {
+    if ((progress.flags & kFlagYunyangGone) != 0U) {
+        (void)PartyRemove(progress, kCharYunyang);
+    }
     if ((progress.flags & kFlagLingxi) != 0U) {
         (void)PartyAdd(progress, kCharLingxi);
     }
-    if ((progress.flags & kFlagYunyang) != 0U) {
+    if ((progress.flags & kFlagYunyang) != 0U && (progress.flags & kFlagYunyangGone) == 0U) {
         (void)PartyAdd(progress, kCharYunyang);
+    }
+    if ((progress.flags & kFlagAnu) != 0U) {
+        (void)PartyAdd(progress, kCharAnu);
     }
 }
 
@@ -335,12 +372,21 @@ uint32_t ProgressSerialize(const Progress& progress, uint8_t* out, uint32_t capa
 
 bool ProgressDeserialize(Progress& progress, const uint8_t* data, uint32_t size) {
     BlobReader reader{data, size};
-    if (reader.U32() != kSaveVersion) {
+    const uint32_t version = reader.U32();
+    if (version != kSaveVersion && version != 1U) {
         return false;
     }
     Progress loaded{};
     loaded.flags = reader.U32();
     loaded.script_index = static_cast<uint8_t>(reader.U32());
+    // v1 saves predate the steps inserted before the 南诏 finale.
+    if (version == 1U) {
+        if (loaded.script_index >= kSaveV1ActFourAt) {
+            loaded.script_index = static_cast<uint8_t>(loaded.script_index + 20U);
+        } else if (loaded.script_index >= kSaveV1ShuGrantAt) {
+            loaded.script_index = static_cast<uint8_t>(loaded.script_index + 1U);
+        }
+    }
     loaded.gold = reader.U32();
     loaded.play_seconds = reader.U32();
     loaded.party_size = static_cast<uint8_t>(reader.U32());

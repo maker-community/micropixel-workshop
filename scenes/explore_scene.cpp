@@ -57,6 +57,14 @@ void NpcToken(GameView& view, micropixel::Rect area, uint8_t portrait) {
         case 3U:
             robe = micropixel::Color::Rgb(92U, 72U, 60U);
             break;
+        case 6U:
+            robe = micropixel::Color::Rgb(176U, 52U, 68U);
+            hair = micropixel::Color::Rgb(52U, 34U, 40U);
+            break;
+        case 7U:
+            robe = micropixel::Color::Rgb(58U, 106U, 122U);
+            hair = micropixel::Color::Rgb(150U, 140U, 190U);
+            break;
         default:
             robe = micropixel::Color::Rgb(126U, 104U, 74U);
             hair = micropixel::Color::Rgb(52U, 42U, 36U);
@@ -153,7 +161,10 @@ void ExploreSceneEnter(GameContext& context) {
 }
 
 void ExploreSceneUpdate(GameContext& context, uint32_t delta_ms) {
+    static uint32_t last_pulse = 0xFFU;
+    const bool was_moving = context.world.moving;
     WorldUpdate(context.world, delta_ms);
+    const uint32_t pulse = context.progress.play_seconds % 2U;
 
     // Keep the save record pointing at where the party actually stands.
     if (context.progress.player_x != context.world.x || context.progress.player_y != context.world.y) {
@@ -174,7 +185,11 @@ void ExploreSceneUpdate(GameContext& context, uint32_t delta_ms) {
         AdvanceScript(context);
         return;
     }
-    context.dirty = true;
+    // Redraw while a step animates and when the exit marker's pulse flips.
+    if (was_moving || context.world.moving || pulse != last_pulse) {
+        last_pulse = pulse;
+        context.dirty = true;
+    }
 }
 
 // Drag-to-walk tuning: thumb travel for one tile, and the shorter flick that

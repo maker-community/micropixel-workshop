@@ -62,14 +62,18 @@ GameLayout BuildLayout(const micropixel::RendererInfo& info) {
     layout.choices = {layout.dialogue.x + 8, layout.dialogue.y + box_h - choice_h - 6, layout.dialogue.width - 16,
                       choice_h};
 
-    // --- battle: foes on top, the party below, commands in the footer --------
-    const int32_t stage_h = layout.body.height;
-    layout.enemy_area = {x, layout.body.y, w, stage_h * 46 / 100};
+    // --- battle: foes on top, the party below, a one-line message strip and a
+    //     compact command panel pinned to the bottom. The exploration footer is
+    //     far too tall for this: it left the foes and the party cards ~50px. ---
+    const int32_t msg_h = math::Clamp<int32_t>(h * 8 / 100, 22, 34);
+    const int32_t cmd_h = math::Clamp<int32_t>(h * 27 / 100, 72, 130);
+    const int32_t battle_top = layout.header.y + layout.header.height + 2;
+    const int32_t battle_stage_h = math::Max(y + h - cmd_h - msg_h - battle_top, 60);
+    layout.enemy_area = {x, battle_top, w, battle_stage_h * 48 / 100};
     layout.party_area = {x, layout.enemy_area.y + layout.enemy_area.height, w,
-                         math::Max(stage_h - layout.enemy_area.height, 30)};
-    const int32_t msg_h = math::Clamp<int32_t>(footer_h * 38 / 100, 32, 62);
-    layout.message = {x, layout.footer.y, w, msg_h};
-    layout.command = {x, layout.message.y + layout.message.height, w, footer_h - msg_h};
+                         math::Max(battle_stage_h - layout.enemy_area.height, 30)};
+    layout.message = {x, y + h - cmd_h - msg_h, w, msg_h};
+    layout.command = {x, layout.message.y + layout.message.height, w, cmd_h};
 
     constexpr int32_t kCols = 3;
     constexpr int32_t kRows = 2;

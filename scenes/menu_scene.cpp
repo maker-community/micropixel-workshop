@@ -43,11 +43,95 @@ micropixel::Rect ButtonRect(const GameContext& context, uint8_t index) {
 void Activate(GameContext& context, uint8_t index) {
     if (index == kMenuSave) {
         StoreProgress(context);
+        context.notice_text = ids::Id::kUiSaved;
         context.notice_ms = 1500U;
         context.dirty = true;
         return;
     }
     PushScene(context, context.previous_scene);
+}
+
+// Index of the party member who most needs `effect`, or -1 when nobody does.
+int32_t FieldTarget(const Progress& progress, ItemEffect effect) {
+    int32_t best = -1;
+    uint32_t best_ratio = 1000U;
+    for (uint8_t index = 0U; index < progress.party_size && index < kMaxParty; ++index) {
+        const PartyMember& member = progress.party[index];
+        if (member.character == kEmptySlot) {
+            continue;
+        }
+        switch (effect) {
+            case ItemEffect::kHealHp: {
+                const uint32_t max_hp = MemberMaxHp(member);
+                const uint32_t ratio = max_hp == 0U ? 1000U : member.hp * 1000U / max_hp;
+                if (member.hp > 0U && member.hp < max_hp && ratio < best_ratio) {
+                    best_ratio = ratio;
+                    best = index;
+                }
+                break;
+            }
+            case ItemEffect::kHealMp: {
+                const uint32_t max_mp = MemberMaxMp(member);
+                const uint32_t ratio = max_mp == 0U ? 1000U : member.mp * 1000U / max_mp;
+                if (member.hp > 0U && member.mp < max_mp && ratio < best_ratio) {
+                    best_ratio = ratio;
+                    best = index;
+                }
+                break;
+            }
+            case ItemEffect::kCurePoison:
+                if (member.poisoned && best < 0) {
+                    best = index;
+                }
+                break;
+            case ItemEffect::kRevive:
+                if (member.hp == 0U && best < 0) {
+                    best = index;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return best;
+}
+
+// Uses one bag item outside battle on whoever needs it most.
+void UseBagItem(GameContext& context, uint8_t slot) {
+    Progress& progress = context.progress;
+    context.notice_text = ids::Id::kUiNoEffect;
+    context.notice_ms = 1200U;
+    if (slot >= progress.bag_size) {
+        return;
+    }
+    const uint8_t item_id = progress.bag[slot].item;
+    const ItemDef& item = Item(item_id);
+    if (!item.field_usable) {
+        return;
+    }
+    const int32_t target = FieldTarget(progress, item.effect);
+    if (target < 0) {
+        return;
+    }
+    PartyMember& member = progress.party[target];
+    switch (item.effect) {
+        case ItemEffect::kHealHp:
+            member.hp = static_cast<uint16_t>(micropixel::math::Min<uint32_t>(MemberMaxHp(member), member.hp + item.magnitude));
+            break;
+        case ItemEffect::kHealMp:
+            member.mp = static_cast<uint16_t>(micropixel::math::Min<uint32_t>(MemberMaxMp(member), member.mp + item.magnitude));
+            break;
+        case ItemEffect::kCurePoison:
+            member.poisoned = false;
+            break;
+        case ItemEffect::kRevive:
+            member.hp = static_cast<uint16_t>(micropixel::math::Min<uint32_t>(MemberMaxHp(member), item.magnitude));
+            break;
+        default:
+            return;
+    }
+    (void)BagConsume(progress, item_id, 1U);
+    context.notice_text = ids::Id::kUiUsed;
 }
 
 }  // namespace
@@ -61,8 +145,8 @@ void MenuSceneEnter(GameContext& context) {
 void MenuSceneUpdate(GameContext& context, uint32_t delta_ms) {
     if (context.notice_ms > 0U) {
         context.notice_ms = context.notice_ms > delta_ms ? context.notice_ms - delta_ms : 0U;
+        context.dirty = true;  // the notice pill just moved or disappeared
     }
-    context.dirty = true;
 }
 
 bool MenuSceneTouch(GameContext& context, const micropixel::TouchEvent& touch) {
@@ -73,6 +157,15 @@ bool MenuSceneTouch(GameContext& context, const micropixel::TouchEvent& touch) {
         if (ButtonRect(context, index).contains(touch.position())) {
             context.cursor = index;
             Activate(context, index);
+            return true;
+        }
+    }
+    // Tapping a bag row uses that item on whoever needs it.
+    const uint8_t bag_rows = micropixel::math::Max<uint8_t>(context.progress.bag_size, 1U);
+    for (uint8_t index = 0U; index < context.progress.bag_size; ++index) {
+        if (BagRect(context, index, bag_rows).contains(touch.position())) {
+            UseBagItem(context, index);
+            context.dirty = true;
             return true;
         }
     }
@@ -192,7 +285,7 @@ void MenuSceneRender(GameContext& context) {
     if (context.notice_ms > 0U) {
         const micropixel::Rect notice{layout.footer.x, layout.footer.y - 22, layout.footer.width, 18};
         widgets::NameTag(view, {layout.footer.center_x() - 60, notice.y, 120, 17},
-                         context.strings.Get(ids::Id::kUiSaved), theme::kJade);
+                         context.strings.Get(context.notice_text), theme::kJade);
     }
 
     view.End();

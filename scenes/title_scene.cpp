@@ -96,8 +96,8 @@ void TitleSceneEnter(GameContext& context) {
 }
 
 void TitleSceneUpdate(GameContext& context, uint32_t delta_ms) {
+    (void)context;  // the backdrop is static; redraws come from input
     (void)delta_ms;
-    context.dirty = true;  // the backdrop is cheap and always animating
 }
 
 bool TitleSceneTouch(GameContext& context, const micropixel::TouchEvent& touch) {

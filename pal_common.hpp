@@ -124,10 +124,15 @@ class GameView final {
         // Both containers of the map layer are clipped: a rounded rect and a
         // label are separate nodes, so clipping only the rects would still let a
         // floating name tag escape over the HUD.
-        map_.rects.SetClip(map_clip);
-        map_.labels.SetClip(map_clip);
-        map_.Hide();
-        hud_.Hide();
+        if (map_clip != map_clip_) {
+            map_clip_ = map_clip;
+            map_.rects.SetClip(map_clip);
+            map_.labels.SetClip(map_clip);
+        }
+        // No blanket hide pass: every node used this frame is rewritten below and
+        // every unused one is hidden or destroyed in End(). Only properties that
+        // actually changed are sent to the Host, so a mostly static screen costs
+        // almost nothing to present.
     }
 
     // Routes subsequent Fill/Round/Text into the clipped map layer.
@@ -157,19 +162,24 @@ class GameView final {
         if (!presented.has_value()) {
             // A rejected frame leaves the previous one on screen. Report it with
             // the frame's node counts and keep running: trapping here would take
-            // the whole App down, and the next frame can still recover.
-            Line line;
-            (void)line.Append("pal: present rejected: ");
-            (void)line.Append(presented.error().name());
-            (void)line.Append(" rects=");
-            (void)line.AppendUint(rects);
-            (void)line.Append(" labels=");
-            (void)line.AppendUint(labels);
-            (void)line.Append(" nodes=");
-            (void)line.AppendUint(scene_.node_count());
-            (void)line.Append(" used=");
-            (void)line.AppendUint(rects + labels);
-            log_.Error(line.c_str());
+            // the whole App down, and the next frame can still recover. The UART
+            // is slow, so a stuck frame is logged once and then every 64th time.
+            if ((rejected_frames_++ & 63U) == 0U) {
+                Line line;
+                (void)line.Append("pal: present rejected: ");
+                (void)line.Append(presented.error().name());
+                (void)line.Append(" rects=");
+                (void)line.AppendUint(rects);
+                (void)line.Append(" labels=");
+                (void)line.AppendUint(labels);
+                (void)line.Append(" nodes=");
+                (void)line.AppendUint(scene_.node_count());
+                (void)line.Append(" x");
+                (void)line.AppendUint(rejected_frames_);
+                log_.Error(line.c_str());
+            }
+        } else {
+            rejected_frames_ = 0U;
         }
     }
 
@@ -194,6 +204,7 @@ class GameView final {
             return;
         }
         Layer& layer = Current();
+        const uint32_t hash = HashText(text);
         if (layer.label_count == layer.label_nodes.size()) {
             // Node creation is fallible: the Host reports kResourceExhausted once
             // its text/node budget is spent (kMaxTextBytes is 1024 and the Host
@@ -205,14 +216,34 @@ class GameView final {
                 return;
             }
             layer.label_nodes.push_back(created.value());
+            layer.label_state.push_back({position, hash, color, font, centered});
+            ++layer.label_count;
+            return;
         }
-        micropixel::LabelNode& node = layer.label_nodes[layer.label_count++];
-        node.SetPosition(position);
-        node.SetText(text);
-        node.SetColor(color);
-        node.SetFont(font);
-        node.SetCentered(centered);
-        node.SetVisible(true);
+        const uint32_t slot = layer.label_count++;
+        micropixel::LabelNode& node = layer.label_nodes[slot];
+        LabelState& state = layer.label_state[slot];
+        if (state.text_hash != hash) {
+            node.SetText(text);
+            state.text_hash = hash;
+        }
+        if (state.position != position) {
+            node.SetPosition(position);
+            state.position = position;
+        }
+        if (state.color != color) {
+            node.SetColor(color);
+            state.color = color;
+        }
+        if (state.font != font) {
+            node.SetFont(font);
+            state.font = font;
+        }
+        if (state.centered != centered) {
+            node.SetCentered(centered);
+            state.centered = centered;
+        }
+        // Labels are destroyed, never hidden, when unused, so a live one is visible.
     }
 
     void CenterText(int32_t center_x, int32_t y, const char* text, micropixel::Color color,
@@ -236,31 +267,56 @@ class GameView final {
 
    private:
     // One retained layer: a rect container, a label container above it, and the
-    // recycled node pools.
+    // recycled node pools. `*_state` mirrors what the Host already holds for each
+    // pooled node so unchanged properties are not sent again.
+    struct RectState final {
+        micropixel::Rect rect{};
+        micropixel::Color fill{micropixel::Color::Black()};
+        micropixel::Color stroke{micropixel::Color::Black()};
+        uint32_t radius{};
+        uint32_t stroke_width{};
+        uint8_t opacity{};
+        bool visible{};
+    };
+
+    struct LabelState final {
+        micropixel::Point position{};
+        uint32_t text_hash{};
+        micropixel::Color color{micropixel::Color::Black()};
+        micropixel::SystemFont font{};
+        bool centered{};
+    };
+
+    // Spare hidden rect nodes kept for the next scene instead of destroyed, so a
+    // scene change reuses them rather than paying for hundreds of creations.
+    static constexpr uint32_t kRectPool = 160U;
+
     struct Layer final {
         Layer(micropixel::ContainerNode root, int16_t rect_z, int16_t label_z) {
             rects = root.CreateContainer({.z_order = rect_z}).value();
             labels = root.CreateContainer({.z_order = label_z}).value();
         }
 
-        void Hide() {
-            for (micropixel::RoundedRectNode& node : rect_nodes) {
-                node.SetVisible(false);
-            }
-            for (micropixel::LabelNode& node : label_nodes) {
-                node.SetVisible(false);
-            }
-        }
-
         void Retire() {
             for (uint32_t index = rect_count; index < rect_nodes.size(); ++index) {
-                rect_nodes[index].Destroy();
+                if (rect_state[index].visible) {
+                    rect_nodes[index].SetVisible(false);
+                    rect_state[index].visible = false;
+                }
+            }
+            if (rect_nodes.size() > kRectPool) {
+                const uint32_t keep = rect_count > kRectPool ? rect_count : kRectPool;
+                for (uint32_t index = keep; index < rect_nodes.size(); ++index) {
+                    rect_nodes[index].Destroy();
+                }
+                rect_nodes.resize(keep);
+                rect_state.resize(keep);
             }
             for (uint32_t index = label_count; index < label_nodes.size(); ++index) {
                 label_nodes[index].Destroy();
             }
-            rect_nodes.resize(rect_count);
             label_nodes.resize(label_count);
+            label_state.resize(label_count);
             rect_count = 0U;
             label_count = 0U;
         }
@@ -268,10 +324,20 @@ class GameView final {
         micropixel::ContainerNode rects{};
         micropixel::ContainerNode labels{};
         std::vector<micropixel::RoundedRectNode> rect_nodes{};
+        std::vector<RectState> rect_state{};
         std::vector<micropixel::LabelNode> label_nodes{};
+        std::vector<LabelState> label_state{};
         uint32_t rect_count{};
         uint32_t label_count{};
     };
+
+    static uint32_t HashText(const char* text) {
+        uint32_t hash = 2166136261U;
+        for (const char* cursor = text; *cursor != '\0'; ++cursor) {
+            hash = (hash ^ static_cast<uint8_t>(*cursor)) * 16777619U;
+        }
+        return hash;
+    }
 
     Layer& Current() { return on_map_layer_ ? map_ : hud_; }
 
@@ -309,15 +375,39 @@ class GameView final {
                 return;
             }
             layer.rect_nodes.push_back(created.value());
+            layer.rect_state.push_back({rect, fill, stroke, radius, stroke_width, 255U, true});
         }
-        micropixel::RoundedRectNode& node = layer.rect_nodes[layer.rect_count++];
-        node.SetRect(rect);
-        node.SetFillColor(fill);
-        node.SetStrokeColor(stroke);
-        node.SetRadius(radius);
-        node.SetStrokeWidth(stroke_width);
-        node.SetOpacity(opacity);
-        node.SetVisible(true);
+        const uint32_t slot = layer.rect_count++;
+        micropixel::RoundedRectNode& node = layer.rect_nodes[slot];
+        RectState& state = layer.rect_state[slot];
+        if (state.rect != rect) {
+            node.SetRect(rect);
+            state.rect = rect;
+        }
+        if (state.fill != fill) {
+            node.SetFillColor(fill);
+            state.fill = fill;
+        }
+        if (state.stroke != stroke) {
+            node.SetStrokeColor(stroke);
+            state.stroke = stroke;
+        }
+        if (state.radius != radius) {
+            node.SetRadius(radius);
+            state.radius = radius;
+        }
+        if (state.stroke_width != stroke_width) {
+            node.SetStrokeWidth(stroke_width);
+            state.stroke_width = stroke_width;
+        }
+        if (state.opacity != opacity) {
+            node.SetOpacity(opacity);
+            state.opacity = opacity;
+        }
+        if (!state.visible) {
+            node.SetVisible(true);
+            state.visible = true;
+        }
     }
 
     micropixel::Renderer renderer_;
@@ -328,6 +418,8 @@ class GameView final {
     bool on_map_layer_{};
     bool updating_{};
     bool last_frame_rejected_{};
+    uint32_t rejected_frames_{};
+    micropixel::Rect map_clip_{};
     uint32_t dropped_{};  // draws skipped this frame because creation failed
 };
 
@@ -394,6 +486,7 @@ struct GameContext final {
     bool dragging{};
     uint8_t dialogue_return{kDialogueToScript};
     uint32_t notice_ms{};  // transient confirmation ("已记录天机") countdown
+    ids::Id notice_text{ids::Id::kUiSaved};  // what the notice pill says
     bool has_save{};
     bool dirty{true};       // re-render when set
     bool refresh_layout{};  // display metrics changed (resume / rotation)

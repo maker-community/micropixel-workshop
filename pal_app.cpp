@@ -100,6 +100,16 @@ void EnterScriptStep(GameContext& context) {
         case StepKind::kBattle:
             PushBattle(context, step.arg);
             break;
+        case StepKind::kGrant:
+            (void)BagAdd(context.progress, step.arg, step.count);
+            AdvanceScript(context);
+            break;
+        case StepKind::kFlag:
+            if (step.arg < 32U) {
+                context.progress.flags |= 1U << step.arg;
+            }
+            AdvanceScript(context);
+            break;
         default:
             PushDialogue(context, EndingDialogueFor(context.progress.flags), kDialogueToEnding);
             break;
@@ -217,8 +227,11 @@ class PalApp final {
         }
         // Rendering is left to the next tick. Presenting from inside the input
         // event raced the Host's own present of the previous frame, which made a
-        // freshly pushed scene (the status menu) come back rejected.
-        context_.dirty = true;
+        // freshly pushed scene (the status menu) come back rejected. Drag moves
+        // fire many times a second and the map marks itself dirty per step.
+        if (touch.phase() != micropixel::TouchPhase::kMove) {
+            context_.dirty = true;
+        }
     }
 
     // A scene whose frame the Host refuses would otherwise trap the player on a

@@ -33,7 +33,7 @@ ids::Id RootLabel(uint8_t row) {
 }
 
 ids::Id UnitNameId(const Combatant& unit) {
-    return unit.enemy ? Enemy(unit.species).name : PortraitNameId(unit.species);
+    return unit.enemy ? Enemy(unit.species).name : CharacterNameId(unit.species);
 }
 
 uint8_t CollectEnemies(const GameContext& context, uint8_t* out) {
@@ -58,27 +58,38 @@ uint8_t CollectParty(const GameContext& context, uint8_t* out) {
 
 micropixel::Rect EnemyRect(const GameContext& context, uint8_t slot, uint8_t slots) {
     const micropixel::Rect area = context.layout.enemy_area;
-    const int32_t width = micropixel::math::Max(area.width / (slots == 0U ? 1 : slots), 24);
-    const int32_t size = micropixel::math::Max(
-        micropixel::math::Min(width - 10, area.height - 22), 20);
-    return {area.x + static_cast<int32_t>(slot) * width + (width - size) / 2,
-            area.y + area.height - size - 14, size, size};
+    const int32_t count = slots == 0U ? 1 : slots;
+    const int32_t cell = area.width / count;
+    const int32_t width = micropixel::math::Max(micropixel::math::Min(cell - 8, 120), 40);
+    const int32_t height = micropixel::math::Max(area.height - 6, 40);
+    return {area.x + static_cast<int32_t>(slot) * cell + (cell - width) / 2, area.y + 3, width, height};
+}
+
+// Square the foe's art is drawn in, between the name caption and the HP bar.
+micropixel::Rect EnemyArt(const micropixel::Rect& plate) {
+    const int32_t side = micropixel::math::Max(micropixel::math::Min(plate.width - 12, plate.height - 29), 16);
+    return {plate.center_x() - side / 2, plate.y + 18, side, side};
 }
 
 micropixel::Rect PartyRect(const GameContext& context, uint8_t slot, uint8_t slots) {
     const micropixel::Rect area = context.layout.party_area;
-    const int32_t pad = 5;
+    const int32_t pad = 3;
     const int32_t count = slots == 0U ? 1 : slots;
-    const int32_t height = micropixel::math::Max((area.height - pad * (count + 1)) / count, 24);
+    const int32_t height = micropixel::math::Max((area.height - pad * (count + 1)) / count, 22);
     return {area.x + pad, area.y + pad + static_cast<int32_t>(slot) * (height + pad), area.width - pad * 2, height};
 }
 
+// Skill and item lists flow into two columns once they outgrow one.
 micropixel::Rect ListRowRect(const GameContext& context, uint8_t row, uint8_t rows) {
     const micropixel::Rect area = context.layout.command;
     const int32_t pad = 4;
-    const int32_t count = micropixel::math::Max<int32_t>(rows, 1);
-    const int32_t height = micropixel::math::Max((area.height - pad * 2) / count, 15);
-    return {area.x + pad, area.y + pad + static_cast<int32_t>(row) * height, area.width - pad * 2, height - 2};
+    const int32_t columns = rows > 2U ? 2 : 1;
+    const int32_t per_column = micropixel::math::Max((static_cast<int32_t>(rows) + columns - 1) / columns, 1);
+    const int32_t height = micropixel::math::Max((area.height - pad * 2) / per_column, 15);
+    const int32_t width = (area.width - pad * 2) / columns;
+    const int32_t column = static_cast<int32_t>(row) / per_column;
+    const int32_t line = static_cast<int32_t>(row) % per_column;
+    return {area.x + pad + column * width, area.y + pad + line * height, width - 2, height - 2};
 }
 
 void DrawPopups(GameContext& context, const uint8_t* enemy_units, uint8_t enemy_count,
@@ -160,8 +171,8 @@ void DrawCommandPanel(GameContext& context) {
                           micropixel::SystemFont::kSmall);
                 Line cost;
                 (void)cost.AppendUint(skill.mp_cost);
-                view.Text({rect.x + rect.width - 6, rect.y + 2}, cost.c_str(),
-                          enabled ? theme::kMp : theme::kDim, micropixel::SystemFont::kSmall, true);
+                view.Text({rect.x + rect.width - 8 - 14, rect.y + 2}, cost.c_str(),
+                          enabled ? theme::kMp : theme::kDim, micropixel::SystemFont::kSmall);
             }
             break;
         }
@@ -182,8 +193,8 @@ void DrawCommandPanel(GameContext& context) {
                 Line amount;
                 (void)amount.Append("x");
                 (void)amount.AppendUint(bag.count);
-                view.Text({rect.x + rect.width - 6, rect.y + 2}, amount.c_str(), theme::kMuted,
-                          micropixel::SystemFont::kSmall, true);
+                view.Text({rect.x + rect.width - 8 - 21, rect.y + 2}, amount.c_str(), theme::kMuted,
+                          micropixel::SystemFont::kSmall);
             }
             break;
         }
@@ -199,7 +210,26 @@ void BattleSceneEnter(GameContext& context) {
     context.dirty = true;
 }
 
+// Everything the battle screen draws that can change between two ticks.
+uint32_t BattleSignature(const BattleState& battle) {
+    uint32_t hash = static_cast<uint32_t>(battle.phase) | (static_cast<uint32_t>(battle.actor) << 8U) |
+                    (static_cast<uint32_t>(battle.cursor) << 16U) | (static_cast<uint32_t>(battle.target) << 24U);
+    hash = hash * 31U + battle.round;
+    hash = hash * 31U + static_cast<uint32_t>(battle.message);
+    hash = hash * 31U + battle.message_unit;
+    hash = hash * 31U + battle.menu_rows;
+    hash = hash * 31U + battle.unit_count;
+    for (uint8_t index = 0U; index < battle.unit_count; ++index) {
+        const Combatant& unit = battle.units[index];
+        hash = hash * 31U + unit.hp;
+        hash = hash * 31U + unit.mp;
+        hash = hash * 31U + (unit.alive ? 1U : 0U) + (unit.defending ? 2U : 0U) + (unit.poisoned ? 4U : 0U);
+    }
+    return hash;
+}
+
 void BattleSceneUpdate(GameContext& context, uint32_t delta_ms) {
+    const uint32_t before = BattleSignature(context.battle);
     BattleUpdate(context.battle, context.progress, delta_ms, context.rng);
 
     if (BattleFinished(context.battle)) {
@@ -224,7 +254,14 @@ void BattleSceneUpdate(GameContext& context, uint32_t delta_ms) {
         PushScene(context, kSceneTitle);
         return;
     }
-    context.dirty = true;
+    // Floating damage numbers rise every tick; otherwise redraw only on change.
+    bool animating = false;
+    for (uint8_t index = 0U; index < context.battle.unit_count; ++index) {
+        animating = animating || context.battle.popup_ms[index] > 0U;
+    }
+    if (animating || BattleSignature(context.battle) != before) {
+        context.dirty = true;
+    }
 }
 
 bool BattleSceneTouch(GameContext& context, const micropixel::TouchEvent& touch) {
@@ -362,15 +399,16 @@ void BattleSceneRender(GameContext& context) {
         view.Round(rect, theme::kPanelDeep,
                    targeted ? theme::kAccent : (unit.alive ? theme::kBlood : theme::kDim), 6U,
                    targeted ? 2U : 1U);
-        widgets::EnemySprite(view, rect.inset(6), Enemy(unit.species).sprite, unit.alive, false);
-        view.Text({rect.x + 5, rect.y + 2}, context.strings.Get(UnitNameId(unit)),
-                  unit.alive ? theme::kText : theme::kDim, micropixel::SystemFont::kSmall);
+        widgets::EnemySprite(view, EnemyArt(rect), Enemy(unit.species).sprite, unit.alive, false);
+        view.CenterText(rect.center_x(), rect.y + 2, context.strings.Get(UnitNameId(unit)),
+                        unit.alive ? theme::kText : theme::kDim, micropixel::SystemFont::kSmall);
         if (unit.alive) {
-            view.Bar({rect.x + 5, rect.y + rect.height - 8, rect.width - 10, 5}, unit.hp, unit.max_hp, theme::kHp);
+            view.Bar({rect.x + 6, rect.y + rect.height - 9, rect.width - 12, 5}, unit.hp, unit.max_hp, theme::kHp);
         }
     }
 
-    // Party cards.
+    // Party cards: one row each — name, level, HP/MP bars, HP figures. Status
+    // (poison, guard) is shown by the card's border to keep the row uncluttered.
     for (uint8_t slot = 0U; slot < party_count; ++slot) {
         const uint8_t unit_index = party[slot];
         const Combatant& unit = BattleUnit(battle, unit_index);
@@ -379,33 +417,36 @@ void BattleSceneRender(GameContext& context) {
                               (battle.phase == BattlePhase::kCommand || battle.phase == BattlePhase::kSkillMenu ||
                                battle.phase == BattlePhase::kItemMenu);
         const bool targeted = (battle.phase == BattlePhase::kTargetAlly) && battle.target == unit_index;
-        widgets::Panel(view, rect, is_actor ? theme::kPanel : theme::kPanelDeep,
-                       targeted ? theme::kHighlight : (is_actor ? theme::kAccent : theme::kEdge), 8U);
-        view.Text({rect.x + 6, rect.y + 2}, context.strings.Get(UnitNameId(unit)),
+        micropixel::Color edge = is_actor ? theme::kAccent : theme::kEdge;
+        if (unit.poisoned) {
+            edge = theme::kJade;
+        } else if (unit.defending) {
+            edge = theme::kMp;
+        }
+        widgets::Panel(view, rect, is_actor ? theme::kPanel : theme::kPanelDeep, targeted ? theme::kHighlight : edge,
+                       8U);
+        const int32_t text_y = rect.y + (rect.height - 18) / 2;
+        view.Text({rect.x + 8, text_y}, context.strings.Get(UnitNameId(unit)),
                   unit.alive ? theme::kText : theme::kDim, micropixel::SystemFont::kSmall);
         Line level;
         (void)level.Append(context.strings.Get(ids::Id::kUiLv));
         (void)level.AppendUint(unit.level);
-        view.Text({rect.x + rect.width - 6, rect.y + 2}, level.c_str(), theme::kAccent,
-                  micropixel::SystemFont::kSmall, true);
+        view.Text({rect.x + 64, text_y}, level.c_str(), theme::kAccent, micropixel::SystemFont::kSmall);
 
-        const micropixel::Rect bars{rect.x + 6, rect.y + rect.height / 2, rect.width - 12,
-                                    micropixel::math::Max(rect.height / 2 - 6, 12)};
-        widgets::HpMpBars(view, bars, unit, true);
+        const int32_t bar_x = rect.x + 112;
+        const int32_t bar_w = micropixel::math::Max(rect.width - 112 - 64, 30);
+        view.Bar({bar_x, rect.y + rect.height / 2 - 7, bar_w, 6}, unit.hp, unit.max_hp, theme::kHp);
+        view.Bar({bar_x, rect.y + rect.height / 2 + 1, bar_w, 6}, unit.mp, unit.max_mp, theme::kMp);
         Line hp_text;
         (void)hp_text.AppendUint(unit.hp);
         (void)hp_text.Append("/");
         (void)hp_text.AppendUint(unit.max_hp);
-        view.Text({rect.x + 6, rect.y + rect.height - 14}, hp_text.c_str(), theme::kMuted,
+        int32_t hp_width = 0;
+        for (const char* cursor = hp_text.c_str(); *cursor != '\0'; ++cursor) {
+            hp_width += 7;  // digits and '/' in the small font
+        }
+        view.Text({rect.x + rect.width - 8 - hp_width, text_y}, hp_text.c_str(), theme::kMuted,
                   micropixel::SystemFont::kSmall);
-        if (unit.poisoned) {
-            view.Text({rect.x + rect.width / 2, rect.y + rect.height - 14}, context.strings.Get(ids::Id::kBattlePoisonTick),
-                      theme::kJade, micropixel::SystemFont::kSmall, true);
-        }
-        if (unit.defending) {
-            view.Text({rect.x + rect.width - 6, rect.y + rect.height - 14},
-                      context.strings.Get(ids::Id::kUiDefend), theme::kMp, micropixel::SystemFont::kSmall, true);
-        }
     }
 
     // Message strip: the acting hero's name while a menu is open, otherwise the
@@ -425,7 +466,8 @@ void BattleSceneRender(GameContext& context) {
             (void)message.Append(context.strings.Get(UnitNameId(BattleUnit(battle, battle.message_unit))));
         }
     }
-    view.CenterText(layout.message.center_x(), layout.message.y + 6, message.c_str(), theme::kText,
+    const int32_t message_y = layout.message.y + (layout.message.height - 18) / 2;
+    view.CenterText(layout.message.center_x(), message_y, message.c_str(), theme::kText,
                     micropixel::SystemFont::kSmall);
 
     if (phase == BattlePhase::kVictory) {
@@ -445,8 +487,8 @@ void BattleSceneRender(GameContext& context) {
                         reward.c_str(), theme::kAccent, micropixel::SystemFont::kMedium);
     }
     if (phase == BattlePhase::kVictory || phase == BattlePhase::kDefeat || phase == BattlePhase::kFled) {
-        view.CenterText(layout.message.center_x(), layout.message.y + layout.message.height - 17,
-                        context.strings.Get(ids::Id::kUiAdvance), theme::kDim, micropixel::SystemFont::kSmall);
+        view.Text({layout.message.x + layout.message.width - 10 - 52, message_y},
+                  context.strings.Get(ids::Id::kUiAdvance), theme::kDim, micropixel::SystemFont::kSmall);
     }
 
     DrawCommandPanel(context);

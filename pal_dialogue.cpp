@@ -105,6 +105,11 @@ bool DialogueConfirm(DialogueState& state, const ids::Catalog& strings) {
         state.line_codepoints = Utf8Count(strings.Get(node.lines[state.line].text));
         return false;
     }
+    if (node.next >= 0) {
+        // A long scene is authored as a chain of three-line nodes.
+        DialogueStart(state, strings, static_cast<uint8_t>(node.next));
+        return false;
+    }
     state.active = false;
     return true;
 }

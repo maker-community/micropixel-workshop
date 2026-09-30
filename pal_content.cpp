@@ -27,6 +27,11 @@ enum : uint8_t {
     kSkSwordRain,
     kSkWaterDragon,
     kSkRedLotus,
+    kSkGuDu,
+    kSkSerpent,
+    kSkSpring,
+    kSkSwarm,
+    kSkTide,
     kSkCount,
 };
 
@@ -41,12 +46,18 @@ constexpr SkillDef kSkills[] = {
     {ids::Id::kSkillGuard, SkillKind::kGuard, TargetSide::kAllAllies, 8U, 40U, false},
     {ids::Id::kSkillRite, SkillKind::kMagic, TargetSide::kAllEnemies, 14U, 120U, false},
     {ids::Id::kSkillDrain, SkillKind::kDrain, TargetSide::kOneEnemy, 0U, 125U, false},
-    {ids::Id::kSkillMiasma, SkillKind::kMagic, TargetSide::kAllEnemies, 0U, 100U, false},
+    {ids::Id::kSkillMiasma, SkillKind::kPoison, TargetSide::kAllEnemies, 0U, 60U, false},
     {ids::Id::kSkillFlame, SkillKind::kMagic, TargetSide::kOneEnemy, 0U, 185U, false},
     // Act 3 ultimates, one per hero, so the late fights are winnable.
     {ids::Id::kSkillSwordRain, SkillKind::kPhysical, TargetSide::kAllEnemies, 20U, 175U, false},
     {ids::Id::kSkillWaterDragon, SkillKind::kMagic, TargetSide::kAllEnemies, 18U, 150U, false},
     {ids::Id::kSkillRedLotus, SkillKind::kMagic, TargetSide::kOneEnemy, 14U, 230U, false},
+    // Act 4-5: 阿奴's poisons and swarms, and the water beast's tide.
+    {ids::Id::kSkillGudu, SkillKind::kPoison, TargetSide::kOneEnemy, 6U, 110U, false},
+    {ids::Id::kSkillSerpent, SkillKind::kMagic, TargetSide::kAllEnemies, 12U, 110U, false},
+    {ids::Id::kSkillSpring, SkillKind::kHeal, TargetSide::kAllAllies, 14U, 130U, false},
+    {ids::Id::kSkillSwarm, SkillKind::kMagic, TargetSide::kAllEnemies, 20U, 170U, false},
+    {ids::Id::kSkillTide, SkillKind::kMagic, TargetSide::kAllEnemies, 16U, 120U, false},
 };
 
 // --- party ------------------------------------------------------------------
@@ -57,6 +68,8 @@ constexpr CharacterDef kCharacters[] = {
      {kSkThunder, kSkRain, kSkFrost, kSkWaterDragon}},
     {ids::Id::kCharYunyang, 2U, 108U, 55U, 18U, 15U, 13U, 14U, 9U, 3U, 3U, 2U, 4U,
      {kSkCalm, kSkGuard, kSkRite, kSkRedLotus}},
+    {ids::Id::kCharAnu, 6U, 100U, 52U, 20U, 13U, 17U, 13U, 9U, 3U, 2U, 3U, 4U,
+     {kSkGuDu, kSkSerpent, kSkSpring, kSkSwarm}},
 };
 
 // --- items ------------------------------------------------------------------
@@ -87,42 +100,55 @@ enum : uint8_t {
     kFoeGolem,
     kFoePriest,
     kFoeOverlord,
+    kFoeSpider,
+    kFoeShaman,
+    kFoeTreeSpirit,
+    kFoeWaterBeast,
     kFoeCount,
 };
 
 constexpr EnemyDef kEnemies[] = {
-    {ids::Id::kEnemyWolf, 0U, 90U, 0U, 18U, 6U, 12U, 0U, {0U, 0U}, 26U, 14U, kItemNone},
+    {ids::Id::kEnemyWolf, 0U, 70U, 0U, 16U, 6U, 12U, 0U, {0U, 0U}, 26U, 14U, kItemNone},
     {ids::Id::kEnemyBandit, 1U, 130U, 0U, 24U, 10U, 10U, 0U, {0U, 0U}, 38U, 22U, kIdxPillHp},
     {ids::Id::kEnemyGhost, 2U, 165U, 20U, 29U, 8U, 16U, 1U, {kSkDrain, 0U}, 54U, 30U, kIdxPillMp},
     {ids::Id::kEnemyDemon, 3U, 900U, 60U, 44U, 22U, 18U, 2U, {kSkMiasma, kSkFlame}, 420U, 320U, kIdxRevive},
     // 十里坡's slow wall: soaks hits and hits back hard.
-    {ids::Id::kEnemyTreant, 3U, 260U, 0U, 24U, 18U, 6U, 1U, {kSkSlash, 0U}, 62U, 40U, kIdxLingzhi},
+    {ids::Id::kEnemyTreant, 6U, 260U, 0U, 24U, 18U, 6U, 1U, {kSkSlash, 0U}, 62U, 40U, kIdxLingzhi},
     // Fast, fragile, and the first foe that can poison the party.
     {ids::Id::kEnemyWasp, 0U, 110U, 0U, 20U, 6U, 22U, 1U, {kSkMiasma, 0U}, 34U, 18U, kIdxPillMp},
     // Act 2: the bandit captain fights like a player swordsman.
-    {ids::Id::kEnemyChief, 1U, 320U, 30U, 30U, 14U, 14U, 2U, {kSkThrust, kSkSlash}, 92U, 64U, kIdxPillHp},
+    {ids::Id::kEnemyChief, 1U, 250U, 30U, 28U, 12U, 14U, 2U, {kSkThrust, kSkSlash}, 92U, 64U, kIdxPillHp},
     // Act 2: cult casters, the first foes that answer with real magic.
-    {ids::Id::kEnemyCultist, 3U, 240U, 40U, 26U, 12U, 18U, 2U, {kSkThunder, kSkFrost}, 110U, 72U, kIdxLingzhi},
+    {ids::Id::kEnemyCultist, 3U, 380U, 40U, 30U, 18U, 18U, 2U, {kSkThunder, kSkFrost}, 110U, 72U, kIdxLingzhi},
     // Act 3. The tower's serpents are fast, its golems are a wall, and the
     // priests heal the thing the party is trying to kill.
-    {ids::Id::kEnemySerpent, 0U, 220U, 20U, 28U, 12U, 20U, 2U, {kSkMiasma, kSkFrost}, 96U, 60U, kIdxHerb},
-    {ids::Id::kEnemyGolem, 3U, 420U, 0U, 34U, 24U, 5U, 2U, {kSkSlash, kSkGuard}, 130U, 80U, kIdxLingzhi},
-    {ids::Id::kEnemyPriest, 3U, 300U, 80U, 30U, 14U, 16U, 2U, {kSkRite, kSkDrain}, 160U, 100U, kIdxPillMp},
-    {ids::Id::kEnemyOverlord, 3U, 1600U, 200U, 52U, 28U, 24U, 2U, {kSkFlame, kSkRite}, 800U, 600U, kIdxJade},
+    {ids::Id::kEnemySerpent, 0U, 420U, 20U, 36U, 18U, 20U, 2U, {kSkMiasma, kSkFrost}, 96U, 60U, kIdxHerb},
+    {ids::Id::kEnemyGolem, 3U, 800U, 24U, 42U, 30U, 5U, 2U, {kSkSlash, kSkGuard}, 130U, 80U, kIdxLingzhi},
+    {ids::Id::kEnemyPriest, 3U, 520U, 120U, 38U, 20U, 16U, 2U, {kSkRite, kSkDrain}, 160U, 100U, kIdxPillMp},
+    {ids::Id::kEnemyOverlord, 3U, 3400U, 400U, 100U, 38U, 24U, 2U, {kSkFlame, kSkRite}, 800U, 600U, kIdxJade},
+    // Act 4-5: 白河/苗疆's venom, the grove's living wood and the temple's guardian.
+    {ids::Id::kEnemySpider, 4U, 640U, 0U, 46U, 24U, 18U, 1U, {kSkMiasma, 0U}, 130U, 70U, kIdxHerb},
+    {ids::Id::kEnemyShaman, 3U, 700U, 60U, 48U, 24U, 15U, 2U, {kSkGuDu, kSkFrost}, 170U, 100U, kIdxLingzhi},
+    {ids::Id::kEnemyTreespirit, 6U, 1000U, 60U, 56U, 32U, 8U, 2U, {kSkCalm, kSkSlash}, 210U, 120U, kIdxLingzhi},
+    {ids::Id::kEnemyWaterbeast, 5U, 3000U, 320U, 96U, 38U, 19U, 2U, {kSkTide, kSkSlash}, 1000U, 700U, kIdxJade},
 };
 
 constexpr BattleDef kBattles[] = {
-    {2U, {kFoeWolf, kFoeWasp, 0U}},
-    {3U, {kFoeBandit, kFoeBandit, kFoeTreant}},
-    {2U, {kFoeGhost, kFoeGhost, 0U}},
-    {3U, {kFoeDemon, kFoeGhost, kFoeTreant}},
-    {2U, {kFoeChief, kFoeWasp, 0U}},
-    {2U, {kFoeCultist, kFoeCultist, 0U}},
-    {3U, {kFoeCultist, kFoeTreant, kFoeCultist}},
-    {2U, {kFoeGolem, kFoeSerpent, 0U}},
-    {3U, {kFoeSerpent, kFoeGolem, kFoeSerpent}},
-    {3U, {kFoePriest, kFoeCultist, kFoePriest}},
-    {3U, {kFoeOverlord, kFoePriest, kFoeGolem}},
+    {2U, {kFoeWolf, kFoeWolf, 0U}, false},
+    {3U, {kFoeBandit, kFoeBandit, kFoeTreant}, false},
+    {2U, {kFoeGhost, kFoeGhost, 0U}, false},
+    {3U, {kFoeDemon, kFoeGhost, kFoeTreant}, true},
+    {2U, {kFoeChief, kFoeWasp, 0U}, false},
+    {2U, {kFoeCultist, kFoeCultist, 0U}, false},
+    {3U, {kFoeCultist, kFoeSerpent, kFoeCultist}, false},
+    {2U, {kFoeGolem, kFoeSerpent, 0U}, false},
+    {3U, {kFoeSerpent, kFoeGolem, kFoeSerpent}, false},
+    {3U, {kFoePriest, kFoeCultist, kFoePriest}, true},
+    {3U, {kFoeOverlord, kFoePriest, kFoeGolem}, true},
+    {3U, {kFoeSpider, kFoeSpider, kFoeWasp}, false},
+    {3U, {kFoeShaman, kFoeSpider, kFoeShaman}, false},
+    {3U, {kFoeTreeSpirit, kFoeTreant, kFoeTreeSpirit}, false},
+    {3U, {kFoeWaterBeast, kFoeSerpent, kFoeSerpent}, true},
 };
 
 // --- dialogue graph ---------------------------------------------------------
@@ -267,7 +293,7 @@ constexpr DialogueNodeDef kDialogue[] = {
     {3U,
      {{ids::Id::kCharShu, ids::Id::kStoryShuL0, 3U, 0U},
       {ids::Id::kCharShu, ids::Id::kStoryShuL1, 3U, 0U},
-      {ids::Id::kCharXiao, ids::Id::kStoryShuL2, 0U, 0U}},
+      {ids::Id::kCharShu, ids::Id::kStoryShuL2, 3U, 0U}},
      0U,
      {},
      -1},
@@ -314,7 +340,7 @@ constexpr DialogueNodeDef kDialogue[] = {
     // 22 kDlgEndMid
     {3U,
      {{ids::Id::kCharXiao, ids::Id::kStoryEndMidL0, 0xFFU, 0U},
-      {ids::Id::kCharYunyang, ids::Id::kStoryEndMidL1, 2U, 0U},
+      {ids::Id::kCharAnu, ids::Id::kStoryEndMidL1, 6U, 0U},
       {ids::Id::kCharXiao, ids::Id::kStoryEndMidL2, 0U, 2U}},
      0U,
      {},
@@ -324,6 +350,104 @@ constexpr DialogueNodeDef kDialogue[] = {
      {{ids::Id::kCharXiao, ids::Id::kStoryEndBadL0, 0xFFU, 0U},
       {ids::Id::kCharLingxi, ids::Id::kStoryEndBadL1, 1U, 2U},
       {ids::Id::kCharXiao, ids::Id::kStoryEndBadL2, 0U, 2U}},
+     0U,
+     {},
+     -1},
+    // 24 kDlgTowerFall — 林月如 holds the seal shut and does not come back
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryTowerfallL0, 0xFFU, 1U},
+      {ids::Id::kCharYunyang, ids::Id::kStoryTowerfallL1, 2U, 2U},
+      {ids::Id::kCharXiao, ids::Id::kStoryTowerfallL2, 0U, 2U}},
+     0U,
+     {},
+     -1},
+    // 25 kDlgBaihe — 白河村 after the fall; 老渔夫 hands over antidotes
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryBaiheL0, 0xFFU, 2U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryBaiheL1, 1U, 2U},
+      {ids::Id::kCharFisher, ids::Id::kStoryBaiheL2, 4U, 0U}},
+     0U,
+     {},
+     -1},
+    // 26 kDlgFisher — 白河村 rumour
+    {2U,
+     {{ids::Id::kCharFisher, ids::Id::kStoryFisherL0, 4U, 0U},
+      {ids::Id::kCharFisher, ids::Id::kStoryFisherL1, 4U, 2U},
+      {}},
+     0U,
+     {},
+     -1},
+    // 27 kDlgBaiheWife — 白河村 grief
+    {2U,
+     {{ids::Id::kCharMerchant, ids::Id::kStoryBaihewifeL0, 4U, 2U},
+      {ids::Id::kCharMerchant, ids::Id::kStoryBaihewifeL1, 4U, 0U},
+      {}},
+     0U,
+     {},
+     -1},
+    // 28 kDlgAnu — 阿奴 joins in 苗疆
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryAnuL0, 0xFFU, 0U},
+      {ids::Id::kCharAnu, ids::Id::kStoryAnuL1, 6U, 3U},
+      {ids::Id::kCharAnu, ids::Id::kStoryAnuL2, 6U, 3U}},
+     2U,
+     {{ids::Id::kStoryAnuC0, -1, kFlagAnu | kFlagTrust, 0U},
+      {ids::Id::kStoryAnuC1, -1, kFlagAnu, kFlagTrust},
+      {}},
+     -1},
+    // 29 kDlgAnuChat — 阿奴 on the bridge
+    {2U,
+     {{ids::Id::kCharAnu, ids::Id::kStoryAnuchatL0, 6U, 3U},
+      {ids::Id::kCharAnu, ids::Id::kStoryAnuchatL1, 6U, 0U},
+      {}},
+     0U,
+     {},
+     -1},
+    // 30 kDlgAnuAfter — 阿奴 hands over her father's horns
+    {3U,
+     {{ids::Id::kCharAnu, ids::Id::kStoryAnuafterL0, 6U, 3U},
+      {ids::Id::kCharAnu, ids::Id::kStoryAnuafterL1, 6U, 0U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryAnuafterL2, 1U, 0U}},
+     0U,
+     {},
+     -1},
+    // 31 kDlgGrove — 巫后 tells 灵儿 who she is
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryGroveL0, 0xFFU, 0U},
+      {ids::Id::kCharQueen, ids::Id::kStoryGroveL1, 7U, 0U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryGroveL2, 1U, 2U}},
+     0U,
+     {},
+     -1},
+    // 32 kDlgQueenNpc — 巫后's aside
+    {2U,
+     {{ids::Id::kCharQueen, ids::Id::kStoryQueennpcL0, 7U, 0U},
+      {ids::Id::kCharQueen, ids::Id::kStoryQueennpcL1, 7U, 2U},
+      {}},
+     0U,
+     {},
+     -1},
+    // 33 kDlgTemple — 女娲神殿, the guardian rises
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryTempleL0, 0xFFU, 0U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryTempleL1, 1U, 0U},
+      {ids::Id::kCharXiao, ids::Id::kStoryTempleL2, 0U, 1U}},
+     0U,
+     {},
+     -1},
+    // 34 kDlgTempleAfter — 灵儿 awakens; a bottle of 天仙玉露 is left behind
+    {3U,
+     {{ids::Id::kCharXiao, ids::Id::kStoryTempleafterL0, 0xFFU, 0U},
+      {ids::Id::kCharLingxi, ids::Id::kStoryTempleafterL1, 1U, 3U},
+      {ids::Id::kCharAnu, ids::Id::kStoryTempleafterL2, 6U, 3U}},
+     0U,
+     {},
+     -1},
+    // 35 kDlgStele — the temple's inscription
+    {2U,
+     {{ids::Id::kCharStele, ids::Id::kStorySteleL0, 0xFFU, 0U},
+      {ids::Id::kCharStele, ids::Id::kStorySteleL1, 0xFFU, 0U},
+      {}},
      0U,
      {},
      -1},
@@ -468,6 +592,70 @@ constexpr const char* kAltarRows[] = {
     "~~~~~~~~~~~~~~~~",
 };
 
+// 白河村 — a river village at the foot of 锁妖塔's shadow.
+constexpr const char* kBaiheRows[] = {
+    "TTTTTTTTTTTTTTTT",
+    "T~~~~..........T",
+    "T~~~~...RRRR...T",
+    "T.......RRRR...T",
+    "T..RRR.........T",
+    "T..RRR.::......T",
+    "T......::..~~~.T",
+    "T.RRR..::......T",
+    "T.RRR..::.~~...T",
+    "T......::......T",
+    "T......**......T",
+    "TTTTTTTTTTTTTTTT",
+};
+
+// 苗疆 — stilt houses over slow water, bamboo groves at the edges.
+constexpr const char* kMiaoRows[] = {
+    "TTTTTTTTTTTTTTTT",
+    "T..TT......TT..T",
+    "T..TT..~~..TT..T",
+    "T.......~~.....T",
+    "T..RRR.........T",
+    "T..RRR.::......T",
+    "T......::..~~..T",
+    "T.RRR..::......T",
+    "T.RRR..::..TT..T",
+    "T......::......T",
+    "T......**......T",
+    "TTTTTTTTTTTTTTTT",
+};
+
+// 神木林 — the sacred grove; the trees close in around a single path.
+constexpr const char* kGroveRows[] = {
+    "TTTTTTTTTTTTTTTT",
+    "T..TTT....TTT..T",
+    "T..TTT....TTT..T",
+    "T..............T",
+    "T.TT.......TT..T",
+    "T.TT...::......T",
+    "T......::..TTT.T",
+    "T.TTT..::......T",
+    "T.TTT..::...~~.T",
+    "T......::......T",
+    "T......**......T",
+    "TTTTTTTTTTTTTTTT",
+};
+
+// 女娲神殿 — a flooded hall with two reflecting pools.
+constexpr const char* kTempleRows[] = {
+    "################",
+    "#______________#",
+    "#__~~~____~~~__#",
+    "#__~~~____~~~__#",
+    "#______________#",
+    "#_##________##_#",
+    "#_##________##_#",
+    "#______________#",
+    "#___~~____~~___#",
+    "#______________#",
+    "#______**______#",
+    "################",
+};
+
 constexpr MapDef kMaps[] = {
     {ids::Id::kMapVillage,
      16U,
@@ -544,11 +732,43 @@ constexpr MapDef kMaps[] = {
      {{}, {}, {}, {}},
      1U,
      {{6U, 10U, 4U, 1U}, {}}},
+    {ids::Id::kMapBaihe,
+     16U,
+     12U,
+     kBaiheRows,
+     2U,
+     {{ids::Id::kCharFisher, 4U, 5U, 2U, kDlgFisher}, {ids::Id::kCharMerchant, 4U, 10U, 5U, kDlgBaiheWife}, {}, {}},
+     1U,
+     {{7U, 10U, 2U, 1U}, {}}},
+    {ids::Id::kMapMiao,
+     16U,
+     12U,
+     kMiaoRows,
+     1U,
+     {{ids::Id::kCharAnu, 6U, 9U, 5U, kDlgAnuChat}, {}, {}, {}},
+     1U,
+     {{7U, 10U, 2U, 1U}, {}}},
+    {ids::Id::kMapGrove,
+     16U,
+     12U,
+     kGroveRows,
+     1U,
+     {{ids::Id::kCharQueen, 7U, 11U, 3U, kDlgQueenNpc}, {}, {}, {}},
+     1U,
+     {{7U, 10U, 2U, 1U}, {}}},
+    {ids::Id::kMapTemple,
+     16U,
+     12U,
+     kTempleRows,
+     1U,
+     {{ids::Id::kCharStele, 3U, 7U, 2U, kDlgStele}, {}, {}, {}},
+     1U,
+     {{7U, 10U, 2U, 1U}, {}}},
 };
 
 // Starting tile per map (the tile the party stands on when a chapter opens).
-constexpr uint8_t kMapStartX[] = {7U, 7U, 7U, 5U, 7U, 7U, 7U, 7U, 7U};
-constexpr uint8_t kMapStartY[] = {4U, 1U, 1U, 1U, 4U, 1U, 4U, 4U, 4U};
+constexpr uint8_t kMapStartX[] = {7U, 7U, 7U, 5U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U, 7U};
+constexpr uint8_t kMapStartY[] = {4U, 1U, 1U, 1U, 4U, 1U, 4U, 4U, 4U, 4U, 4U, 4U, 4U};
 
 // --- table shape guards -----------------------------------------------------
 // The tables are deliberately declared without a bound so these asserts can
@@ -651,12 +871,34 @@ constexpr ScriptStepDef kScript[] = {
     {StepKind::kDialogue, kDlgFinal},
     {StepKind::kExplore, kMapShu},
     {StepKind::kDialogue, kDlgShu},
+    {StepKind::kGrant, kIdxShuTalisman, 2U},
     {StepKind::kBattle, kBattleTrial},
     {StepKind::kExplore, kMapTower},
     {StepKind::kDialogue, kDlgTower},
     {StepKind::kBattle, kBattleTower},
     {StepKind::kDialogue, kDlgTowerTop},
     {StepKind::kBattle, kBattlePriests},
+    // Act 4: the fall of the tower and the road south.
+    {StepKind::kDialogue, kDlgTowerFall},
+    {StepKind::kFlag, kBitYunyangGone},
+    {StepKind::kExplore, kMapBaihe},
+    {StepKind::kDialogue, kDlgBaihe},
+    {StepKind::kGrant, kIdxHerb, 3U},
+    {StepKind::kBattle, kBattleBaihe},
+    {StepKind::kExplore, kMapMiao},
+    {StepKind::kDialogue, kDlgAnu},
+    {StepKind::kBattle, kBattleMiao},
+    {StepKind::kDialogue, kDlgAnuAfter},
+    {StepKind::kGrant, kIdxOxhorn, 2U},
+    // Act 5: the grove, the temple, and the showdown.
+    {StepKind::kExplore, kMapGrove},
+    {StepKind::kDialogue, kDlgGrove},
+    {StepKind::kBattle, kBattleGrove},
+    {StepKind::kExplore, kMapTemple},
+    {StepKind::kDialogue, kDlgTemple},
+    {StepKind::kBattle, kBattleGuardian},
+    {StepKind::kDialogue, kDlgTempleAfter},
+    {StepKind::kGrant, kIdxJade, 1U},
     {StepKind::kExplore, kMapAltar},
     {StepKind::kDialogue, kDlgAltar},
     {StepKind::kBattle, kBattleOverlord},
@@ -750,10 +992,11 @@ uint8_t EndingDialogueFor(uint32_t flags) {
     const bool mercy = (flags & kFlagMercy) != 0U;
     const bool bold = (flags & kFlagBold) != 0U;
     const bool courtesy = (flags & kFlagCourtesy) != 0U;
+    const bool trust = (flags & kFlagTrust) != 0U;
     if (relic && mercy) {
         return kDlgEndGood;
     }
-    if (bold || courtesy) {
+    if (bold || courtesy || trust) {
         return kDlgEndMid;
     }
     return kDlgEndBad;

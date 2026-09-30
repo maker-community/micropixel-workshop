@@ -39,8 +39,8 @@ void EndingSceneEnter(GameContext& context) {
 }
 
 void EndingSceneUpdate(GameContext& context, uint32_t delta_ms) {
+    (void)context;  // a static screen
     (void)delta_ms;
-    context.dirty = true;
 }
 
 bool EndingSceneTouch(GameContext& context, const micropixel::TouchEvent& touch) {
