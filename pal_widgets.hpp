@@ -20,7 +20,7 @@ void Panel(GameView& view, micropixel::Rect rect, micropixel::Color fill, microp
 // Slim top bar with the current location and the party purse.
 void Header(GameContext& context, ids::Id title, bool show_gold);
 
-// 0 李逍遥, 1 赵灵儿, 2 林月如, 3 酒剑仙, 4 村民, 5 拜月教主, 0xFF none.
+// 0 李逍遥, 1 赵灵儿, 2 林月如, 3 酒剑仙, 4 村民, 5 拜月教主, 6 阿奴, 7 巫后, 8 蜀山掌门, 0xFF none.
 void Portrait(GameView& view, micropixel::Rect area, uint8_t portrait, uint8_t emotion, bool highlight);
 
 // Monsters: 0 蛇妖, 1 山贼, 2 水妖, 3 拜月教主.

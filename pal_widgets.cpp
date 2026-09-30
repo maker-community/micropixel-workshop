@@ -234,6 +234,18 @@ void Portrait(GameView& view, micropixel::Rect area, uint8_t portrait, uint8_t e
                        micropixel::Color::Rgb(255U, 240U, 200U), 40U, 1U);
             break;
         }
+        case 8U: {  // 蜀山掌门 — an elder of the sword sect, in blue-grey
+            const FaceStyle style{micropixel::Color::Rgb(238U, 218U, 198U), micropixel::Color::Rgb(200U, 178U, 158U),
+                                  micropixel::Color::Rgb(226U, 226U, 232U), micropixel::Color::Rgb(255U, 255U, 255U),
+                                  micropixel::Color::Rgb(96U, 108U, 140U), 0U, true, false};
+            DrawRobe(view, area, micropixel::Color::Rgb(58U, 74U, 112U), micropixel::Color::Rgb(206U, 210U, 224U),
+                     true);
+            DrawHead(view, area, style, emotion);
+            // a sect crown over the topknot
+            view.Round(Cell(area, 390, 40, 220, 90), micropixel::Color::Rgb(196U, 200U, 216U),
+                       micropixel::Color::Rgb(140U, 148U, 172U), 30U, 1U);
+            break;
+        }
         default: {  // 拜月教主 — moon cult leader
             const FaceStyle style{micropixel::Color::Rgb(206U, 196U, 214U), micropixel::Color::Rgb(150U, 138U, 168U),
                                   micropixel::Color::Rgb(38U, 28U, 56U), micropixel::Color::Rgb(96U, 62U, 132U),

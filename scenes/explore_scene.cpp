@@ -65,6 +65,9 @@ void NpcToken(GameView& view, micropixel::Rect area, uint8_t portrait) {
             robe = micropixel::Color::Rgb(58U, 106U, 122U);
             hair = micropixel::Color::Rgb(150U, 140U, 190U);
             break;
+        case 8U:
+            robe = micropixel::Color::Rgb(58U, 74U, 112U);
+            break;
         default:
             robe = micropixel::Color::Rgb(126U, 104U, 74U);
             hair = micropixel::Color::Rgb(52U, 42U, 36U);
