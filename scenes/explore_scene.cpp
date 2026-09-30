@@ -91,7 +91,10 @@ void DrawMap(GameContext& context) {
     const micropixel::Rect stage = context.layout.stage;
     const uint8_t map_id = context.world.map;
     const MapDef& map = Map(map_id);
-    const int32_t tile = micropixel::math::Max(micropixel::math::Min(stage.width / 9, stage.height / 7), 12);
+    // The pad moved to the rim, so the viewport is the whole square: aim for
+    // 11 x 9 tiles of as much as 34 px instead of the old 9 x 7 of 16.
+    const int32_t tile =
+        micropixel::math::Clamp<int32_t>(micropixel::math::Min(stage.width / 11, stage.height / 9), 12, 34);
     const int32_t view_cols = micropixel::math::Max(stage.width / tile, 1);
     const int32_t view_rows = micropixel::math::Max(stage.height / tile, 1);
 
@@ -332,8 +335,14 @@ void ExploreSceneRender(GameContext& context) {
     widgets::Header(context, ContextMapNameId(context), true);
 
     for (uint8_t index = 0U; index < 4U; ++index) {
-        view.Round(layout.dpad[index], theme::kPanel, theme::kEdge, 8U, 1U);
-        Arrow(view, layout.dpad[index], index);
+        const micropixel::Rect key = layout.dpad[index];
+        // In the ring a key is a capsule hugging the rim; in the footer it is a
+        // rounded square.
+        const uint32_t radius = layout.ring_pad
+                                    ? static_cast<uint32_t>(micropixel::math::Min(key.width, key.height) / 2)
+                                    : 8U;
+        view.Round(key, theme::kPanel, theme::kEdge, radius, 1U);
+        Arrow(view, key, index);
     }
     const micropixel::Rect menu = layout.menu_button;
     view.Round(menu, theme::kPanel, theme::kEdge, 8U, 1U);

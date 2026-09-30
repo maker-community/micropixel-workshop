@@ -39,7 +39,7 @@
   "ui.pick_ally": "选择同伴",
   "ui.round_prefix": "第",
   "ui.round_suffix": "回合",
-  "ui.explore_hint": "下方按键或方向键移动",
+  "ui.explore_hint": "边缘按键或拖动地图移动",
   "ui.empty": "空",
   "ui.ending": "终章",
   "ui.ending_hint": "轻触返回标题",

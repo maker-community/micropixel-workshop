@@ -71,7 +71,11 @@ inline constexpr micropixel::Color kShrine = micropixel::Color::Rgb(196U, 170U, 
 // ---------------------------------------------------------------------------
 
 struct GameLayout final {
-    micropixel::Rect screen{};
+    // The App Surface. On the Watcher the panel is a circle and `screen` is the
+    // inscribed square, so everything between the two - the ring - belongs to
+    // the panel but to no scene. That is where the direction pad lives.
+    micropixel::Rect panel{};
+    micropixel::Rect screen{};  // safe area: the square the scene owns
     micropixel::Rect header{};
     micropixel::Rect body{};
     micropixel::Rect footer{};
@@ -89,6 +93,10 @@ struct GameLayout final {
     std::array<micropixel::Rect, 4U> dpad{};
     std::array<micropixel::Rect, 6U> commands{};
     bool compact{};
+    // True when the pad sits in the panel ring (round panels) instead of in the
+    // footer: the footer is then a thin action strip and the body owns the rest
+    // of the square.
+    bool ring_pad{};
 };
 
 GameLayout BuildLayout(const micropixel::RendererInfo& info);
