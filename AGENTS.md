@@ -120,6 +120,11 @@ $m='C:\Users\gil\AppData\Local\MicroPixel\bin\micropixel.exe'
   加枚举 + 在 `pal_audio.cpp` 的 `kProfiles[]` 加一行（两者顺序必须一致，有 `static_assert` 兜）。
   触发点只放在场景的咽喉函数里（`TryStep`、`Confirm`、`Activate` 以及
   `BattleSceneUpdate` 的消息差分 `BattleAudioCue`），不要再往每个按钮上单独撒调用。
+- 五灵与技能解锁也是**平行表**，都在 `pal_content.cpp`：`kSkillElements[]`（按 SkillId 顺序，
+  漏一个会被 `static_assert` 拦住）、`kEnemyResist[]` / `kCharacterResist[]`（只列有属性的，
+  没列的就是中性）、`kSkillUnlockLevel[角色][技能行]`。加技能必须同时补 `kSkillElements` 一行。
+- **加技能/改抗性后必须跑第 1 节的模拟**：`smart` 与 `skills-no-items` 要 300/300，
+  前期（battle 3/4，队伍 1-4 级）最容易被削崩 —— 解锁等级太晚会直接让开头变成赌运气。
 
 ## 7. 已知坑（都真踩过）
 
@@ -147,7 +152,6 @@ $m='C:\Users\gil\AppData\Local\MicroPixel\bin\micropixel.exe'
 
 ## 8. 还没做的事
 
-- 技能按等级解锁：现在 1 级就开放全部四个技能（含终极技）
 - 火灵符 / 蛮牛角 / 灵石（金币）没有获得与消耗途径，没有商店
 - 每次进入新地图都会全员回满血，道具与灵力管理基本失去意义
 - 白河村 → 苗疆 → 毒瘴谷 → 神木林 → 女娲神殿 → 南诏祭坛 → 结局这一段
