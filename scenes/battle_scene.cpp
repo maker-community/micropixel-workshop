@@ -199,6 +199,22 @@ void DrawCommandPanel(GameContext& context) {
             break;
         }
         case BattleMenu::kNone:
+            // Aiming hides the menu, so the panel explains what to do instead of
+            // sitting empty — otherwise the screen reads as frozen.
+            if (battle.phase == BattlePhase::kTargetEnemy || battle.phase == BattlePhase::kTargetAlly) {
+                const bool ally = battle.phase == BattlePhase::kTargetAlly;
+                Line hint;
+                (void)hint.Append(context.strings.Get(ally ? ids::Id::kUiPickAlly : ids::Id::kUiPickFoe));
+                if (battle.target < battle.unit_count) {
+                    (void)hint.Append("  ");
+                    (void)hint.Append(context.strings.Get(UnitNameId(battle.units[battle.target])));
+                }
+                view.CenterText(layout.command.center_x(), layout.command.y + 7, hint.c_str(), theme::kText,
+                                micropixel::SystemFont::kSmall);
+                view.CenterText(layout.command.center_x(), layout.command.y + layout.command.height - 20,
+                                context.strings.Get(ids::Id::kUiAdvance), theme::kDim,
+                                micropixel::SystemFont::kSmall);
+            }
             break;
     }
 }
@@ -309,8 +325,9 @@ bool BattleSceneTouch(GameContext& context, const micropixel::TouchEvent& touch)
     if (battle.phase == BattlePhase::kTargetEnemy || battle.phase == BattlePhase::kTargetAlly) {
         uint8_t units[kMaxCombatants]{};
         const uint8_t enemies = CollectEnemies(context, units);
-        for (uint8_t slot = 0U; slot < enemies; ++slot) {
-            if (EnemyRect(context, slot, enemies).contains(point)) {
+        for (uint8_t slot = 0U; battle.phase == BattlePhase::kTargetEnemy && slot < enemies; ++slot) {
+            // A fallen foe is not a target: tapping it must not burn the turn.
+            if (EnemyRect(context, slot, enemies).contains(point) && BattleUnit(battle, units[slot]).alive) {
                 context.battle.target = units[slot];
                 (void)BattleConfirm(context.battle, context.progress, context.rng);
                 context.dirty = true;
@@ -319,7 +336,7 @@ bool BattleSceneTouch(GameContext& context, const micropixel::TouchEvent& touch)
         }
         uint8_t party[kMaxCombatants]{};
         const uint8_t members = CollectParty(context, party);
-        for (uint8_t slot = 0U; slot < members; ++slot) {
+        for (uint8_t slot = 0U; battle.phase == BattlePhase::kTargetAlly && slot < members; ++slot) {
             if (!PartyRect(context, slot, members).contains(point)) {
                 continue;
             }
@@ -333,6 +350,21 @@ bool BattleSceneTouch(GameContext& context, const micropixel::TouchEvent& touch)
             context.dirty = true;
             return true;
         }
+        // The command panel is empty while aiming, so a tap there backs out.
+        if (context.layout.command.contains(point) || context.layout.message.contains(point)) {
+            (void)BattleBack(context.battle);
+            context.dirty = true;
+        }
+        return true;
+    }
+
+    // A tap beside an open list backs out of it; beside the root menu it does nothing.
+    if (battle.phase == BattlePhase::kSkillMenu || battle.phase == BattlePhase::kItemMenu) {
+        (void)BattleBack(context.battle);
+        context.dirty = true;
+        return true;
+    }
+    if (battle.phase == BattlePhase::kCommand) {
         return true;
     }
 
@@ -342,16 +374,48 @@ bool BattleSceneTouch(GameContext& context, const micropixel::TouchEvent& touch)
     return true;
 }
 
+// Cursor step for a direction key in the current menu's on-screen layout: the
+// root menu is a 3-column grid of 5, lists flow column-major into two columns,
+// and target selection just cycles.
+int32_t KeyStep(const BattleState& battle, micropixel::KeyCode code) {
+    const bool horizontal = code == micropixel::KeyCode::kLeft || code == micropixel::KeyCode::kRight;
+    const int32_t sign = (code == micropixel::KeyCode::kLeft || code == micropixel::KeyCode::kUp) ? -1 : 1;
+    const int32_t cursor = battle.cursor;
+    switch (battle.phase) {
+        case BattlePhase::kCommand:
+            if (horizontal) {
+                return sign;
+            }
+            if (sign < 0) {
+                return cursor >= 3 ? -3 : 0;
+            }
+            return cursor < 3 ? micropixel::math::Min(3, 4 - cursor) : 0;
+        case BattlePhase::kSkillMenu:
+        case BattlePhase::kItemMenu: {
+            const int32_t rows = battle.menu_rows;
+            const int32_t columns = rows > 2 ? 2 : 1;
+            const int32_t per_column = micropixel::math::Max((rows + columns - 1) / columns, 1);
+            if (horizontal) {
+                const int32_t next = cursor + sign * per_column;
+                return next >= 0 && next < rows ? sign * per_column : 0;
+            }
+            const int32_t next = cursor + sign;
+            return next >= 0 && next < rows && next / per_column == cursor / per_column ? sign : 0;
+        }
+        default:
+            return sign;
+    }
+}
+
 bool BattleSceneKey(GameContext& context, micropixel::KeyCode code) {
     switch (code) {
         case micropixel::KeyCode::kLeft:
-            return BattleMoveCursor(context.battle, -1);
         case micropixel::KeyCode::kRight:
-            return BattleMoveCursor(context.battle, 1);
         case micropixel::KeyCode::kUp:
-            return BattleMoveCursor(context.battle, context.battle.phase == BattlePhase::kCommand ? -3 : -1);
-        case micropixel::KeyCode::kDown:
-            return BattleMoveCursor(context.battle, context.battle.phase == BattlePhase::kCommand ? 3 : 1);
+        case micropixel::KeyCode::kDown: {
+            const int32_t step = KeyStep(context.battle, code);
+            return step != 0 && BattleMoveCursor(context.battle, step);
+        }
         case micropixel::KeyCode::kConfirm:
         case micropixel::KeyCode::kSouth:
             return BattleConfirm(context.battle, context.progress, context.rng);

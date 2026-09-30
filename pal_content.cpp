@@ -117,9 +117,9 @@ constexpr EnemyDef kEnemies[] = {
     // 十里坡's slow wall: soaks hits and hits back hard.
     {ids::Id::kEnemyTreant, 6U, 260U, 0U, 24U, 18U, 6U, 1U, {kSkSlash, 0U}, 62U, 40U, kIdxLingzhi},
     // Fast, fragile, and the first foe that can poison the party.
-    {ids::Id::kEnemyWasp, 0U, 110U, 0U, 20U, 6U, 22U, 1U, {kSkMiasma, 0U}, 34U, 18U, kIdxPillMp},
+    {ids::Id::kEnemyWasp, 0U, 95U, 0U, 20U, 6U, 22U, 1U, {kSkMiasma, 0U}, 34U, 18U, kIdxPillMp},
     // Act 2: the bandit captain fights like a player swordsman.
-    {ids::Id::kEnemyChief, 1U, 250U, 30U, 28U, 12U, 14U, 2U, {kSkThrust, kSkSlash}, 92U, 64U, kIdxPillHp},
+    {ids::Id::kEnemyChief, 1U, 210U, 30U, 26U, 12U, 14U, 2U, {kSkThrust, kSkSlash}, 92U, 64U, kIdxPillHp},
     // Act 2: cult casters, the first foes that answer with real magic.
     {ids::Id::kEnemyCultist, 3U, 380U, 40U, 30U, 18U, 18U, 2U, {kSkThunder, kSkFrost}, 110U, 72U, kIdxLingzhi},
     // Act 3. The tower's serpents are fast, its golems are a wall, and the

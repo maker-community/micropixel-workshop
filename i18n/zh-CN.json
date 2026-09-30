@@ -35,6 +35,8 @@
   "ui.no_mp": "灵力不足",
   "ui.no_item": "道具不足",
   "ui.advance": "轻触继续",
+  "ui.pick_foe": "选择敌人",
+  "ui.pick_ally": "选择同伴",
   "ui.round_prefix": "第",
   "ui.round_suffix": "回合",
   "ui.explore_hint": "下方按键或方向键移动",
