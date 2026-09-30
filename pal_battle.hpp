@@ -93,6 +93,11 @@ void BattleBegin(BattleState& battle, const Progress& progress, uint8_t battle_i
 // Drives timers, enemy turns and popups. Safe to call every tick.
 void BattleUpdate(BattleState& battle, Progress& progress, uint32_t delta_ms, micropixel::XorShift32& rng);
 
+// Writes the fight's HP/MP back into the party. Winning, losing and fleeing all
+// settle the battle through this, so a retreat keeps the damage it took instead
+// of healing the party for free.
+void SyncPartyFromBattle(const BattleState& battle, Progress& progress);
+
 // --- input ------------------------------------------------------------------
 // Each returns true when the press was consumed by the battle UI.
 

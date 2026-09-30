@@ -356,10 +356,14 @@ void BattleSceneUpdate(GameContext& context, uint32_t delta_ms) {
             PushBattle(context, battle_id);
             return;
         }
-        // Fled: the chapter is abandoned. "继续前缘" replays it from the save.
-        PartyRestore(context.progress);
+        // Fled: the encounter is dodged, not the chapter abandoned. The party
+        // keeps the damage it took, falls back to the entrance of the area it
+        // came from, and the same foes still hold the way out.
+        SyncPartyFromBattle(context.battle, context.progress);
         StoreProgress(context);
-        PushScene(context, kSceneTitle);
+        context.retreat_battle = context.battle.battle_id;
+        WorldEnter(context.world, context.progress.map_id);
+        PushScene(context, kSceneExplore);
         return;
     }
     // Floating damage numbers rise every tick; otherwise redraw only on change.

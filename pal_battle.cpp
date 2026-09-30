@@ -6,6 +6,26 @@
 #include "sdk/math.hpp"
 
 namespace pal {
+
+// Writes the fight's HP/MP back into the party. Winning, losing and fleeing all
+// settle the battle through this, so a retreat keeps the damage it took instead
+// of quietly restoring everyone to full.
+void SyncPartyFromBattle(const BattleState& battle, Progress& progress) {
+    for (uint8_t index = 0U; index < battle.unit_count; ++index) {
+        const Combatant& unit = battle.units[index];
+        if (unit.enemy || unit.slot >= progress.party_size || unit.slot >= kMaxParty) {
+            continue;
+        }
+        PartyMember& member = progress.party[unit.slot];
+        if (member.character != unit.species) {
+            continue;
+        }
+        member.hp = unit.hp;
+        member.mp = unit.mp;
+        member.poisoned = unit.poisoned;
+    }
+}
+
 namespace {
 
 inline constexpr uint32_t kIntroMs = 1200U;
@@ -170,24 +190,6 @@ void BuildOrder(BattleState& battle) {
         battle.order[probe + 1] = key;
     }
     battle.order_count = count;
-}
-
-// --- party write-back -------------------------------------------------------
-
-void SyncPartyFromBattle(const BattleState& battle, Progress& progress) {
-    for (uint8_t index = 0U; index < battle.unit_count; ++index) {
-        const Combatant& unit = battle.units[index];
-        if (unit.enemy || unit.slot >= progress.party_size || unit.slot >= kMaxParty) {
-            continue;
-        }
-        PartyMember& member = progress.party[unit.slot];
-        if (member.character != unit.species) {
-            continue;
-        }
-        member.hp = unit.hp;
-        member.mp = unit.mp;
-        member.poisoned = unit.poisoned;
-    }
 }
 
 // --- actions ----------------------------------------------------------------

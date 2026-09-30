@@ -497,6 +497,10 @@ struct GameContext final {
     int32_t drag_origin_y{};
     bool dragging{};
     uint8_t dialogue_return{kDialogueToScript};
+    // Set when the party fled: the same encounter still guards the way out of
+    // the map they fell back to, so stepping on that trigger re-opens the
+    // battle instead of advancing the chapter past it.
+    uint8_t retreat_battle{kEmptySlot};
     uint32_t notice_ms{};  // transient confirmation ("已记录天机") countdown
     ids::Id notice_text{ids::Id::kUiSaved};  // what the notice pill says
     bool has_save{};

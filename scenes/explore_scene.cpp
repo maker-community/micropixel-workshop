@@ -194,6 +194,14 @@ void ExploreSceneUpdate(GameContext& context, uint32_t delta_ms) {
     }
     if (context.world.completed) {
         context.world.completed = false;
+        // A fled encounter still holds the exit: stepping back onto the trigger
+        // re-opens the same fight rather than letting the chapter walk past it.
+        if (context.retreat_battle != kEmptySlot) {
+            const uint8_t battle_id = context.retreat_battle;
+            context.retreat_battle = kEmptySlot;
+            PushBattle(context, battle_id);
+            return;
+        }
         AdvanceScript(context);
         return;
     }
