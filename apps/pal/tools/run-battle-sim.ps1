@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 # Builds tools/battle_sim.cpp for wasm32-wasip1 with the MicroPixel wasi-sdk and
 # runs it under node's WASI. Needs a prior `micropixel build` so that
 # build/generated/pal_strings.hpp exists.

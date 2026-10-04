@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 <#
 .SYNOPSIS
     Verifies the MPX1 control transport over a UART (SenseCAP Watcher CH342) link.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Headless story simulator: plays the whole chapter script with a scripted
 // "reasonable player" through the same Battle* entry points the scene uses, and
 // reports how each fight goes. Built for wasm32-wasip1 and run under node by

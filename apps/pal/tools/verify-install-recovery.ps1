@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 <#
 .SYNOPSIS
     Verifies Bundle install transfer behaviour on a UART-attached device:

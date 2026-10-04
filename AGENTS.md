@@ -19,6 +19,13 @@
 - `micropixel build` 干净通过：`-Wall -Wextra -Werror`，未使用的参数/变量会直接编译失败。
 - 跑该 app 自己的验证脚本（pal 是 `tools/run-battle-sim.ps1`，它同时负责内容校验和平衡模拟）。
 - 新增源文件第一行写 `// SPDX-License-Identifier: MIT`（`.ps1` 用 `#`）。
+- **`.ps1` 一律只写 ASCII**（注释和信息都用英文）：Windows PowerShell 5.1 不认没有 BOM 的
+  UTF-8，中文会被读成乱码、甚至吃掉引号终止符，报出莫名其妙的"字符串缺少终止符"。
+  中文说明写在 `.md` 里（含 skill 的 references），脚本里只留命令和英文输出。
+- 反过来，脚本**读**仓库里的文件时要显式按 UTF-8 解码：
+  `[System.IO.File]::ReadAllText($p, [System.Text.Encoding]::UTF8)`。
+  用 `Get-Content -Raw` 读带中文的 `app.json` 会被 ANSI 解码破坏引号配对，
+  `ConvertFrom-Json` 只会报一个没有上下文的 ArgumentException。
 - 提交信息用英文；`build/`、`screenshots/`、`devlog.txt`、`.env`、`micropixel.lock.json`
   已在 `.gitignore` 里，不要强加。
 

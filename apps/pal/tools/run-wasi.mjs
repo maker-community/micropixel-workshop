@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Runs a WASI preview1 module, stubbing any host import the module declares
 // but never needs (the SDK's device imports are linked with --allow-undefined).
 import { readFile } from 'node:fs/promises';
