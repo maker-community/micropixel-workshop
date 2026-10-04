@@ -14,11 +14,27 @@ MicroPixel 宿主的游戏与小应用合集。每个 app 都是独立可构建�
 
 新增 app 时在这里加一行。
 
+## 快速开始
+
+第一次拿到这个仓库，看 [`docs/getting-started.md`](docs/getting-started.md)（完整路径：装 CLI → 构建 →
+不用设备也能验证 → 上真机 → 让 AI 接手）。最短路径：
+
+```powershell
+git clone https://github.com/maker-community/micropixel-workshop.git
+cd micropixel-workshop/apps/pal
+micropixel build
+powershell -NoProfile -File tools\run-battle-sim.ps1 -Runs 300
+```
+
+前提：已安装 MicroPixel SDK 与 CLI（https://micropixel.ai/docs/environment/）。
+**没有设备也能跑上面两条**：第二条是整条剧本的 300 遍模拟 + 内容校验，
+`smart` / `skills-no-items` 显示 `300/300` 即为通过。
+
 ## 环境基线
 
 | 项 | 版本 |
 | --- | --- |
-| MicroPixel SDK | 0.20.1 |
+| MicroPixel SDK | 记录基线 0.20.1（本机 CLI 实测 `micropixel --version` = 0.20.1；官方 SDK 已有 0.20.2，升级前读兼容性说明） |
 | 设备固件 | 0.9.5（SenseCAP Watcher，ESP32-S3，412×412 圆屏） |
 | 工具链 | wasi-sdk clang++，`--target=wasm32-wasip1 -std=c++23 -ffreestanding` |
 | AOT | target `xtensa`，WAMR 格式 v6 |
@@ -31,23 +47,39 @@ MicroPixel 宿主的游戏与小应用合集。每个 app 都是独立可构建�
 cd apps/pal
 micropixel build
 powershell -NoProfile -File tools\run-battle-sim.ps1 -Runs 300
-micropixel --port COM3 run --aot-target xtensa --no-follow
+micropixel --port COM3 run --aot-target xtensa --no-follow   # COM3 是本机端口，换成你的
 ```
 
-`micropixel` 在 `C:\Users\gil\AppData\Local\MicroPixel\bin\micropixel.exe`，不一定在 PATH 里。
-每个 app 的验证流程、坐标表和已知坑写在它自己的 `AGENTS.md` 里。
+- `micropixel` 装好后在 PATH 里（本机为 `C:\Users\gil\AppData\Local\MicroPixel\bin\micropixel.exe`）。
+- 前两条**不需要设备**；第三条要设备，串口号按你的机器改。
+  注意：`micropixel port list` 在本机的 CH342 桥上返回 **0 个端口**（它只认 ESP32 原生 VID），
+  不能据此判断设备不在；串口号用设备管理器看，见 `docs/getting-started.md` 第 4 章。
+- 每个 app 的验证流程、坐标表和已知坑写在它自己的 `AGENTS.md` 里。
 
 ## 目录结构
 
 ```
-apps/<app>/        一个完整的 app 工程：app.json、源码、assets/、audio/、i18n/、scenes/、tools/
-apps/<app>/AGENTS.md
-                   该 app 的构建-验证流程与踩坑记录（改代码前先读）
-AGENTS.md          仓库级规则：许可、提交、目录约定
-NOTICE             第三方组件 + 内容声明
+apps/<app>/                一个完整的 app 工程：app.json、源码、assets/、audio/、i18n/、scenes/、tools/
+apps/<app>/README.md       这个 app 是什么、怎么玩、怎么改（面向人）
+apps/<app>/AGENTS.md       该 app 的构建-验证流程与踩坑记录（改代码前先读）
+docs/getting-started.md    第一次拿到仓库的完整上手路径
+.github/skills/            AI 工作流（新建 app / 上机验证 / 发布），可当斜杠命令用
+AGENTS.md                  仓库级规则：许可、提交、目录约定
+NOTICE                     第三方组件 + 内容声明
 ```
 
-跨 app 的 `docs/` 与 `tools/` 等第二个 app 落地后再抽，先不做过度设计。
+## 和 AI 一起用
+
+规则和技能都在版本库里，克隆下来就能用，不需要额外配置：
+
+| 你想做什么 | 对 AI 说 |
+| --- | --- |
+| 新加一个 app | `/micropixel-new-app` |
+| 上机运行、验证、排查冻屏/黑屏 | `/micropixel-run-on-device` |
+| 发布到商店、准备截图与说明 | `/micropixel-publish` |
+
+AI 会自动读根 `AGENTS.md`、`apps/<app>/AGENTS.md` 与按需加载的 `.github/skills/`，
+所以你不必先解释项目背景。
 
 ## 许可
 

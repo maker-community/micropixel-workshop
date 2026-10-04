@@ -21,8 +21,8 @@ powershell -NoProfile -File tools\run-battle-sim.ps1 -Runs 300
 micropixel --port COM3 run --aot-target xtensa --no-follow
 ```
 
-- `micropixel` 在 `C:\Users\gil\AppData\Local\MicroPixel\bin\micropixel.exe`；
-  下面示例里的 `micropixel` 都代指这个完整路径（它不一定在 PATH 里）。
+- `micropixel` 装好后在 PATH 里（本机为 `C:\Users\gil\AppData\Local\MicroPixel\bin\micropixel.exe`，
+  `micropixel --version` 实测 0.20.1）；万一不在 PATH，下面示例里的 `micropixel` 就代指完整路径。
 - `tools/run-battle-sim.ps1` 用 SDK 自带的 wasi-sdk 编译
   `tools/battle_sim.cpp` + `pal_battle/pal_model/pal_content`，再用 node 的 WASI 跑。
   **前置条件**：先 `micropixel build` 过一次，否则没有 `build/generated/pal_strings.hpp`。
