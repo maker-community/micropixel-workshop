@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Dialogue scene: portrait, typewriter text and the branching choice list.
 
 #include "../pal_common.hpp"

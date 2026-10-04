@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Battle scene: foes, party cards, the message strip and the command panel.
 
 #include "../pal_common.hpp"

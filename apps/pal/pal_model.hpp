@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Runtime party state, bag and the versioned KV save.
 //
 // The model layer never touches graphics: it only knows numbers and ids, which

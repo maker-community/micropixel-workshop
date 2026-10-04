@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Epilogue screen: the run summary and a way back to the title.
 
 #include "../pal_common.hpp"

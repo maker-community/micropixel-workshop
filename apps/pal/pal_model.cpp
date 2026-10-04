@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Party growth curves, bag bookkeeping and the versioned save blob.
 
 #include "pal_model.hpp"

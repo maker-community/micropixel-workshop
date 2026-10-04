@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Status menu: party sheets, the bag and the save / resume actions.
 
 #include "../pal_common.hpp"

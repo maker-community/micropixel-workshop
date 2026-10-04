@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Application glue: the retained scene, the event loop, the chapter script
 // machine and the scene routing. This is the app's `demo_app.cpp`.
 

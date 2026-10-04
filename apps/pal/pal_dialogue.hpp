@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Dialogue runtime: a cursor over the authored node graph plus the typewriter
 // reveal. Text stays in the generated localization catalog; only ids are stored
 // here so a running dialogue is a handful of bytes.

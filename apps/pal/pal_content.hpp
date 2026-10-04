@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Static content tables for 仙剑奇侠传.
 //
 // Everything here is immutable data: characters, skills, items, enemies, the

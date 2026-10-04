@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Host-synth audio for 仙剑奇侠传.
 //
 // Sound effects are tone recipes authored in `audio/sfx.json`; the build turns

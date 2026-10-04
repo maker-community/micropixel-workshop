@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Grid movement and chapter exits.
 
 #include "pal_world.hpp"

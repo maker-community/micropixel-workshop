@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Chapter exploration: a grid map, a diamond pad and NPC interaction.
 
 #include "../pal_common.hpp"

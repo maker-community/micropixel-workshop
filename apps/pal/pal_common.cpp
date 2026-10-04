@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Responsive layout for every screen.
 
 #include "pal_common.hpp"

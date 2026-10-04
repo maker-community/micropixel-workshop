@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Turn-based battle engine.
 //
 // The engine owns a snapshot of both sides (party copies plus spawned enemies),

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // See pal_audio.hpp. Every number here comes from the generated profile header,
 // which the Build produces from audio/sfx.json; this file only decides *when* a
 // recipe plays.

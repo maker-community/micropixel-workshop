@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Shared foundation for 仙剑奇侠传: the palette, the responsive layout, the
 // immediate-mode scene view and the GameContext every scene receives.
 //

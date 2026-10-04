@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Dialogue cursor and UTF-8 prefix helpers.
 
 #include "pal_dialogue.hpp"

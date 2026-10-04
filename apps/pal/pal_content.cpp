@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // The immutable content of 仙剑奇侠传: characters, skills, items, enemies, the
 // dialogue graph, the exploration maps and the chapter script.
 //

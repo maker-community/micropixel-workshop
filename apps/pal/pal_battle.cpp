@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Turn-based combat rules, turn order, enemy AI and rewards.
 
 #include "pal_battle.hpp"

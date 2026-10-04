@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Title screen: night sky, moon, mountain ridge and the two entry points.
 
 #include "../pal_common.hpp"

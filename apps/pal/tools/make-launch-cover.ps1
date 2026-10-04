@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: MIT
 # Renders assets/launch.png: the 360x360 cover the MicroPixel launcher shows
 # (app.json -> launch_asset). Replaces the leftover art from the project this
 # repository was forked from, which still carried the old title and logo.

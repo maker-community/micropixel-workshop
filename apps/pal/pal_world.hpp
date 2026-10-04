@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Grid exploration: where the party stands on the current map, tile-stepped
 // movement with interpolation, NPC interaction and chapter exit triggers.
 

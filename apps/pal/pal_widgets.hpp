@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 // Shared chrome and the procedural vector art.
 //
 // Every character, monster and tile is composed from rounded rectangles and
